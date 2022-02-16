@@ -6,7 +6,6 @@ on:
       - '[0-9][0-9]?.[0-9][0-9].[0-9][0-9]'
       - '[0-9][0-9]?.[0-9][0-9].[0-9][0-9]-alpha-[0-9]+'
 
-# a workflow is built up as jobs, and within these jobs are steps
 jobs:
   
   dump:
@@ -18,9 +17,9 @@ jobs:
         echo ${{ github.event_name }}
         echo ${{ github.event_path }}
         echo ${{ github.ref }}
-        echo ${{ github.github.prerelease }}
+        echo ${{ github.prerelease }}
           
-  mainline-release:
+  release:
     if: ${{ github.prerelease == false }}
     runs-on: ubuntu-latest
     env:
@@ -36,7 +35,7 @@ jobs:
         with:
           args: -n "{package-name}-{project-version}-{game-type}{nolib}:{project-version}-{game-type}{nolib}"
 
-  mainline-alpha:
+  alpha:
     if: ${{ github.prerelease == true }}
     runs-on: ubuntu-latest
     env:
@@ -52,13 +51,10 @@ jobs:
         with:
           args: -w 0 -n "{package-name}-{project-version}-alpha-{game-type}{nolib}:{project-version}-alpha-{game-type}{nolib}"
           
-# not wowi, it doesnt support alpha/beta, just release
+# -w 0 = not wowinterface, it doesnt support alpha/beta, only release
         
-        
-#        with:
-#          
         
 #      - name: Package nolib
 #        uses: BigWigsMods/packager@v1
 #        with:
-#          args: -s -n "{package-name}-{project-version}-{game-type}{alpha}{beta}{nolib}:{project-version}-{game-type}{alpha}{beta}{nolib}"
+#          args: -s # nolib
