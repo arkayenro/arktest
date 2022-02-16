@@ -1,14 +1,9 @@
-# description of this workflow, can be anything you want
-name: Packager
+name: Packager-Stable
 
-# we need to let GitHub know _when_ we want to release, typically only when we create a new tag.
-# this will target only tags, and not all pushes to the master branch.
-# this part can be heavily customized to your liking, like targeting only tags that match a certain word,
-# other branches or even pullrequests.
 on:
   push:
     tags:
-      - '^\d\d\d\d\d$'
+      - '[0-9].[0-9][0-9].[0-9][0-9]'
 
 # a workflow is built up as jobs, and within these jobs are steps
 jobs:
@@ -38,3 +33,4 @@ jobs:
       # once cloned, we just run the GitHub Action for the packager project
       - name: Package for Retail
         uses: BigWigsMods/packager@v1
+        
