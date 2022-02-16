@@ -33,8 +33,8 @@ jobs:
       - name: Package (release)
         uses: BigWigsMods/packager@v1.0.3
         with:
-          args: -n "{package-name}-{project-version}-{game-type}{nolib}:{project-version}-{game-type}{nolib}"
-# -g retail,bcc,clasic
+          args: -g retail,bcc,clasic -n "{package-name}-{project-version}{nolib}:{project-version}{nolib}"
+# 
 
   alpha:
     if: ${{ contains(github.ref,'alpha') }}
@@ -50,7 +50,7 @@ jobs:
       - name: Package (alpha)
         uses: BigWigsMods/packager@v1.0.3
         with:
-          args: -w 0 -n "{package-name}-{project-version}-{game-type}:{project-version}-{game-type}"
+          args: -w 0 -n "{package-name}-{project-version}:{project-version}"
           
 # -w 0 = not wowinterface, it doesnt support alpha/beta, only release
         
