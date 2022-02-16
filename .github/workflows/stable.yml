@@ -17,6 +17,8 @@ jobs:
           echo ${{ github.event_name }}
           echo ${{ github.event_path }}
           echo ${{ github.ref }}
+          echo ${{ github.prerelease }}
+          
     
   mainline:
     runs-on: ubuntu-latest
