@@ -1,0 +1,17 @@
+## Interface: 90105
+
+## Title: ArkTest
+## Author: Arkayenro - Khaz'goroth
+## Email: arkayenro at gmail dot com
+## Version: 30963.1
+## X-ReleaseType: Alpha
+
+## Notes: test mod
+
+## X-Website: https://github.com/arkayenro/arkinventory
+
+### X-Curse-Project-ID: 
+### X-WoWI-ID: 
+### X-Wago-ID: 
+
+ArkTest.lua
