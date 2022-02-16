@@ -8,19 +8,20 @@ on:
 
 # a workflow is built up as jobs, and within these jobs are steps
 jobs:
-  check:
+  
+  dump:
     runs-on: ubuntu-latest
     steps:
-      - name: Check
-        run: |
-          echo ${{ github.event }}
-          echo ${{ github.event_name }}
-          echo ${{ github.event_path }}
-          echo ${{ github.ref }}
-          echo ${{ github.prerelease }}
+    - name: Dump
+      run: |
+        echo ${{ github.event }}
+        echo ${{ github.event_name }}
+        echo ${{ github.event_path }}
+        echo ${{ github.ref }}
+        echo ${{ github.github.prerelease }}
           
-    
-  mainline:
+  mainline-release:
+    if: ${{ github.prerelease == false }}
     runs-on: ubuntu-latest
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
@@ -30,12 +31,32 @@ jobs:
     steps:
       - name: Clone project
         uses: actions/checkout@v1
-      - name: Package
+      - name: Package (release)
         uses: BigWigsMods/packager@v1.0.3
+        with:
+          args: -n "{package-name}-{project-version}-{game-type}{nolib}:{project-version}-{game-type}{nolib}"
+
+  mainline-alpha:
+    if: ${{ github.prerelease == true }}
+    runs-on: ubuntu-latest
+    env:
+      CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+      WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v1
+      - name: Package (alpha)
+        uses: BigWigsMods/packager@v1.0.3
+        with:
+          args: -w 0 -n "{package-name}-{project-version}-alpha-{game-type}{nolib}:{project-version}-alpha-{game-type}{nolib}"
+          
+# not wowi, it doesnt support alpha/beta, just release
         
         
 #        with:
-#          args: -n "{package-name}-{project-version}-{game-type}{alpha}{beta}{nolib}:{project-version}-{game-type}{alpha}{beta}{nolib}"
+#          
         
 #      - name: Package nolib
 #        uses: BigWigsMods/packager@v1
