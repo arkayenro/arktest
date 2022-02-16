@@ -8,27 +8,32 @@ on:
 
 # a workflow is built up as jobs, and within these jobs are steps
 jobs:
-
-  # "release" is a job, you can name it anything you want
-  release:
-
+  check:
     runs-on: ubuntu-latest
-
+    steps:
+      - name: Check
+        run: |
+          echo ${{ github.event }}
+          echo ${{ github.event_name }}
+          echo ${{ github.event_path }}
+          echo ${{ github.ref }}
+    
+  mainline:
+    runs-on: ubuntu-latest
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
       WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
       WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
       GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-
     steps:
-
       - name: Clone project
         uses: actions/checkout@v1
-
       - name: Package
-        uses: BigWigsMods/packager@v1
-        with:
-          args: -n "{package-name}-{project-version}-{game-type}{alpha}{beta}{nolib}:{project-version}-{game-type}{alpha}{beta}{nolib}"
+        uses: BigWigsMods/packager@v1.0.3
+        
+        
+#        with:
+#          args: -n "{package-name}-{project-version}-{game-type}{alpha}{beta}{nolib}:{project-version}-{game-type}{alpha}{beta}{nolib}"
         
 #      - name: Package nolib
 #        uses: BigWigsMods/packager@v1
