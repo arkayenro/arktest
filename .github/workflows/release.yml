@@ -20,7 +20,7 @@ jobs:
         echo ${{ github.prerelease }}
           
   release:
-    if: ${{ github.prerelease == false }}
+    if: ${{ !contains(github.ref,"alpha") }}
     runs-on: ubuntu-latest
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
@@ -36,7 +36,7 @@ jobs:
           args: -n "{package-name}-{project-version}-{game-type}{nolib}:{project-version}-{game-type}{nolib}"
 
   alpha:
-    if: ${{ github.prerelease == true }}
+    if: ${{ contains(github.ref,"alpha") }}
     runs-on: ubuntu-latest
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
