@@ -25,12 +25,12 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v1
 
-      - name: Package for Retail
+      - name: Package
         uses: BigWigsMods/packager@v1
         with:
-          args: -n "{game-type}:"
+          args: -n "{package-name}-{project-version}-{game-type}{alpha}{beta}{nolib}:{project-version}-{game-type}{alpha}{beta}{nolib}"
         
-#      - name: Package for Retail
+#      - name: Package nolib
 #        uses: BigWigsMods/packager@v1
 #        with:
-#          args: -g classic
+#          args: -s -n "{package-name}-{project-version}-{game-type}{alpha}{beta}{nolib}:{project-version}-{game-type}{alpha}{beta}{nolib}"
