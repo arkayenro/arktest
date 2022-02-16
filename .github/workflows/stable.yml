@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Package for Retail
-        uses: BigWigsMods/packager@v2
+        uses: BigWigsMods/packager@v1
         
 #      - name: Package for Retail
 #        uses: BigWigsMods/packager@v1
