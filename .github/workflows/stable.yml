@@ -27,6 +27,8 @@ jobs:
 
       - name: Package for Retail
         uses: BigWigsMods/packager@v1
+        with:
+          args: -n "{game-type}:"
         
 #      - name: Package for Retail
 #        uses: BigWigsMods/packager@v1
