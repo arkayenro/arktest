@@ -27,7 +27,7 @@ jobs:
       - name: Package for Retail
         uses: BigWigsMods/packager@v1
         
-      - name: Package for Retail
-        uses: BigWigsMods/packager@v1
-        with:
-          args: -g classic
+#      - name: Package for Retail
+#        uses: BigWigsMods/packager@v1
+#        with:
+#          args: -g classic
