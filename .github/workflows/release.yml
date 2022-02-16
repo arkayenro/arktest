@@ -20,7 +20,7 @@ jobs:
         echo ${{ github.prerelease }}
           
   release:
-    if: ${{ !contains(github.ref,"alpha") }}
+    if: ${{ !contains(github.ref,'alpha') }}
     runs-on: ubuntu-latest
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
@@ -37,7 +37,7 @@ jobs:
 # -g retail,bcc,clasic
 
   alpha:
-    if: ${{ contains(github.ref,"alpha") }}
+    if: ${{ contains(github.ref,'alpha') }}
     runs-on: ubuntu-latest
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
