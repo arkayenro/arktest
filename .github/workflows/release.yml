@@ -31,9 +31,13 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v1
       - name: Package (release)
-        uses: BigWigsMods/packager@v1.0.3
+        uses: BigWigsMods/packager@v1
         with:
-          args: -g 9.1.5,2.5.2,1.14.1 -n "{package-name}-{project-version}{nolib}:{project-version}{nolib}"
+          args: -n "{package-name}-{project-version}{nolib}:{project-version}"
+      - name: Package (release-nolib)
+        uses: BigWigsMods/packager@v1
+        with:
+          args: -s -n "{package-name}-{project-version}{nolib}:{project-version}{nolib}"
 # 
 
   alpha:
