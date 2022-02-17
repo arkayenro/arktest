@@ -33,7 +33,7 @@ jobs:
       - name: Package (release)
         uses: BigWigsMods/packager@v1.0.3
         with:
-          args: -g mainline,bcc,clasic -n "{package-name}-{project-version}{nolib}:{project-version}{nolib}"
+          args: -g 9.1.5,2.5.2,1.14.1 -n "{package-name}-{project-version}{nolib}:{project-version}{nolib}"
 # 
 
   alpha:
