@@ -21,10 +21,12 @@ jobs:
         uses: actions/checkout@v1
       - name: Package (release)
         uses: BigWigsMods/packager@v1
+        with:
+          args: -d
 #      - name: Package (release-nolib)
 #        uses: BigWigsMods/packager@v1
 #        with:
-#          args: -s
+#          args: -d -s
 
   alphas:
     if: ${{ contains(github.ref,'alpha') }}
@@ -40,6 +42,6 @@ jobs:
       - name: Package (alpha)
         uses: BigWigsMods/packager@v1
         with:
-          args: -w 0
+          args: -d -w 0
           
 # -w 0 = not wowinterface, it doesnt support alpha/beta, only release
