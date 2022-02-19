@@ -18,7 +18,8 @@ jobs:
       - name: Package (release)
         uses: BigWigsMods/packager@v1
         with:
-          args: -g retail,classic,bcc
+          args: -g mainline,classic,bcc
+
 #      - name: Package (release-nolib)
 #        uses: BigWigsMods/packager@v1
 #        with:
