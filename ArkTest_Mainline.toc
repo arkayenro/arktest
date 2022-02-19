@@ -10,9 +10,9 @@
 
 ## X-Website: https://github.com/arkayenro/arkinventory
 
-### X-Curse-Project-ID: 
-### X-WoWI-ID: 
-### X-Wago-ID: 5bGo1860
+## X-Curse-Project-ID: 
+## X-WoWI-ID: 
+## X-Wago-ID: 5bGo1860
 
 #@no-lib-strip@
 ArkTestExternals.xml
