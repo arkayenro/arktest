@@ -11,7 +11,7 @@
 ## X-Website: https://github.com/arkayenro/arkinventory
 
 ## X-Curse-Project-ID: 
-## X-WoWI-ID: 
+## X-WoWI-ID: 26238
 ## X-Wago-ID: 5bGo1860
 
 #@no-lib-strip@
