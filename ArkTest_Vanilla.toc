@@ -1,13 +1,21 @@
-## Interface: 11402
+## Interface: 11401
 
 ## Title: ArkTest [Classic]
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 30963.1
-## X-ReleaseType: Alpha
+## Version: 10000
+## X-ReleaseType: 
 
 ## Notes: test mod
 
 ## X-Website: https://github.com/arkayenro/arkinventory
+
+### X-Curse-Project-ID: 
+### X-WoWI-ID: 
+### X-Wago-ID: 5bGo1860
+
+#@no-lib-strip@
+ArkTestExternals.xml
+#@end-no-lib-strip@
 
 ArkTest.lua
