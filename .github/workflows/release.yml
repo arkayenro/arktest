@@ -17,6 +17,8 @@ jobs:
         uses: actions/checkout@v1
       - name: Package (release)
         uses: BigWigsMods/packager@v1
+        with:
+          args: -g retail,classic,bcc
 #      - name: Package (release-nolib)
 #        uses: BigWigsMods/packager@v1
 #        with:
