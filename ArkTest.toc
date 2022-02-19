@@ -1,9 +1,0 @@
-### this toc file is for the packaager only
-
-## Interface-Retail: 90105
-## Interface-Classic: 11402
-## Interface-BCC: 20503
-
-### X-Curse-Project-ID: 
-### X-WoWI-ID: 
-### X-Wago-ID: 
