@@ -8,9 +8,9 @@
 
 ## Notes: test mod
 
-## X-Website: https://github.com/arkayenro/arkinventory
+## X-Website: https://github.com/arkayenro
 
-## X-Curse-Project-ID: 
+## X-Curse-Project-ID: 581591
 ## X-WoWI-ID: 26238
 ## X-Wago-ID: 5bGo1860
 
