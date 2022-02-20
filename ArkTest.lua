@@ -1,12 +1,1 @@
 print "ArkTest"
-
-
-
-
-
-
-
-
-
-
-
