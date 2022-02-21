@@ -1,4 +1,4 @@
-## Interface: 11300
+## Interface: 11402
 
 ## Title: ArkTest [Classic]
 ## Author: Arkayenro - Khaz'goroth
