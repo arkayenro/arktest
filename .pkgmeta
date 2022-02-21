@@ -2,3 +2,4 @@
 
 manual-changelog:
   filename: ChangeHistory.md
+  markup-type: markdown
