@@ -14,7 +14,7 @@ jobs:
     env:
       GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
       WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
-      #WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+      WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
     steps:
       - name: Clone project
@@ -22,9 +22,8 @@ jobs:
       - name: Package (release)
         if: ${{ !(contains(github.ref,'alpha') || contains(github.ref,'beta')) }}
         uses: arkayenro/packager@v2
-      - name: Package (alpha)
+      - name: Package (alpha/beta)
         if: ${{ contains(github.ref,'alpha') || contains(github.ref,'beta') }}
         uses: arkayenro/packager@v2
-        with:
+        with: # wowinterface doesnt support alpha/beta so dont upload them there
           args: -w 0
-          # wowinterface doesnt support alpha/beta so dont upload them there
