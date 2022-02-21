@@ -1,4 +1,4 @@
-﻿# x.xx.xx (xx-xxx-2022)
+# x.xx.xx (xx-xxx-2022)
 
 ### alpha 1
  - fixed - blah
@@ -8,4 +8,7 @@
  - fixed - blah
 
 ### alpha 2
+ - fixed - blah
+
+### alpha 3
  - fixed - blah
