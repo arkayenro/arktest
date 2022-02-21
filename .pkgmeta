@@ -1,0 +1,4 @@
+﻿package-as: ArkTest
+
+manual-changelog:
+  filename: ChangeHistory.md
