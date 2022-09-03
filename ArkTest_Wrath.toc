@@ -1,9 +1,9 @@
-## Interface: 90207
+## Interface: 30400
 
-## Title: ArkTest
+## Title: ArkTest [Wrath]
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 10088
+## Version: 10000
 ## X-ReleaseType: 
 
 ## Notes: test mod
