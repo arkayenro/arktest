@@ -24,10 +24,10 @@ jobs:
         
       - name: Package (release)
         if: ${{ !(contains(github.ref,'alpha') || contains(github.ref,'beta')) }}
-        uses: arkayenro/packager@v2
+        uses: arkayenro/packager@v3
         
       - name: Package (alpha/beta)
         if: ${{ contains(github.ref,'alpha') || contains(github.ref,'beta') }}
-        uses: arkayenro/packager@v2
+        uses: arkayenro/packager@v3
         with: # wowinterface doesnt support alpha/beta so dont upload them there
           args: -w 0
