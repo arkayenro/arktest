@@ -1,0 +1,20 @@
+﻿## License: LGPL v2.1 (this file specifically)
+
+## Interface: 100000
+
+## Title: ArkInventory [Rules] Example
+## Notes: Example rule for ArkInventory
+## Author: Arkayenro
+## Version: @project-version@
+
+## DefaultState: Disabled
+## LoadOnDemand: 0
+## RequiredDeps: ArkInventoryRules
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Always:delayed
+
+## OptionalDeps: InsertAnyModsHereThatYourRuleMightNeed
+
+
+ArkInventoryRules_Example.lua

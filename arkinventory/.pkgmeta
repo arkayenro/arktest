@@ -1,0 +1,46 @@
+﻿package-as: ArkInventory
+
+externals:
+  Externals/Ace3/AceAddon: https://repos.wowace.com/wow/ace3/trunk/AceAddon-3.0
+  Externals/Ace3/AceConsole: https://repos.wowace.com/wow/ace3/trunk/AceConsole-3.0
+  Externals/Ace3/AceGUI: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
+  Externals/Ace3/AceConfig: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
+  Externals/Ace3/AceDB: https://repos.wowace.com/wow/ace3/trunk/AceDB-3.0
+  Externals/Ace3/AceDBOptions: https://repos.wowace.com/wow/ace3/trunk/AceDBOptions-3.0
+  Externals/Ace3/AceLocale: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
+  Externals/Ace3/AceHook: https://repos.wowace.com/wow/ace3/trunk/AceHook-3.0
+  Externals/Ace3/AceEvent: https://repos.wowace.com/wow/ace3/trunk/AceEvent-3.0
+  Externals/Ace3/AceTimer: https://repos.wowace.com/wow/ace3/trunk/AceTimer-3.0
+  Externals/Ace3/AceBucket: https://repos.wowace.com/wow/ace3/trunk/AceBucket-3.0
+  Externals/Ace3/AceComm: https://repos.wowace.com/wow/ace3/trunk/AceComm-3.0
+  Externals/Ace3/AceSerializer: https://repos.wowace.com/wow/ace3/trunk/AceSerializer-3.0
+  
+  Externals/PeriodicTable/PeriodicTable: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1
+  Externals/PeriodicTable/ClassSpell: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-ClassSpell
+  Externals/PeriodicTable/Consumable: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Consumable
+  Externals/PeriodicTable/CurrencyItems: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-CurrencyItems
+  Externals/PeriodicTable/Gear: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Gear
+  Externals/PeriodicTable/GearSet: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-GearSet
+  Externals/PeriodicTable/TransmogSet: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-TransmogSet
+  Externals/PeriodicTable/InstanceLoot: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-InstanceLoot
+  Externals/PeriodicTable/InstanceLootHeroic: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-InstanceLootHeroic
+  Externals/PeriodicTable/InstanceLootLFR: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-InstanceLootLFR
+  Externals/PeriodicTable/Misc: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Misc
+  Externals/PeriodicTable/Reputation: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Reputation
+  Externals/PeriodicTable/Tradeskill: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Tradeskill
+  Externals/PeriodicTable/TradeskillResultMats: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-TradeskillResultMats
+  Externals/PeriodicTable/TradeskillLevels: https://repos.wowace.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-TradeskillLevels
+  
+  Externals/SharedMedia: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
+  Externals/SharedMediaWidgets: https://repos.wowace.com/wow/ace-gui-3-0-shared-media-widgets/trunk/AceGUI-3.0-SharedMediaWidgets
+
+
+move-folders:
+  ArkInventory/Modules/ArkInventoryConfig: ArkInventoryConfig
+  ArkInventory/Modules/ArkInventorySearch: ArkInventorySearch
+  ArkInventory/Modules/ArkInventoryRules: ArkInventoryRules
+  ArkInventory/Modules/ArkInventoryRules_Example: ArkInventoryRules_Example
+
+manual-changelog:
+  filename: ChangeHistory.md
+  markup-type: markdown
