@@ -7338,8 +7338,6 @@ end
 
 function ArkInventory.Frame_Item_Update_StatusIconJunk( frame, codex )
 	
-	if not ArkInventory.Global.Junk.process then return end
-	
 	if not ArkInventory.ValidFrame( frame ) then return end
 	
 	local obj = frame.JunkIcon

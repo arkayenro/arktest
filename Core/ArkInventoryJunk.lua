@@ -28,6 +28,7 @@ function ArkInventory.JunkCheck( i, codex )
 	if i and i.h then
 		
 		local info = i.info or ArkInventory.GetObjectInfo( i.h )
+		
 		if info.ready and info.id then
 			
 			if IsAddOnLoaded( "Scrap" ) and Scrap then
