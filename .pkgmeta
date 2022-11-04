@@ -36,10 +36,10 @@ externals:
 
 
 move-folders:
-  ArkInventory/Modules/ArkInventoryConfig: ArkInventoryConfig
-  ArkInventory/Modules/ArkInventorySearch: ArkInventorySearch
-  ArkInventory/Modules/ArkInventoryRules: ArkInventoryRules
-  ArkInventory/Modules/ArkInventoryRules_Example: ArkInventoryRules_Example
+  ArkTest/Modules/ArkInventoryConfig: ArkInventoryConfig
+  ArkTest/Modules/ArkInventorySearch: ArkInventorySearch
+  ArkTest/Modules/ArkInventoryRules: ArkInventoryRules
+  ArkTest/Modules/ArkInventoryRules_Example: ArkInventoryRules_Example
 
 manual-changelog:
   filename: ChangeHistory.md

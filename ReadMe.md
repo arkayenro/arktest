@@ -1,5 +1,3 @@
-this is just test code to test the packager with
+this is a test mod, it just lets me test stuff with packaging and uploading from github to the hosting sites
 
-do not use it in the game
-
-406
+do not install this in the game
