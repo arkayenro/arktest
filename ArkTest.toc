@@ -20,7 +20,7 @@
 ## X-Website: https://github.com/arkayenro
 
 ## X-Curse-Project-ID: 581591
-## X-WoWI-ID: 26395
+## Z-WoWI-ID: 26395
 ## X-Wago-ID: 5bGo1860
 
 #@no-lib-strip@
