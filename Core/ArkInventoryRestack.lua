@@ -13,7 +13,7 @@ local function Restack_Yield( loc_id )
 end
 
 function ArkInventory.RestackString( )
-	return ArkInventory.Const.Actions[ArkInventory.Const.ActionID.Restack].Name( )
+	return ArkInventory.Const.ButtonData[ArkInventory.ENUM.BUTTONID.Restack].Name( )
 end
 
 local function RestackMessageStart( loc_id )
@@ -54,7 +54,7 @@ local function RestackBagCheck( blizzard_id )
 	local numSlots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
 	local freeSlots, bagType = ArkInventory.CrossClient.GetContainerNumFreeSlots( blizzard_id )
 	
-	if blizzard_id == ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK and not ArkInventory.CrossClient.IsReagentBankUnlocked( ) then
+	if blizzard_id == ArkInventory.ENUM.BAG.INDEX.REAGENTBANK and not ArkInventory.CrossClient.IsReagentBankUnlocked( ) then
 		-- reagent bank always returns its number of slots even if you havent unlocked it
 		numSlots = 0
 		freeSlots = 0
@@ -315,7 +315,7 @@ local function FindPartialStack( loc_id, cl, cb, bp, cs, id )
 		end
 		
 		
-		if cb == ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK then
+		if cb == ArkInventory.ENUM.BAG.INDEX.REAGENTBANK then
 			
 			-- we were restacking the reagent bank and found nothing there
 			-- need to check the bank for stacks we can take from
@@ -442,7 +442,7 @@ local function FindProfessionItem( loc_id, cl, cb, bp, cs, ct )
 			
 			if ArkInventory.db.option.restack.priority then
 				-- priority is reagent bank
-				--if blizzard_id ~= ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK and ( bt == 0 or bt == ct ) then
+				--if blizzard_id ~= ArkInventory.ENUM.BAG.INDEX.REAGENTBANK and ( bt == 0 or bt == ct ) then
 				if ( not ArkInventory.Global.BlizzardReagentContainerIDs[blizzard_id] ) and ( bt == 0 or bt == ct ) then
 					-- do not steal from a reagent container
 					-- do not steal from a profession bag unless its for a reagent container
@@ -486,7 +486,7 @@ local function FindProfessionItem( loc_id, cl, cb, bp, cs, ct )
 								
 								-- ignore bags
 								local info = ArkInventory.GetObjectInfo( itemInfo.hyperlink )
-								if info.equiploc ~= "INVTYPE_BAG" then
+								if info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT then
 									
 									local check_item = true
 									if loc_id ~= cl and not info.craft then
@@ -498,7 +498,7 @@ local function FindProfessionItem( loc_id, cl, cb, bp, cs, ct )
 										
 										local it = GetItemFamily( itemInfo.hyperlink ) or 0
 										
-										if ArkInventory.ClientCheck( ArkInventory.Const.ENUM.EXPANSION.WRATH ) then -- FIX ME
+										if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) then -- FIX ME
 											
 											if bit.band( it, ct ) > 0 then
 												--ArkInventory.Output( "found prof> ", ArkInventory.Global.Location[loc_id].Name, ".", blizzard_id, ".", slot_id, " " , itemInfo.hyperlink )
@@ -583,7 +583,7 @@ local function FindCraftingItem( loc_id, cl, cb, bp, cs )
 			
 			if ArkInventory.db.option.restack.priority then
 				-- priority is reagent bank
-				--if blizzard_id ~= ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK and ( bt == 0 or cb == ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK ) then
+				--if blizzard_id ~= ArkInventory.ENUM.BAG.INDEX.REAGENTBANK and ( bt == 0 or cb == ArkInventory.ENUM.BAG.INDEX.REAGENTBANK ) then
 				if ( not ArkInventory.Global.BlizzardReagentContainerIDs[blizzard_id] ) and ( bt == 0 or ArkInventory.Global.BlizzardReagentContainerIDs[cb] ) then
 					-- do not steal from a reagent container
 					-- do not steal from a profession bag unless its for a reagent container
@@ -984,7 +984,7 @@ local function Consolidate( loc_id )
 				return cl, recheck, false
 			end
 			
-			--if count > 0 and ( blizzard_id == ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK or bt ~= 0 ) then
+			--if count > 0 and ( blizzard_id == ArkInventory.ENUM.BAG.INDEX.REAGENTBANK or bt ~= 0 ) then
 			if count > 0 and ( ArkInventory.Global.BlizzardReagentContainerIDs[blizzard_id] or bt ~= 0 ) then
 				
 				--ArkInventory.Output( "Consolidate ", loc_id, ".", blizzard_id, " ", bt )
@@ -1012,7 +1012,7 @@ local function Consolidate( loc_id )
 			-- fill up reagent bank with crafting items
 			
 			local bag_pos = ArkInventory.Global.Location[loc_id].ReagentBag
-			local blizzard_id = ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK
+			local blizzard_id = ArkInventory.ENUM.BAG.INDEX.REAGENTBANK
 			
 			if not me.player.data.option[loc_id].bag[bag_pos].restack.ignore then
 				
@@ -1051,7 +1051,7 @@ local function Consolidate( loc_id )
 						return cl, recheck, false
 					end
 					
-					--if bt == 0 and blizzard_id ~= ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK then
+					--if bt == 0 and blizzard_id ~= ArkInventory.ENUM.BAG.INDEX.REAGENTBANK then
 					if bt == 0 and not ArkInventory.Global.BlizzardReagentContainerIDs[blizzard_id] then
 						
 						local ab, rc = ConsolidateBag( loc_id, blizzard_id, bag_pos )
@@ -1186,7 +1186,7 @@ local function Compact( loc_id )
 				return cl, recheck, false
 			end
 			
-			--if count > 0 and bt == 0 and blizzard_id ~= ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK then
+			--if count > 0 and bt == 0 and blizzard_id ~= ArkInventory.ENUM.BAG.INDEX.REAGENTBANK then
 			if count > 0 and bt == 0 and not ArkInventory.Global.BlizzardReagentContainerIDs[blizzard_id] then
 				
 				--ArkInventory.Output( "Compact ", loc_id, ".", blizzard_id, " ", bt )
@@ -1295,7 +1295,7 @@ local function RestackRun_Threaded( loc_id )
 			
 			RestackMessageStart( loc_id )
 			
-			if ArkInventory.ClientCheck( ArkInventory.Const.ENUM.EXPANSION.WRATH ) and ArkInventory.db.option.restack.blizzard then -- FIX ME
+			if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) and ArkInventory.db.option.restack.blizzard then -- FIX ME
 				
 				ArkInventory.CrossClient.SetSortBagsRightToLeft( ArkInventory.db.option.restack.reverse )
 				ArkInventory.CrossClient.SortBankBags( )

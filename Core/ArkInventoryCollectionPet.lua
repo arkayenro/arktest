@@ -10,7 +10,7 @@ local C_PetJournal = _G.C_PetJournal
 local C_PetBattles = _G.C_PetBattles
 
 local loc_id = ArkInventory.Const.Location.Pet
-local BreedAvailable = IsAddOnLoaded( "BattlePetBreedID" )
+local BreedAvailable = ArkInventory.CrossClient.IsAddOnLoaded( "BattlePetBreedID" )
 
 ArkInventory.Collection.Pet = { }
 
@@ -1095,6 +1095,7 @@ local ImportCrossRefTable = {
 {181337,{187735,-359606}}, -- Geordy / Summon Geordy
 {181488,{187795,-359760}}, -- Archetype of Discovery / Summon Archetype of Discovery
 {181547,{187798,-359813}}, -- Tunneling Vombata / Summon Tunneling Vombata
+{181575,{-359855}}, -- Drakks
 {181578,{187803,-359863}}, -- Archetype of Motion / Summon Archetype of Motion
 {181615,{189369,-359898}}, -- Archetype of Animation / Summon Archetype of Animation
 {182081,{189382,-360389}}, -- Archetype of Serenity / Summon Archetype of Serenity
@@ -1121,6 +1122,96 @@ local ImportCrossRefTable = {
 {184186,{189371,-364259}}, -- Archetype of Renewal / Summon Archetype of Renewal
 {184923,{189585,-366069}}, -- E'rnee / Summon E'rnee
 {185477,{191039,-367376}}, -- Pocopoc / Pocopoc Traveler
+{185586,{190586,-367702}}, -- Lil' Ursoc
+{186844,{193889,191126,-369723}}, -- Jeweled Onyx Whelpling
+{188709,{191915,-371534}}, -- Time-Lost Feral Rabbit
+{188821,{191930,-371594}}, -- Blue Phoenix Hatchling
+{188849,{191932,-371621}}, -- Violet Violence / Summon Violet Violence
+{188861,{191936,-371636}}, -- Secretive Frogduck / Summon Secretive Frogduck
+{188885,{191941,-371655}}, -- Crystalline Mini-Monster / Summon Crystalline Mini-Monster
+{188901,{191946,-371675}}, -- Mister Muskoxeles / Summon Mister Muskoxeles
+{189204,{193619,-371925}}, -- Yipper / Summon Yipper
+{189211,{193620,-371930}}, -- Time-Lost Slyvern
+{189663,{193852,-372585}}, -- Azure Frillfish
+{189695,{192459,-372750}}, -- Jean's Lucky Fish / Summon Jean's Lucky Fish
+{189096,{193066,-374600}}, -- Chestnut
+{192108,{201441,-374678}}, -- Scout
+{189098,{193068,-374710}}, -- Time-Lost Treeflitter
+{189099,{193071,-374734}}, -- Pistachio
+{198269,{201265,-374751}}, -- Tide Spirit
+{198271,{201260,-374755}}, -- Dust Spirit
+{198272,{201261,-374840}}, -- Blaze Spirit
+{198273,{201262,-374883}}, -- Gale Spirit
+{198480,{201463,-374887}}, -- Cubbly
+{189105,{193225,-374889}}, -- Whiskuk
+{189106,{193235,-374895}}, -- Scarlet Ottuk Pup
+{189108,{200519,-374998}}, -- Mister Toots
+{189111,{200173,-375035}}, -- Ghostflame
+{198511,{201707,-375036}}, -- Troubled Tome
+{198543,{201703,-375043}}, -- Pinkie
+{189113,{193363,-375045}}, -- Auburntusk Calf
+{189115,{193364,-375047}}, -- Time-Lost Baby Mammoth
+{189117,{193373,-375084}}, -- Smoldering Phoenix Hatchling
+{189118,{193374,-375085}}, -- Crimson Phoenix Hatchling
+{189119,{193377,-375089}}, -- Time-Lost Phoenix Hatchling
+{198077,{200927,-375223}}, -- Petal
+{189123,{193429,-375235}}, -- Time-Lost Salamanther
+{189128,{193380,-375242}}, -- Pink Salamanther
+{189138,{193484,-375266}}, -- Pilot
+{189140,{193571,-375312}}, -- Mallard Duckling
+{189142,{193572,-375321}}, -- Quack-E
+{189145,{-375336}}, -- Time-Lost Duckling
+{189133,{199172,-375344}}, -- Viridescent Duck
+{189135,{193587,-375355}}, -- Time-Lost Duck
+{189150,{193614,-375366}}, -- Groundshaker
+{189154,{193618,-375378}}, -- Hoofhelper
+{189156,{193834,-375413}}, -- Blackfeather Nester
+{189158,{193835,-375448}}, -- Brightfeather
+{189655,{193837,-375473}}, -- Backswimmer Timbertooth
+{189661,{193850,-375499}}, -- Time-Lost Timbertooth
+{189694,{193853,-375511}}, -- Emerald Frillfish
+{189696,{193851,-375536}}, -- Purple Frillfish
+{191287,{193854,-375553}}, -- Blue Vorquin Foal
+{191298,{193855,-375567}}, -- Time-Lost Vorquin Foal
+{191435,{193908,-375642}}, -- Sapphire Crystalspine
+{191377,{-375699}}, -- Black Dragon Whelp
+{191379,{-375705}}, -- Blue Dragon Whelp
+{191380,{-375706}}, -- Red Dragon Whelp
+{191381,{198622,-375707}}, -- Spyragos
+{191382,{-375708}}, -- Bronze Dragon Whelp
+{191383,{193886,-375709}}, -- Jeweled Sapphire Whelpling
+{191384,{193885,-375710}}, -- Jeweled Amber Whelpling
+{191385,{193887,-375711}}, -- Jeweled Ruby Whelpling
+{191386,{193888,-375712}}, -- Jeweled Emerald Whelpling
+{191387,{199109,-375713}}, -- Primal Stormling
+{191627,{194098,-376302}}, -- Lord Basilton / Summon Lord Basilton
+{192343,{-377361}}, -- Snowclaw Cub
+{192350,{-377392}}, -- Bugbiter Tortoise
+{192363,{-377401}}, -- Diamond Crab
+{192365,{-377407}}, -- Sapphire Crab
+{192366,{-377410}}, -- Truesilver Crab
+{192368,{-377417}}, -- Striped Snakebiter
+{192369,{199916,-377423}}, -- Roseate Hopper
+{189095,{191886,-378738}}, -- Alvin the Anvil
+{194004,{198353,-382811}}, -- Shiverweb Broodling / Shiverweb Egg
+{194893,{198725,-384874}}, -- Gray Marmoni
+{189152,{199175,-386575}}, -- Lubbins
+{195896,{199326,-386985}}, -- Chip
+{189101,{199688,-387685}}, -- Bronze Racing Enthusiast
+{196304,{199757,-388085}}, -- Magic Nibbler / Magic Nipper
+{196305,{199758,-388086}}, -- Crimson Proto-Whelp
+{196409,{198726,-388268}}, -- Black Skitterbug
+{196666,{200114,-388913}}, -- Stormie
+{192258,{200183,-389143}}, -- Echo of the Cave
+{189112,{200255,-389363}}, -- Echo of the Inferno
+{189130,{200260,-389378}}, -- Echo of the Depths
+{189132,{200263,-389384}}, -- Echo of the Heights
+{189134,{200276,-389429}}, -- Ohuna Companion
+{189159,{200290,-389503}}, -- Bakar Companion
+{197089,{200479,-389801}}, -- Titan-Touched Elemental
+{197963,{200872,-392351}}, -- Living Mud Mask
+{197969,{200874,-392380}}, -- Lady Feathersworth
+{198316,{200930,-393330}}, -- Obsidian Proto-Whelp
 -- end of live
 
 }
@@ -1906,7 +1997,7 @@ function ArkInventory:EVENT_ARKINV_COLLECTION_PET_UPDATE_BUCKET( events )
 	
 	if ArkInventory.Global.Mode.Combat then
 		-- set to scan when leaving combat
-		ArkInventory.Global.LeaveCombatRun[loc_id] = true
+		ArkInventory.Global.ScanAfterCombat[loc_id] = true
 		return
 	end
 	
@@ -1968,7 +2059,7 @@ function ArkInventory:EVENT_ARKINV_BATTLEPET_OPENING_DONE( event, ... )
 	-- WARNING WARNING WARNING - THIS MUST RUN TO COLLECT SPECIES DATA FOR THE LEGENDARY / ELITE / TRAINER PETS
 	
 	
-	local player = ArkInventory.Const.ENUM.BATTLEPET.ENEMY
+	local player = ArkInventory.ENUM.BATTLEPET.ENEMY
 	local isnpc = C_PetBattles.IsPlayerNPC( player )
 	local opponents = C_PetBattles.GetNumPets( player )
 	

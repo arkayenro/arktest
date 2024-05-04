@@ -1,10 +1,12 @@
-﻿## Interface: 30400
+﻿## Interface: 30403
 
 ## Title: ArkInventory [Wrath] [Rules]
 ## Notes: Rules for ArkInventory
-## Author: Arkayenro
+## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 31004
+## Version: 31028.04
+## X-ReleaseType: Alpha
+## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
 
 ## DefaultState: Enabled
 ## LoadOnDemand: 0

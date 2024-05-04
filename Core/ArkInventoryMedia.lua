@@ -156,7 +156,7 @@ function ArkInventory.MediaMenuFontSet( face, size )
 	
 end
 
-function ArkInventory.MediaFrameFontSet( frame, face, size )
+function ArkInventory.MediaFrameFontSet( frame, face, size, thread_loc )
 	
 	if frame ~= nil and type( frame ) == "string" then
 		frame = _G[frame]
@@ -170,15 +170,27 @@ function ArkInventory.MediaFrameFontSet( frame, face, size )
 	end
 	
 	for _, obj in pairs( { frame:GetRegions( ) } ) do
+		
+		if thread_loc then
+			ArkInventory.ThreadYield_Window( thread_loc )
+		end
+		
 		ArkInventory.MediaObjectFontSet( obj, face, size )
+		
 	end
 	
 	for _, obj in pairs( { frame:GetChildren( ) } ) do
+		
+		if thread_loc then
+			ArkInventory.ThreadYield_Window( thread_loc )
+		end
+		
 		ArkInventory.MediaObjectFontSet( obj, face, size )
+		
 	end
 	
 	for _, obj in pairs( { frame:GetChildren( ) } ) do
-		ArkInventory.MediaFrameFontSet( obj, face, size )
+		ArkInventory.MediaFrameFontSet( obj, face, size, thread_loc )
 	end
 	
 end
@@ -203,13 +215,15 @@ function ArkInventory.MediaAllFontSet( face, size )
 end
 
 function ArkInventory.MediaUpdate( )
-	ArkInventory.MediaAllFontSet( ArkInventory.db.option.font.face )
-	ArkInventory.Frame_Main_Paint_All( )
+	if ArkInventory.db then
+		ArkInventory.MediaAllFontSet( ArkInventory.db.option.font.face )
+		ArkInventory.Frame_Main_Paint_All( )
+	end
 end
 
 
-function ArkInventory.MediaFrameDefaultFontSet( frame )
+function ArkInventory.MediaFrameDefaultFontSet( frame, thread_loc )
 	if ArkInventory.db then
-		ArkInventory.MediaFrameFontSet( frame, ArkInventory.db.option.font.face )
+		ArkInventory.MediaFrameFontSet( frame, ArkInventory.db.option.font.face, nil, thread_loc )
 	end
 end

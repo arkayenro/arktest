@@ -55,7 +55,7 @@ function ArkInventory.API.CustomReputationTooltipReady( ... )
 		
 	args
 		[1] tooltip
-		[2] custom "hyperlink" string - reputation:factionId:standingText:barValue:barMax:isCapped:paragonLevel:hasParagonReward
+		[2] custom "hyperlink" string - reputation:factionID:standingText:barValue:barMin:barMax:isCapped:paragonLevel:paragonRewardPending:rankValue:rankMax
 	
 ]]--
 end
@@ -270,7 +270,7 @@ function ArkInventory.API.LocationIsOffline( loc_id )
 		
 ]]--
 	
-	if ArkInventory.Global.Location[loc_id] then
+	if loc_id and ArkInventory.Global.Location[loc_id] then
 		return not not ArkInventory.Global.Location[loc_id].isOffline
 	end
 	

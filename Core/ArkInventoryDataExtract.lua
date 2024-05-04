@@ -145,8 +145,8 @@ function ArkInventory.ExtractData( )
 			for x = 1, maxLoop do
 				
 				h = string.format( "item:%s::::::::::::1:%s:", id, x )
-				ArkInventory.TooltipSetHyperlink( tooltip, h )
-				p = ArkInventory.TooltipFind( tooltip, "corrupt" )
+				ArkInventory.TooltipSet( tooltip, nil, nil, nil, h )
+				p = ArkInventory.TooltipMatch( tooltip, nil, "corrupt" )
 				
 				if p and not ArkInventory.PT_BonusIDInSets( x, "ArkInventory.BonusID.Corruption" ) then
 					table.insert( ArkInventory.db.extract.corruption, x )

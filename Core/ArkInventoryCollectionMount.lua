@@ -22,9 +22,11 @@ local collection = {
 	numTotal = 0,
 	numOwned = 0,
 	
-	cache = { },
+	cache = { }, -- [mountId] = { data }
 	owned = { }, -- [mta] = { } array of all mounts of that type that you own, updated here when scanned
 	usable = { }, -- [mta] = { } array of all mounts of that type that you can use at the location you called it, updated via LDB
+	
+	cachespell = { }, -- spellId = MountId
 	
 --	filter = {
 --		ignore = false,
@@ -35,6 +37,21 @@ local collection = {
 --		source = { },
 --		backup = false,
 --	},
+	
+}
+
+-- /dump C_Map.GetBestMapForUnit( "player" )
+local ZoneRestrictions = {
+	[25953] = ArkInventory.Const.Mount.Zone.AhnQiraj, -- Blue Qiraji Battle Tank
+	[26054] = ArkInventory.Const.Mount.Zone.AhnQiraj, -- Red Qiraji Battle Tank
+	[26055] = ArkInventory.Const.Mount.Zone.AhnQiraj, -- Yellow Qiraji Battle Tank
+	[26056] = ArkInventory.Const.Mount.Zone.AhnQiraj, -- Green Qiraji Battle Tank
+	
+	[75207] = ArkInventory.Const.Mount.Zone.Vashjir, -- Vashj'ir Seahorse
+	
+--	[000000] = ArkInventory.Const.Mount.Zone.DragonIsles, -- is now calculated
+	
+--	[294143] = { [85]=1 }, -- X-995 Mechanocat, testing in org
 	
 }
 
@@ -52,13 +69,6 @@ local ImportCrossRefTable = {
 -- may no longer exist
 {343550,{186480}}, -- Battle-Hardened Aquilon
 {346136,{}}, -- Viridian Phase-Hunter
-
--- zone restrictions
-{25953,{},{766,717}}, -- Blue Qiraji Battle Tank
-{26054,{},{766,717}}, -- Red Qiraji Battle Tank
-{26055,{},{766,717}}, -- Yellow Qiraji Battle Tank
-{26056,{},{766,717}}, -- Green Qiraji Battle Tank
-{75207,{},{610,613,614,615}}, -- Vashj'ir Seahorse
 
 -- extracted from wowhead
 {458,{5656}}, -- Brown Horse / Brown Horse Bridle
@@ -976,15 +986,17 @@ local ImportCrossRefTable = {
 {347810,{186644}}, -- Beryl Shardhide
 {347812,{}}, -- Sapphire Skyblazer
 {347813,{}}, -- Fireplume Phoenix
-{348162,{}}, -- Wandering Ancient
 {348769,{186179}}, -- Vicious War Gorm
 {348770,{186178}}, -- Vicious War Gorm
 {349823,{187642}}, -- Vicious Warstalker
 {349824,{187644}}, -- Vicious Warstalker
+{349935,{204382}}, -- Noble Bruffalon
+{350219,{192777}}, -- Magmashell
 {351195,{186642}}, -- Vengeance / Vengeance's Reins
 {352309,{185973}}, -- Hand of Bahmethra / Chain of Bahmethra
 {352441,{186000}}, -- Wild Hunt Legsplitter / Legsplitter War Harness
 {352742,{186103}}, -- Undying Darkhound / Undying Darkhound's Harness
+{352926,{192800}}, -- Skyskin Hornstrider
 {353036,{186177}}, -- Unchained Gladiator's Soul Eater
 {353263,{186638}}, -- Cartel Master's Gearglider
 {353264,{186639}}, -- Pilfered Gearglider
@@ -1018,6 +1030,7 @@ local ImportCrossRefTable = {
 {356488,{}}, -- Sarge's Tale
 {356501,{187183}}, -- Rampaging Mauler
 {356802,{}}, -- Holy Lightstrider
+{358072,{}}, -- Bound Blizzard
 {358319,{187525}}, -- Soultwisted Deathwalker
 {359013,{187595}}, -- Val'sharah Hippogryph / Favor of the Val'sharah Hippogryph
 {359229,{187629}}, -- Heartlight Vombata / Heartlight Stone
@@ -1037,13 +1050,19 @@ local ImportCrossRefTable = {
 {359376,{187670}}, -- Bronze Helicid
 {359377,{187671}}, -- Unsuccessful Prototype Fleetpod
 {359378,{187672}}, -- Scarlet Helicid
+{359379,{187675}}, -- Shimmering Aurelid
 {359381,{187673}}, -- Cryptic Aurelid
 {359401,{187677}}, -- Genesis Crawler
 {359402,{187678}}, -- Tarachnid Creeper
 {359403,{187679}}, -- Ineffable Skitterer
 {359407,{187682}}, -- Wastewarped Deathwalker
+{359408,{198821}}, -- Divine Kiss of Ohn'ahra
+{359409,{198871}}, -- Iskaara Trader's Ottuk
 {359413,{187683}}, -- Goldplate Bufonid
 {359545,{190771}}, -- Carcinized Zerethsteed / Fractal Cypher of the Carcinized Zerethsteed
+{359622,{201440}}, -- Liberated Slyvern / Reins of the Liberated Slyvern
+{359843,{}}, -- Tangled Dreamweaver
+{360954,{194106,194705}}, -- Highland Drake
 {363136,{188696}}, -- Colossal Ebonclaw Mawrat / Sturdy Soulsteel Mawrat Harness
 {363178,{188700}}, -- Colossal Umbrahide Mawrat / Sturdy Silver Mawrat Harness
 {363297,{188736}}, -- Colossal Soulshredder Mawrat / Sturdy Gilded Mawrat Harness
@@ -1052,10 +1071,120 @@ local ImportCrossRefTable = {
 {363703,{188809}}, -- Prototype Leaper
 {363706,{188810}}, -- Russet Bufonid
 {365559,{189507}}, -- Cosmic Gladiator's Soul Eater
+{366647,{189978}}, -- Magenta Cloud Serpent / Reins of the Magenta Cloud Serpent
+{366789,{190168}}, -- Crusty Crawler
+{366790,{190169}}, -- Quawks
+{366791,{190170}}, -- Jigglesworth Sr. / Jigglesworth, Sr.
+{366962,{190231}}, -- Ash'adar, Harbinger of Dawn
+{367190,{}}, -- JZB Test Mount
+{367620,{190539}}, -- Coral-Stalker Waveray
 {367673,{190580}}, -- Heartbond Lupine
+{367676,{190581}}, -- Nether-Gorged Greatwyrm
+{367826,{190613}}, -- Savage Green Battle Turtle
+{367875,{190636}}, -- Armored Siege Kodo
 {368105,{190765}}, -- Colossal Plaguespew Mawrat / Iska's Mawrat Leash
+{368126,{190767}}, -- Armored Golden Pterrordax
 {368128,{190766}}, -- Colossal Wraithbound Mawrat / Spectral Mawrat's Tail
 {368158,{190768}}, -- Zereth Overseer / Fractal Cypher of the Zereth Overseer
+{368893,{204361}}, -- Winding Slitherdrake
+{368896,{194034}}, -- Renewed Proto-Drake
+{368899,{194549}}, -- Windborne Velocidrake
+{368901,{194521}}, -- Cliffside Wylderdrake
+{369451,{}}, -- Jade, Bright Foreseer
+{369476,{191114}}, -- Amalgam of Rage / Reins of the Amalgam of Rage
+{369480,{}}, -- Cerulean Marsh Hopper
+{369666,{191123}}, -- Grimhowl / Grimhowl's Face Axe
+{370346,{191290}}, -- Eternal Gladiator's Soul Eater
+{370620,{191566}}, -- Elusive Emerald Hawkstrider
+{370770,{}}, -- Tuskarr Shoreglider
+{371176,{191838}}, -- Subterranean Magmammoth
+{372995,{}}, -- Swift Spectral Drake
+{373859,{192601,201837}}, -- Loyal Magmammoth
+{374032,{192761}}, -- Tamed Skitterfly
+{374034,{192762}}, -- Azure Skitterfly
+{374048,{192764}}, -- Verdant Skitterfly
+{374090,{192772}}, -- Ancient Salamanther
+{374098,{192775}}, -- Stormhide Salamanther
+{374138,{192779}}, -- Seething Slug
+{374155,{192784}}, -- Shellack
+{374157,{192785}}, -- Gooey Snailemental
+{374162,{192786}}, -- Scrappy Worldsnail / Slumbering Worldsnail Shell
+{374194,{192790}}, -- Mossy Mammoth
+{374196,{192791}}, -- Plainswalker Bearer
+{374247,{192799}}, -- Lizi, Thunderspine Tramper / Lizi's Reins
+{374263,{192804}}, -- Restless Hornstrider
+{374275,{192806}}, -- Raging Magmammoth
+{374278,{192807}}, -- Renewed Magmammoth
+{376873,{198870}}, -- Otto
+{376875,{198872}}, -- Brown Scouting Ottuk
+{376879,{198873}}, -- Ivory Trader's Ottuk
+{376880,{200118}}, -- Yellow Scouting Ottuk
+{376910,{201426}}, -- Brown War Ottuk
+{376912,{198654}}, -- Otterworldly Ottuk Carrier
+{376913,{201425}}, -- Yellow War Ottuk
+{377071,{202086}}, -- Crimson Gladiator's Drake
+{381529,{}}, -- Telix the Stormhorn
+{384963,{198808}}, -- Guardian Vorquin
+{385115,{198811}}, -- Majestic Armored Vorquin
+{385131,{198809}}, -- Armored Vorquin Leystrider
+{385134,{198810}}, -- Swift Armored Vorquin
+{385262,{198824}}, -- Duskwing Ohuna
+{385266,{198825}}, -- Zenet Hatchling
+{385738,{201454}}, -- Temperamental Skyclaw
+{386452,{}}, -- Frostbrood Proto-Wyrm
+{387231,{199412}}, -- Hailstorm Armoredon
+{387948,{}}, -- [PH] Wind Proto-Drake
+{394216,{201702}}, -- Crimson Vorquin
+{394218,{201704}}, -- Sapphire Vorquin
+{394219,{201720}}, -- Bronze Vorquin
+{394220,{201719}}, -- Obsidian Vorquin
+{394737,{201789}}, -- Vicious Sabertooth
+{394738,{201788}}, -- Vicious Sabertooth
+{395095,{}}, -- Whelpling
+{395644,{}}, -- Divine Kiss of Ohn'ahra
+{397406,{206167}}, -- Wonderous Wavewhisker / Way of the Wonderous Wavewhisker
+{399708,{203226}}, -- Stormfused Salamanther
+{400733,{204091}}, -- Rocket Shredder 9001
+{400976,{203727}}, -- Gleaming Moonbeast / Gleaming Moonbeast's Reins
+{406637,{204798}}, -- Inferno Armoredon
+{407555,{206162}}, -- Tarecgosa's Visage / Lingering Echo of Tarecgosa
+{408313,{205155}}, -- Big Slick in the City
+{408627,{205197}}, -- Igneous Shalewing
+{408647,{205203}}, -- Cobalt Shalewing
+{408648,{}}, -- Shalewing, Fire (Yellow) [PH]
+{408649,{205205}}, -- Shadowflame Shalewing
+{408651,{205204}}, -- Cataloged Shalewing / Flaming Shalewing Subject 01
+{408653,{205209}}, -- Boulder Hauler / Boulder Hauler Reins
+{408654,{}}, -- Sandy Shalewing
+{408655,{205207}}, -- Morsel Sniffer / Morsel Sniffer Reins
+{408977,{205233}}, -- Obsidian Gladiator's Slitherdrake
+{409032,{205245}}, -- Vicious War Snail
+{409034,{205246}}, -- Vicious War Snail
+{411565,{206027}}, -- Felcrystal Scorpion / Reins of the Felcrystal Scorpion
+{412088,{206156}}, -- Grotto Netherwing Drake
+{413409,{}}, -- Riders of Azeroth Drake
+{413825,{206566}}, -- Scarlet Pterrordax / Reins of the Scarlet Pterrordax
+{413827,{206567}}, -- Harbor Gryphon
+{413922,{206585}}, -- Valiance / Reins of Valiance
+{414316,{206673}}, -- White War Wolf / Horn of the White War Wolf
+{414323,{206674}}, -- Ravenous Black Gryphon / Reins of the Ravenous Black Gryphon
+{414324,{206675}}, -- Gold-Toed Albatross
+{414326,{206676}}, -- Felstorm Dragon
+{414327,{206678}}, -- Sulfur Hound / Sulfur Hound's Leash
+{414328,{206679}}, -- Perfected Juggernaut
+{414334,{206680}}, -- Scourgebound Vanquisher / Reins of the Scourgebound Vanquisher
+{414986,{206976}}, -- Royal Swarmer / Royal Swarmer's Reins
+{417245,{207821}}, -- Ancestral Clefthoof
+{417548,{}}, -- Riders of Azeroth Proto-Drake
+{417552,{}}, -- Riders of Azeroth Velocidrake
+{417554,{}}, -- Riders of Azeroth Wylderdrake
+{417556,{}}, -- Riders of Azeroth Slitherdrake
+{418078,{208152}}, -- Pattie / Pattie's Cap
+{419002,{208433}}, -- Bronze Racer's Pennant
+{419345,{208598}}, -- Eve's Ghastly Rider
+{419567,{}}, -- Ginormous Grrloc
+{420097,{208572}}, -- Azure Worldchiller
+{424082,{210022}}, -- Mimiron's Jumpjets
 -- end of live
 
 -- ptr
@@ -1143,6 +1272,7 @@ end
 
 function ArkInventory.Collection.Mount.GetCount( mta )
 	if mta then
+		ArkInventory.OutputDebug("mounts [", mta, "] [", ArkInventory.Table.Elements( collection.usable[mta] ), " / ", ArkInventory.Table.Elements( collection.owned[mta] ), "]" )
 		return ArkInventory.Table.Elements( collection.usable[mta] ), ArkInventory.Table.Elements( collection.owned[mta] )
 	else
 		return collection.numOwned, collection.numTotal
@@ -1155,16 +1285,51 @@ function ArkInventory.Collection.Mount.GetMount( index )
 	end
 end
 
+function ArkInventory.Collection.Mount.ZoneCheck( mapid_table )
+	local mapid = C_Map.GetBestMapForUnit( "player" )
+	for _, id in ipairs( mapid_table ) do
+		if mapid == id then
+			return true
+		end
+	end
+end
+
 function ArkInventory.Collection.Mount.GetUsable( mta )
 	if mta then
 		return collection.usable[mta]
 	end
 end
 
+function ArkInventory.Collection.Mount.isDragonridingAvailable( )
+	
+	local DragonRidingMounts = C_MountJournal.GetCollectedDragonridingMounts( )
+	for _, mountID in pairs( DragonRidingMounts ) do
+		local isUsable, useError = C_MountJournal.GetMountUsabilityByID( mountID, IsIndoors( ) )
+		if isUsable then
+			ArkInventory.OutputDebug( "dragonriding mount [", mountID, "] is usable here" )
+			return true
+		else
+			ArkInventory.OutputDebug( "dragonriding mount [", mountID, "] is not usable here [", useError, "]" )
+			return false
+		end
+	end
+end
+
 function ArkInventory.Collection.Mount.GetMountBySpell( spellID )
-	for _, v in pairs( collection.cache ) do
-		if v.spellID == spellID then
-			return v
+	local mountID = collection.cachespell[spellID]
+	if mountID then
+		local md = collection.cache[mountID]
+		if md then
+			return md
+		end
+	end
+end
+
+function ArkInventory.Collection.Mount.GetMountByID( mountID )
+	if mountID then
+		local md = collection.cache[mountID]
+		if md then
+			return md
 		end
 	end
 end
@@ -1208,12 +1373,173 @@ function ArkInventory.Collection.Mount.SetFavorite( id, value )
 	end
 end
 
+
+function ArkInventory.Collection.Mount.IsFlyableAdvanced( )
+	
+	local IsFlyable = IsAdvancedFlyableArea( ) and IsOutdoors( )
+	
+	return IsFlyable
+	
+end
+
+function ArkInventory.Collection.Mount.IsFlyableNormal( )
+	
+	local IsFlyable = IsFlyableArea( ) -- its dynamic based off skill and location but its got some issues.  its usually only wrong about flying zones but it got worse in 7.3.5
+	
+	--local name, instanceType, difficulty, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance, instanceMapId, instanceGroupSize, lfgID = GetInstanceInfo( )
+	local instancemapid = select( 8, GetInstanceInfo( ) )
+	local uimapid = C_Map.GetBestMapForUnit( "player" )
+	
+	if not IsFlyable then
+		
+		--ArkInventory.Output( "blizzard says this is NOT a flyable area" )
+		
+		-- /run ArkInventory.Output(IsFlyableArea())
+		-- /run ArkInventory.Output({GetInstanceInfo()})
+		
+		if ArkInventory.Const.Flying.Bug735[instancemapid] then
+			
+			--ArkInventory.Output( "zone, instancemapid, " is not flyable, but you can actually fly here" )
+			IsFlyable = true
+			
+		end
+		
+	end
+	
+	return IsFlyable
+	
+end
+
+function ArkInventory.Collection.Mount.IsFlyable( )
+	
+	if IsIndoors( ) or ArkInventory.Collection.Mount.SkillLevel( ) < 225 then
+		return false
+	end
+	
+	local IsFlyable = ArkInventory.Collection.Mount.IsFlyableNormal( ) or ArkInventory.Collection.Mount.IsFlyableAdvanced( )
+	
+	--local name, instanceType, difficulty, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance, instanceMapId, instanceGroupSize, lfgID = GetInstanceInfo( )
+	local instancemapid = select( 8, GetInstanceInfo( ) )
+	local uimapid = C_Map.GetBestMapForUnit( "player" )
+	
+	if IsFlyable then
+		
+		--ArkInventory.Output( "blizzard says this is a flyable area" )
+		
+		-- dont care what blizzard says, you cant actually fly in this zone
+		if IsFlyable and ArkInventory.Const.Flying.Never.Instance[instancemapid] then
+			--ArkInventory.Output( "zone ", instancemapid, " is non flyable" )
+			IsFlyable = false
+		end
+		
+		-- you can fly here but you need a specific achievement
+		if IsFlyable and ArkInventory.Const.Flying.Achievement[instancemapid] then
+			local known = select( 4, GetAchievementInfo( ArkInventory.Const.Flying.Achievement[instancemapid] ) )
+			if not known then
+				--ArkInventory.Output( "zone ", instancemapid, " but you do not have achievement ", ArkInventory.Const.Flying.Achievement[instancemapid] )
+				IsFlyable = false
+			end
+		end
+		
+		-- you can fly here but you need a specific quest
+		if IsFlyable and ArkInventory.Const.Flying.Quest[instancemapid] then
+			local known = C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted( ArkInventory.Const.Flying.Quest[instancemapid] )
+			if not known then
+				--ArkInventory.Output( "zone ", instancemapid, " but you do not have quest ", ArkInventory.Const.Flying.Spell[instancemapid] )
+				IsFlyable = false
+			end
+		end
+		
+		-- you can fly here but you need a specific spell
+		if IsFlyable and ArkInventory.Const.Flying.Spell[instancemapid] then
+			local known = IsSpellKnown( ArkInventory.Const.Flying.Spell[instancemapid] )
+			if not known then
+				--ArkInventory.Output( "zone ", instancemapid, " but you do not have spell ", ArkInventory.Const.Flying.Spell[instancemapid] )
+				IsFlyable = false
+			end
+		end
+		
+		-- while you can fly in this zone, you cannot fly in this particular map
+		if IsFlyable and ArkInventory.Const.Flying.Never.Map[uimapid] then
+			--ArkInventory.Output( "zone ", instancemapid, " is flyable but map ", uimapid, " is not" )
+			IsFlyable = false
+		end
+		
+	end
+	
+	if IsFlyable then
+		
+		-- world pvp battle in progress?
+		
+		for index = 1, GetNumWorldPVPAreas( ) do
+			
+			local pvpID, pvpZone, isActive = GetWorldPVPAreaInfo( index )
+			--ArkInventory.Output( pvpID, " / ", pvpZone, " / ", isActive )
+			
+			if isActive and GetRealZoneText( ) == pvpZone then
+				-- ArkInventory.Output( "battle in progress, no flying allowed" )
+				IsFlyable = false
+				break
+			end
+			
+		end
+		
+	end
+	
+	return IsFlyable
+	
+end
+
 function ArkInventory.Collection.Mount.isUsable( id )
 	
 	local md = ArkInventory.Collection.Mount.GetMount( id )
 	if md then
-		local mu = select( 5, C_MountJournal.GetMountInfoByID( id ) ) -- is not always correct
-		return IsOutdoors( ) and mu and ( IsUsableSpell( md.spellID ) ) -- so check outdoors, mount, and spell
+		
+		if IsUsableSpell( md.spellID ) then
+			
+			local mz = false
+			
+			--local mu = select( 5, C_MountJournal.GetMountInfoByID( id ) ) -- is not always correct
+			local mu = C_MountJournal.GetMountUsabilityByID( id, IsIndoors( ) )
+			if mu then
+				
+				if md.mta == "a" then
+					if md.isDragonriding then
+						if not ArkInventory.Collection.Mount.IsFlyableAdvanced( ) then
+							mu = false
+						end
+					else
+						if not ArkInventory.Collection.Mount.IsFlyableNormal( ) then
+							mu = false
+						end
+					end
+				end
+				
+				if ZoneRestrictions[md.spellID] then
+					
+					ArkInventory.OutputDebug( "mount ", md.spellID, " has zone restrictions ", ZoneRestrictions[md.spellID] )
+					
+					local map = C_Map.GetBestMapForUnit( "player" )
+					for _, z in pairs( ZoneRestrictions[md.spellID] ) do
+						if map == z then
+							mz = true
+							break
+						end
+					end
+					
+					if not mz then
+						ArkInventory.OutputDebug( "mount ", md.spellID, " cannot be used here [zone=", map, "]" )
+						mu = false
+					end
+					
+				end
+				
+				return mu, mz
+				
+			end
+			
+		end
+		
 	end
 	
 end
@@ -1270,7 +1596,7 @@ end
 
 function ArkInventory.Collection.Mount.UpdateOwned( )
 	
-	for mta, mt in pairs( ArkInventory.Const.MountTypes ) do
+	for mta, mt in pairs( ArkInventory.Const.Mount.Types ) do
 		if not collection.owned[mta] then
 			collection.owned[mta] = { }
 		else
@@ -1286,9 +1612,9 @@ function ArkInventory.Collection.Mount.UpdateOwned( )
 	
 end
 
-function ArkInventory.Collection.Mount.UpdateUsable( )
+function ArkInventory.Collection.Mount.UpdateUsable( useDragonridingWhenAvailable, forceDragonridingAlternative )
 	
-	for mta in pairs( ArkInventory.Const.MountTypes ) do
+	for mta in pairs( ArkInventory.Const.Mount.Types ) do
 		if not collection.usable[mta] then
 			collection.usable[mta] = { }
 		else
@@ -1303,29 +1629,75 @@ function ArkInventory.Collection.Mount.UpdateUsable( )
 	
 	local me = ArkInventory.GetPlayerCodex( )
 	
-	for mta, mt in pairs( ArkInventory.Const.MountTypes ) do
+	ArkInventory.OutputDebug( "Area Flyable (Normal) = ", ArkInventory.Collection.Mount.IsFlyableNormal( ) )
+	ArkInventory.OutputDebug( "Area Flyable (Advanced) = ", ArkInventory.Collection.Mount.IsFlyableAdvanced( ) )
+	
+	for mta, mt in pairs( ArkInventory.Const.Mount.Types ) do
 		
-		for _, md in ArkInventory.Collection.Mount.Iterate( mta ) do
+		for checkType = 0, 2 do
 			
-			local usable = true
+			-- 0 = check for zone specific mounts
+			-- 1 = preferred flying mount type (normal/dragonriding)
+			-- 2 = pick any mount that works
 			
-			if me.player.data.ldb.mounts.type[mta].selected[md.spellID] == false then
-				usable = false
-			elseif not me.player.data.ldb.mounts.type[mta].useall then
-				usable = me.player.data.ldb.mounts.type[mta].selected[md.spellID]
+			for _, md in ArkInventory.Collection.Mount.Iterate( mta ) do
+				
+				local usable = true
+				local mz = false
+				
+				if me.player.data.ldb.mounts.type[mta].selected[md.spellID] == false then
+					usable = false
+				elseif not me.player.data.ldb.mounts.type[mta].useall then
+					usable = me.player.data.ldb.mounts.type[mta].selected[md.spellID]
+				end
+				
+				if usable then
+					usable, mz = ArkInventory.Collection.Mount.isUsable( md.index )
+				end
+				
+				if usable and checkType == 0 and not mz then
+					usable = false
+				end
+				
+				if usable and checkType == 1 and mta == "a" then
+					if useDragonridingWhenAvailable then
+						if forceDragonridingAlternative then
+							if md.isDragonriding then
+								usable = false
+							end
+						else
+							if not md.isDragonriding then
+								usable = false
+							end
+						end
+					else
+						if forceDragonridingAlternative then
+							if not md.isDragonriding then
+								usable = false
+							end
+						else
+							if md.isDragonriding then
+								usable = false
+							end
+						end
+					end
+				end
+				
+				if usable then
+					collection.usable[mta][md.index] = md
+				end
+				
 			end
 			
-			if usable then
-				usable = ArkInventory.Collection.Mount.isUsable( md.index )
-			end
+			local c = ArkInventory.Table.Elements( collection.usable[mta] )
 			
-			if usable then
-				collection.usable[mta][md.index] = md
+			ArkInventory.OutputDebug( "check type [", mta, "] [", checkType, "] mounts found [", c, "]" )
+			
+			if c > 0 then
+				break
 			end
 			
 		end
-		
-		--ArkInventory.Output( "usable ", mta, " = ", collection.usable[mta] )
 		
 	end
 	
@@ -1350,7 +1722,7 @@ function ArkInventory.Collection.Mount.ApplyUserCorrections( )
 				--ArkInventory.Output( "correcting mount ", md.spellID, ": system=", md.mt, ", correction=", correction )
 				md.mt = correction
 				
-				for mta, mt in pairs( ArkInventory.Const.MountTypes ) do
+				for mta, mt in pairs( ArkInventory.Const.Mount.Types ) do
 					if md.mt == mt then
 						md.mta = mta
 						break
@@ -1402,7 +1774,7 @@ local function Scan_Threaded( thread_id )
 		numTotal = numTotal + 1
 		YieldCount = YieldCount + 1
 		
-		local name, spellID, icon, isActive, isUsable, source, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID( index )
+		local name, spellID, icon, isActive, isUsable, source, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID, isDragonriding = C_MountJournal.GetMountInfoByID( index )
 		local creatureDisplayInfoID, description, source2, isSelfMount, mountTypeID, uiModelSceneID = C_MountJournal.GetMountInfoExtraByID( index )
 --		local isFavorite, canSetFavorite = C_MountJournal.GetIsFavorite( i )
 		
@@ -1447,26 +1819,19 @@ local function Scan_Threaded( thread_id )
 			c[i].isSelfMount = isSelfMount
 			c[i].mountTypeID = mountTypeID
 			c[i].uiModelSceneID = uiModelSceneID
+			c[i].isDragonriding = isDragonriding
+			
+			collection.cachespell[spellID] = i
 			
 			c[i].link = GetSpellLink( spellID )
 			
-			local mta = "x"
-			if mountTypeID == 230 or mountTypeID == 241 or mountTypeID == 284 then
-				-- land
-				mta = "l"
-			elseif mountTypeID == 248 or mountTypeID == 247 or mountTypeID == 242 then
-				-- flying
-				mta = "a"
-			elseif mountTypeID == 231 or mountTypeID == 232 or mountTypeID == 254 then
-				--underwater
-				mta = "u"
---			elseif mountTypeID == 269 then
---				-- surface
---				mta = "s"
+			local mta = ( mountTypeID and ArkInventory.Const.Mount.TypeID[mountTypeID] ) or "x"
+			if mta == "x" then
+				ArkInventory.OutputDebug( "unknown mount type [", mountTypeID, "] for ", name )
 			end
 			
 			c[i].mta = mta
-			c[i].mt = ArkInventory.Const.MountTypes[mta]
+			c[i].mt = ArkInventory.Const.Mount.Types[mta]
 			c[i].mto = c[i].mt -- save original mount type (user corrections can override the other value)
 			
 		end
@@ -1557,7 +1922,7 @@ function ArkInventory:EVENT_ARKINV_COLLECTION_MOUNT_UPDATE_BUCKET( events )
 	
 	if ArkInventory.Global.Mode.Combat then
 		-- set to scan when leaving combat
-		ArkInventory.Global.LeaveCombatRun[loc_id] = true
+		ArkInventory.Global.ScanAfterCombat[loc_id] = true
 		return
 	end
 	
@@ -1601,4 +1966,114 @@ end
 function ArkInventory:EVENT_ARKINV_COLLECTION_MOUNT_EQUIPMENT_UPDATE( event )
 	local loc_id = ArkInventory.Const.Location.MountEquipment
 	ArkInventory.ScanLocation( loc_id )	
+end
+
+
+
+function ArkInventory:EVENT_ARKINV_UNIT_AURA_BUCKET( events )
+	
+	--ArkInventory.Output( "events = [", events, "]" )
+	
+	if not IsMounted( ) then
+		
+		--ArkInventory.Output( "player is dismounted - check for run on dismount" )
+		
+		for loc_id in pairs( ArkInventory.Global.ScanAfterDismount ) do
+			
+			ArkInventory.Global.ScanAfterDismount[loc_id] = nil
+			
+			if loc_id == ArkInventory.Const.Location.Currency then
+				ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_CURRENCY_UPDATE_BUCKET", "DISMOUNTED" )
+			end
+			
+		end
+
+	end
+	
+end
+
+function ArkInventory:EVENT_ARKINV_UNIT_AURA( event, ... )
+	
+	local arg1, arg2, arg3 = ...
+	
+	if arg1 == "player" then
+		--ArkInventory.Output( "event = [", event, "] [", arg1, "] [", arg2, "] [", arg3, "]" ) 
+		ArkInventory:SendMessage( "EVENT_ARKINV_UNIT_AURA_BUCKET", event )
+	end
+	
+end
+
+function ArkInventory:EVENT_ARKINV_PLAYER_CAN_GLIDE_CHANGED( event, ... )
+	
+	--ArkInventory.Output( "event = [", event, "] [", arg1, "] [", arg2, "] [", arg3, "]" ) 
+	ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_MOUNT_UPDATE_BUCKET", event )
+	
+end
+
+function ArkInventory.SetMountMacro( )
+	
+	if not InCombatLockdown( ) then
+		
+		--ArkInventory.Output( "SetMountMacro" )
+		
+		local codex = ArkInventory.GetPlayerCodex( )
+		
+		local macrotext = ""
+		macrotext = macrotext .. "/dismount [combat,mounted,noflying]" -- dismount if in combat and mounted and not flying
+		macrotext = macrotext .. "\n/stopmacro [combat]" -- abort if in combat
+		
+		if codex.player.data.info.class == "DRUID" or codex.player.data.info.class == "WARLOCK" or codex.player.data.info.class == "SHAMAN" then
+			macrotext = macrotext .. "\n/cancelform [noform:0]" -- cancel all forms
+		end
+		
+		
+		local usingtravelform = false
+		if codex.player.data.ldb.travelform then
+			
+			if codex.player.data.info.class == "DRUID" then
+				
+				usingtravelform = true
+				
+				local cat_form = GetSpellInfo( 768 )
+				local travel_form = GetSpellInfo( 783 )
+				macrotext = macrotext .. "\n/cast [indoors] " .. cat_form .. "; " .. travel_form
+				
+			elseif codex.player.data.info.class == "SHAMAN" then
+				-- shaman ghost wolf?
+			end
+			
+		end
+		
+		
+		if not usingtravelform then
+			macrotext = macrotext .. "\n/run ArkInventory.LDB.Mounts.GetNext( )"
+		end
+		
+		--ArkInventory.OutputDebug( macrotext )
+		
+		local btn = ARKINV_MountToggle
+		if not btn then
+			btn = CreateFrame( "Button", "ARKINV_MountToggle", UIParent, "SecureActionButtonTemplate" )
+			btn:SetAttribute( "type", "macro" )
+			btn:SetPoint( "CENTER" )
+			btn:Hide( )
+			btn:RegisterForClicks( "LeftButtonDown", "LeftButtonUp" )
+		end
+		btn:SetAttribute( "macrotext", macrotext )
+		
+		if ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.SHADOWLANDS ) then
+			
+			local state = ArkInventory.CrossClient.GetCVarBool( "ActionButtonUseKeyDown" )
+			
+			-- /run C_CVar.SetCVar("ActionButtonUseKeyDown",1)
+			
+			if state then
+				btn:RegisterForClicks( "LeftButtonDown" )
+			else
+				btn:RegisterForClicks( "LeftButtonUp" )
+			end
+		end
+		
+	end
+	
 end

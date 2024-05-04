@@ -7,14 +7,14 @@ local type = _G.type
 local error = _G.error
 local table = _G.table
 
-ArkInventory.Rules = { }
+--ArkInventory.Rules = { }
 
 function ArkInventory.Frame_Rules_Hide( )
 	if ARKINV_Rules then
 		ARKINV_Rules:Hide( )
 	end
 end
-	
+
 function ArkInventory.Frame_Rules_Show( )
 	
 	if not ArkInventory.LoadAddOn( "ArkInventoryRules" ) then return end
@@ -32,6 +32,44 @@ function ArkInventory.Frame_Rules_Toggle( )
 		ArkInventory.Frame_Rules_Hide( )
 	else
 		ArkInventory.Frame_Rules_Show( )
+	end
+	
+end
+
+
+
+
+function ArkInventory.Frame_Actions_Hide( )
+	
+	if not ArkInventory.Global.actions_enabled then return end
+	
+	if ARKINV_Actions then
+		ARKINV_Actions:Hide( )
+	end
+	
+end
+
+function ArkInventory.Frame_Actions_Show( )
+	
+	if not ArkInventory.Global.actions_enabled then return end
+	
+	if not ArkInventory.LoadAddOn( "ArkInventoryActions" ) then return end
+	
+	if ARKINV_Actions then
+		ARKINV_Actions:Show( )
+		ArkInventory.Frame_Main_Level( ARKINV_Actions )
+	end
+	
+end
+
+function ArkInventory.Frame_Actions_Toggle( )
+	
+	if not ArkInventory.Global.actions_enabled then return end
+	
+	if ARKINV_Actions and ARKINV_Actions:IsVisible( ) then
+		ArkInventory.Frame_Actions_Hide( )
+	else
+		ArkInventory.Frame_Actions_Show( )
 	end
 	
 end

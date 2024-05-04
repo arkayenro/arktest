@@ -50,7 +50,7 @@ local function TransferBagCheck( blizzard_id )
 	local numSlots = GetContainerNumSlots( blizzard_id )
 	local freeSlots, bagType = ArkInventory.CrossClient.GetContainerNumFreeSlots( blizzard_id )
 	
-	if blizzard_id == ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK and not ArkInventory.CrossClient.IsReagentBankUnlocked( ) then
+	if blizzard_id == ArkInventory.ENUM.BAG.INDEX.REAGENTBANK and not ArkInventory.CrossClient.IsReagentBankUnlocked( ) then
 		-- reagent bank always returns its number of slots even if you havent unlocked it
 		numSlots = 0
 		freeSlots = 0
@@ -132,7 +132,7 @@ local function FindItem( loc_id, cl, cb, bp, cs, id, ct )
 						
 					else
 						
-						local h = GetContainerItemLink( bag_id, slot_id )
+						local h = ArkInventory.CrossClient.GetContainerItemLink( bag_id, slot_id )
 						
 						if h then
 							
@@ -161,7 +161,7 @@ local function FindItem( loc_id, cl, cb, bp, cs, id, ct )
 		return FindItem( loc_id, cl, cb, bp, cs, id, ct )
 	end
 	
-	if loc_id == ArkInventory.Const.Location.Bank and cb == ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK and ArkInventory.db.option.transfer.topup then
+	if loc_id == ArkInventory.Const.Location.Bank and cb == ArkInventory.ENUM.BAG.INDEX.REAGENTBANK and ArkInventory.db.option.transfer.topup then
 		-- we were transfering the reagent bank and found nothing
 		-- checked the bank and found nothing
 		-- now checking the bags because topup is enabled
@@ -284,7 +284,7 @@ local function FindPartialStack( loc_id, cl, cb, bp, cs, id )
 							
 							--ArkInventory.Output( "check> ", loc_id, ".", bag_id, ".", slot_id )
 							
-							local h = GetContainerItemLink( bag_id, slot_id )
+							local h = ArkInventory.CrossClient.GetContainerItemLink( bag_id, slot_id )
 							
 							if h then
 								
@@ -316,7 +316,7 @@ local function FindPartialStack( loc_id, cl, cb, bp, cs, id )
 		end
 		
 		
-		if cb == ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK then
+		if cb == ArkInventory.ENUM.BAG.INDEX.REAGENTBANK then
 			
 			-- we were transfering the reagent bank and found nothing there
 			-- need to check the bank for stacks we can take from
@@ -360,7 +360,7 @@ local function FindNormalItem( loc_id, cl, cb, bp, cs )
 				return cl, recheck, false
 			end
 			
-			if bt == 0 and bag_id ~= ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK then
+			if bt == 0 and bag_id ~= ArkInventory.ENUM.BAG.INDEX.REAGENTBANK then
 				
 				for slot_id = 1, count do
 					
@@ -379,7 +379,7 @@ local function FindNormalItem( loc_id, cl, cb, bp, cs )
 							
 						else
 							
-							local h = GetContainerItemLink( bag_id, slot_id )
+							local h = ArkInventory.CrossClient.GetContainerItemLink( bag_id, slot_id )
 							
 							if h then
 								--ArkInventory.Output( "found> ", loc_id, ".", bag_id, ".", slot_id )
@@ -444,7 +444,7 @@ local function FindProfessionItem( loc_id, cl, cb, bp, cs, ct )
 			
 			if ArkInventory.db.option.transfer.priority then
 				-- priority is reagent bank
-				if bag_id ~= ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK and ( bt == 0 or bt == ct ) then
+				if bag_id ~= ArkInventory.ENUM.BAG.INDEX.REAGENTBANK and ( bt == 0 or bt == ct ) then
 					-- do not steal from the reagent bank
 					-- do not steal from profession bags, unless its for the reagent bank
 					pri_ok = true
@@ -478,7 +478,7 @@ local function FindProfessionItem( loc_id, cl, cb, bp, cs, ct )
 							
 						else
 							
-							local h = GetContainerItemLink( bag_id, slot_id )
+							local h = ArkInventory.CrossClient.GetContainerItemLink( bag_id, slot_id )
 							
 							--ArkInventory.Output( "chk> ", h )
 							
@@ -488,7 +488,7 @@ local function FindProfessionItem( loc_id, cl, cb, bp, cs, ct )
 								
 								-- ignore bags
 								local info = ArkInventory.GetObjectInfo( h )
-								if info.equiploc ~= "INVTYPE_BAG" then
+								if info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT then
 									
 									local check_item = true
 									if loc_id ~= cl and not info.craft then
@@ -500,7 +500,7 @@ local function FindProfessionItem( loc_id, cl, cb, bp, cs, ct )
 										
 										local it = GetItemFamily( h ) or 0
 										
-										if ArkInventory.ClientCheck( ArkInventory.Const.ENUM.EXPANSION.CLASSIC ) then -- FIX ME
+										if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CLASSIC ) then -- FIX ME
 											
 											if bit.band( it, ct ) > 0 then
 												--ArkInventory.Output( "found prof> ", ArkInventory.Global.Location[loc_id].Name, ".", bag_id, ".", slot_id, " " , h )
@@ -585,7 +585,7 @@ local function FindCraftingItem( loc_id, cl, cb, bp, cs )
 			
 			if ArkInventory.db.option.transfer.priority then
 				-- priority is reagent bank
-				if bag_id ~= ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK and ( bt == 0 or cb == ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK ) then
+				if bag_id ~= ArkInventory.ENUM.BAG.INDEX.REAGENTBANK and ( bt == 0 or cb == ArkInventory.ENUM.BAG.INDEX.REAGENTBANK ) then
 					-- do not steal from the reagent bank
 					-- do not steal from profession bags, unless its for the reagent bank
 					pri_ok = true
@@ -621,7 +621,7 @@ local function FindCraftingItem( loc_id, cl, cb, bp, cs )
 							
 						else
 							
-							local h = GetContainerItemLink( bag_id, slot_id )
+							local h = ArkInventory.CrossClient.GetContainerItemLink( bag_id, slot_id )
 							
 							if h then
 								
@@ -714,7 +714,7 @@ local function StackBags( loc_id )
 						
 						--ArkInventory.Output( "unlocked> ", loc_id, ".", bag_id, ".", slot_id )
 						
-						local h = GetContainerItemLink( bag_id, slot_id )
+						local h = ArkInventory.CrossClient.GetContainerItemLink( bag_id, slot_id )
 						
 						if h then
 							
@@ -816,7 +816,7 @@ local function ConsolidateBag( loc_id, bag_id, bag_pos )
 				
 			else
 				
-				local h = GetContainerItemLink( bag_id, slot_id )
+				local h = ArkInventory.CrossClient.GetContainerItemLink( bag_id, slot_id )
 				
 				if not h then
 				
@@ -895,7 +895,7 @@ local function Consolidate( loc_id )
 			
 			--ArkInventory.Output( "Consolidate ", loc_id, ".", bag_id, " ", bt )
 			
-			if count > 0 and ( bag_id == ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK or bt ~= 0 ) then
+			if count > 0 and ( bag_id == ArkInventory.ENUM.BAG.INDEX.REAGENTBANK or bt ~= 0 ) then
 				
 				local ab, rc = ConsolidateBag( loc_id, bag_id, bag_pos )
 				
@@ -919,7 +919,7 @@ local function Consolidate( loc_id )
 			
 			-- fill up reagent bank with crafting items
 			
-			local bag_id = ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK
+			local bag_id = ArkInventory.ENUM.BAG.INDEX.REAGENTBANK
 			
 			if not me.player.data.option[loc_id].bag[bag_id].transfer.ignore then
 				
@@ -958,7 +958,7 @@ local function Consolidate( loc_id )
 						return cl, recheck, false
 					end
 					
-					if bt == 0 and bag_id ~= ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK then
+					if bt == 0 and bag_id ~= ArkInventory.ENUM.BAG.INDEX.REAGENTBANK then
 						
 						local ab, rc = ConsolidateBag( loc_id, bag_id, bag_pos )
 						
@@ -1023,7 +1023,7 @@ local function CompactBag( loc_id, bag_id, bag_pos )
 				
 			else
 				
-				local h = GetContainerItemLink( bag_id, slot_id )
+				local h = ArkInventory.CrossClient.GetContainerItemLink( bag_id, slot_id )
 				
 				if not h then
 				
@@ -1093,7 +1093,7 @@ local function Compact( loc_id )
 				return cl, recheck, false
 			end
 			
-			if count > 0 and bt == 0 and bag_id ~= ArkInventory.Const.ENUM.BAGINDEX.REAGENTBANK then
+			if count > 0 and bt == 0 and bag_id ~= ArkInventory.ENUM.BAG.INDEX.REAGENTBANK then
 				
 				--ArkInventory.Output( "Compact ", loc_id, ".", bag_id, " ", bt )
 				
@@ -1201,7 +1201,7 @@ local function TransferRun_Threaded( loc_id )
 			
 			TransferMessageStart( loc_id )
 			
-			if ArkInventory.ClientCheck( ArkInventory.Const.ENUM.EXPANSION.CLASSIC ) and ArkInventory.db.option.transfer.blizzard then -- FIX ME
+			if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CLASSIC ) and ArkInventory.db.option.transfer.blizzard then -- FIX ME
 				
 				ArkInventory.CrossClient.SetSortBagsRightToLeft( ArkInventory.db.option.transfer.reverse )
 				SortBankBags( )

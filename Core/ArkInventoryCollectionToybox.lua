@@ -91,7 +91,7 @@ end
 local function FilterGetSource( t )
 	assert( type( t ) == "table", "parameter is not a table" )
 	for i = 1, FilterNumSource( ) do
-		t[i] = not C_ToyBox.IsSourceTypeFilterChecked( i )
+		t[i] = C_ToyBox.IsSourceTypeFilterChecked( i )
 	end
 end
 
@@ -116,7 +116,7 @@ end
 local function FilterGetExpansion( t )
 	assert( type( t ) == "table", "parameter is not a table" )
 	for i = 1, FilterNumExpansion( ) do
-		t[i] = not C_ToyBox.IsExpansionTypeFilterChecked( i )
+		t[i] = C_ToyBox.IsExpansionTypeFilterChecked( i )
 	end
 end
 
@@ -336,7 +336,7 @@ function ArkInventory:EVENT_ARKINV_COLLECTION_TOYBOX_UPDATE_BUCKET( events )
 	if not ArkInventory:IsEnabled( ) then return end
 	
 	if ArkInventory.Global.Mode.Combat then
-		ArkInventory.Global.LeaveCombatRun[loc_id] = true
+		ArkInventory.Global.ScanAfterCombat[loc_id] = true
 		return
 	end
 	

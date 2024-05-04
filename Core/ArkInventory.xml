@@ -6,16 +6,11 @@
   <GameTooltip virtual="true" name="ArkScanTooltipTemplate" inherits="GameTooltipTemplate" >
     <Scripts>
       <Onload>
+        SharedTooltip_OnLoad( self )
+        self.updateTooltipTimer = TOOLTIP_UPDATE_TIME
+        
         GameTooltip_OnLoad( self )
         self:SetOwner( UIParent, "ANCHOR_NONE" )
-        
-        if self:HasScript( "OnTooltipAddMoney" ) then
-          self:SetScript( "OnTooltipAddMoney", nil )
-        end
-        
-        if self:HasScript( "OnTooltipCleared" ) then
-          self:SetScript( "OnTooltipCleared", nil )
-        end
       </Onload>
     </Scripts>
   </GameTooltip>
@@ -285,18 +280,17 @@
     </PushedTexture>
     
     <Layers>
-      <Layer level="OVERLAY" textureSubLevel="3">
+      <Layer level="OVERLAY" textureSubLevel="7">
         <Texture parentKey="ArkHighlight" name="$parentArkHighlight" setAllPoints="true" hidden="true" >
           <Color r="0" g="0" b="0" a="0.8" />
         </Texture>
       </Layer>
-      <Layer level="OVERLAY" textureSubLevel="2">
+      <Layer level="OVERLAY" textureSubLevel="6">
         <Texture parentKey="ArkTint" name="$parentArkTint" setAllPoints="true" hidden="true" >
           <Color r="1" g="0" b="0" a="0.5"/>
         </Texture>
       </Layer>
-      
-      <Layer level="OVERLAY" textureSubLevel="7">
+      <Layer level="OVERLAY" textureSubLevel="4">
         <Texture parentKey="ArkIconProfessionRank" name="$parentArkIconProfessionRank" hidden="true" >
           <Size x="12" y="12" />
           <Anchors>
@@ -308,29 +302,8 @@
             <Anchor point="TOPLEFT" x="0" y="0" />
           </Anchors>
         </FontString>
-        <Texture parentKey="ArkIconCorrupted" name="$parentArkIconCorrupted" hidden="true" >
-          <Size x="12" y="12" />
-          <Anchors>
-            <Anchor point="BOTTOMLEFT" x="0" y="0" />
-          </Anchors>
-        </Texture>
       </Layer>
-      
-      <Layer level="OVERLAY" textureSubLevel="6">
-        <FontString parentKey="ArkLevel" name="$parentLevel" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
-          <Anchors>
-            <Anchor point="TOPLEFT" x="0" y="0" />
-          </Anchors>
-        </FontString>
-      </Layer>
-      
-      <Layer level="OVERLAY" textureSubLevel="1">
-        <Texture parentKey="ArkIconTransmog" name="$parentArkIconTransmog" hidden="true" >
-          <Size x="12" y="12" />
-          <Anchors>
-            <Anchor point="BOTTOMLEFT" x="0" y="0" />
-          </Anchors>
-        </Texture>
+      <Layer level="OVERLAY" textureSubLevel="3">
         <FontString parentKey="ArkLevel" name="$parentLevel" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
           <Anchors>
             <Anchor point="TOPLEFT" x="0" y="0" />
@@ -343,10 +316,24 @@
             <Anchor point="CENTER" />
           </Anchors>
         </FontString>
-        <Texture parentKey="ArkIconQuest" name="$parentArkIconQuest" hidden="true" >
+      </Layer>
+      <Layer level="OVERLAY" textureSubLevel="1">
+        <Texture parentKey="ArkIconQuestBang" name="$parentArkIconQuestBang" hidden="true" >
           <Size x="8" y="24" />
           <Anchors>
             <Anchor point="BOTTOMLEFT" />
+          </Anchors>
+        </Texture>
+        <Texture parentKey="ArkIconTransmog" name="$parentArkIconTransmog" hidden="true" >
+          <Size x="12" y="12" />
+          <Anchors>
+            <Anchor point="BOTTOMLEFT" x="0" y="0" />
+          </Anchors>
+        </Texture>
+        <Texture parentKey="ArkIconCorrupted" name="$parentArkIconCorrupted" hidden="true" >
+          <Size x="12" y="12" />
+          <Anchors>
+            <Anchor point="BOTTOMLEFT" x="0" y="0" />
           </Anchors>
         </Texture>
       </Layer>
@@ -354,6 +341,7 @@
     
     <Frames>
       <Frame parentKey="ArkListEntry" name="$parentArkListEntry" inherits="ARKINV_TemplateButtonListEntryItem" />
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
     </Frames>
     
     <Scripts>
@@ -383,7 +371,7 @@
       </OnMouseUp>
       
       <PreClick>
-        ArkInventory.Frame_Item_PreClick( self, button )
+        ArkInventory.Frame_Item_PreClick( self, button, down )
       </PreClick>
       
       <PostClick>
@@ -394,7 +382,7 @@
     
   </ItemButton>
   
-  <Button virtual="true" name="ARKINV_TemplateButtonItem2" inherits="ContainerFrameItemButtonTemplate" hidden="true">
+  <Button virtual="true" name="ARKINV_TemplateButtonItem2" inherits="ContainerFrameItemButtonTemplate" hidden="false">
     
     <NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-PassiveHighlight" >
       <Anchors>
@@ -411,15 +399,35 @@
     </PushedTexture>
     
     <Layers>
-      <Layer level="OVERLAY" textureSubLevel="3">
+      <Layer level="OVERLAY" textureSubLevel="7">
         <Texture parentKey="ArkHighlight" name="$parentArkHighlight" setAllPoints="true" hidden="true" >
           <Color r="0" g="0" b="0" a="0.8" />
         </Texture>
       </Layer>
-      <Layer level="OVERLAY" textureSubLevel="2">
+      <Layer level="OVERLAY" textureSubLevel="6">
         <Texture parentKey="ArkTint" name="$parentArkTint" setAllPoints="true" hidden="true" >
           <Color r="1" g="0" b="0" a="0.5"/>
         </Texture>
+      </Layer>
+      <Layer level="OVERLAY" textureSubLevel="4">
+        <Texture parentKey="ArkIconProfessionRank" name="$parentArkIconProfessionRank" hidden="true" >
+          <Size x="12" y="12" />
+          <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0" />
+          </Anchors>
+        </Texture>
+        <FontString parentKey="ArkIconProfessionRankText" name="$parentArkIconProfessionRankText" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
+          <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0" />
+          </Anchors>
+        </FontString>
+      </Layer>
+      <Layer level="OVERLAY" textureSubLevel="3">
+        <FontString parentKey="ArkLevel" name="$parentLevel" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
+          <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0" />
+          </Anchors>
+        </FontString>
       </Layer>
       <Layer level="ARTWORK" textureSubLevel="2">
         <FontString parentKey="ArkItemAge" name="$parentArkItemAge" inherits="ARKINV_NewItemFont" hidden="true" >
@@ -429,6 +437,12 @@
         </FontString>
       </Layer>
       <Layer level="OVERLAY" textureSubLevel="1">
+        <Texture parentKey="ArkIconQuestBang" name="$parentArkIconQuestBang" hidden="true" >
+          <Size x="8" y="24" />
+          <Anchors>
+            <Anchor point="BOTTOMLEFT" />
+          </Anchors>
+        </Texture>
         <Texture parentKey="ArkIconTransmog" name="$parentArkIconTransmog" hidden="true" >
           <Size x="12" y="12" />
           <Anchors>
@@ -441,28 +455,12 @@
             <Anchor point="BOTTOMLEFT" x="0" y="0" />
           </Anchors>
         </Texture>
-        <Texture parentKey="ArkIconProfessionRank" name="$parentArkIconProfessionRank" hidden="true" >
-          <Size x="12" y="12" />
-          <Anchors>
-            <Anchor point="TOPLEFT" />
-          </Anchors>
-        </Texture>
-        <Texture parentKey="ArkIconQuest" name="$parentArkIconQuest" hidden="true" >
-          <Size x="8" y="24" />
-          <Anchors>
-            <Anchor point="BOTTOMLEFT" x="4" y="6" />
-          </Anchors>
-        </Texture>
-        <FontString parentKey="ArkLevel" name="$parentLevel" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
-          <Anchors>
-            <Anchor point="TOPLEFT" x="0" y="0" />
-          </Anchors>
-        </FontString>
       </Layer>
     </Layers>
     
     <Frames>
       <Frame parentKey="ArkListEntry" name="$parentArkListEntry" inherits="ARKINV_TemplateButtonListEntryItem" />
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
     </Frames>
     
     <Scripts>
@@ -492,7 +490,7 @@
       </OnMouseUp>
       
       <PreClick>
-        ArkInventory.Frame_Item_PreClick( self, button )
+        ArkInventory.Frame_Item_PreClick( self, button, down )
       </PreClick>
       
       <PostClick>
@@ -502,7 +500,6 @@
     </Scripts>
     
   </Button>
-  
   
   <ItemButton virtual="true" name="ARKINV_TemplateButtonVaultItem1" inherits="ARKINV_TemplateButtonItem1" hidden="true">
     
@@ -552,7 +549,6 @@
     
   </Button>
   
-  
   <ItemButton virtual="true" name="ARKINV_TemplateButtonMailboxItem1" inherits="ARKINV_TemplateButtonItem1" hidden="true">
     
     <Scripts>
@@ -600,7 +596,6 @@
     </Scripts>
     
   </Button>
-  
   
   <ItemButton virtual="true" name="ARKINV_TemplateButtonMountItem1" inherits="ARKINV_TemplateButtonItem1" hidden="true">
     
@@ -807,7 +802,7 @@
   </Button>
   
   
-  <ItemButton virtual="true" name="ARKINV_TemplateButtonItemTainted1" inherits="ContainerFrameItemButtonTemplate" hidden="true">
+  <ItemButton virtual="true" name="ARKINV_TemplateButtonItem1Tainted" inherits="ContainerFrameItemButtonTemplate" hidden="true">
     
     <NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-PassiveHighlight" >
       <Anchors>
@@ -831,14 +826,18 @@
       </Layer>
     </Layers>
     
+    <Frames>
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
+    </Frames>
+    
     <Scripts>
       
       <OnLoad>
-        ArkInventory.Frame_Item_OnLoad_Tainted( self )
+        ArkInventory.Frame_Item_OnLoad( self )
       </OnLoad>
       
       <OnEnter>
-        ArkInventory.Frame_Item_OnEnter_Tainted( self )
+        ArkInventory.Frame_Item_OnEnter( self )
       </OnEnter>
       
       <OnClick>
@@ -861,7 +860,7 @@
     
   </ItemButton>
   
-  <Button virtual="true" name="ARKINV_TemplateButtonItemTainted2" inherits="ContainerFrameItemButtonTemplate" hidden="true">
+  <Button virtual="true" name="ARKINV_TemplateButtonItem2Tainted" inherits="ContainerFrameItemButtonTemplate" hidden="true">
     
     <NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-PassiveHighlight" >
       <Anchors>
@@ -885,14 +884,18 @@
       </Layer>
     </Layers>
     
+    <Frames>
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
+    </Frames>
+    
     <Scripts>
       
       <OnLoad>
-        ArkInventory.Frame_Item_OnLoad_Tainted( self )
+        ArkInventory.Frame_Item_OnLoad( self )
       </OnLoad>
       
       <OnEnter>
-        ArkInventory.Frame_Item_OnEnter_Tainted( self )
+        ArkInventory.Frame_Item_OnEnter( self )
       </OnEnter>
       
       <OnClick>
@@ -915,6 +918,21 @@
     
   </Button>
   
+  <ItemButton virtual="true" name="ARKINV_TemplateButtonItem1Popup" inherits="ARKINV_TemplateButtonItem1">
+    <Scripts>
+      <OnLoad>
+        ArkInventory.Frame_Item_OnLoad( self, ArkInventory.Const.ItemFrameType.Popup )
+      </OnLoad>
+    </Scripts>
+  </ItemButton>
+  
+  <Button virtual="true" name="ARKINV_TemplateButtonItem2Popup" inherits="ARKINV_TemplateButtonItem2" hidden="true">
+    <Scripts>
+      <OnLoad>
+        ArkInventory.Frame_Item_OnLoad( self, ArkInventory.Const.ItemFrameType.Popup )
+      </OnLoad>
+    </Scripts>
+  </Button>
   
   <ItemButton virtual="true" name="ARKINV_TemplateButtonBarEdit1" inherits="ARKINV_TemplateButtonItem1" hidden="true">
     
@@ -1095,6 +1113,10 @@
       </Anchors>
     </PushedTexture>
     
+    <Frames>
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
+    </Frames>
+    
     <Scripts>
       
       <OnLoad>
@@ -1152,6 +1174,10 @@
         <Anchor point="CENTER" />
       </Anchors>
     </PushedTexture>
+    
+    <Frames>
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
+    </Frames>
     
     <Scripts>
       
@@ -1221,9 +1247,9 @@
   </ItemButton>
   
   <Button virtual="true" name="ARKINV_TemplateChangerVaultTab2" inherits="ARKINV_TemplateChangerPlayerMain2">
-  
+    
     <Scripts>
-  
+      
       <OnLoad>
         ArkInventory.Frame_Changer_Vault_Tab_OnLoad( self )
       </OnLoad>
@@ -1231,48 +1257,38 @@
       <OnClick>
         ArkInventory.Frame_Changer_Vault_Tab_OnClick( self, button )
       </OnClick>
-
-          <OnReceiveDrag>
-              ArkInventory.Frame_Changer_Vault_Tab_OnClick( self )
-          </OnReceiveDrag>
+      
+      <OnReceiveDrag>
+          ArkInventory.Frame_Changer_Vault_Tab_OnClick( self )
+      </OnReceiveDrag>
       
       <OnEnter>
         ArkInventory.Frame_Changer_Vault_Tab_OnEnter( self )
       </OnEnter>
       
     </Scripts>
-      
+    
   </Button>
   
   
   <Button virtual="true" name="ARKINV_TemplateChangerVaultAction" inherits="ARKINV_TemplateButton" hidden="true">
-    
     <Size x="30" y="30" />
-    
     <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
-    
     <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
-    
     <Scripts>
-      
       <OnLoad>
         ArkInventory.Frame_Changer_Vault_Action_OnLoad( self )
       </OnLoad>
-      
       <OnClick>
         ArkInventory.Frame_Changer_Vault_Action_OnClick( self, button, down )
       </OnClick>
-      
-          <OnReceiveDrag>
-              -- do nothing
-          </OnReceiveDrag>
-      
+      <OnReceiveDrag>
+          -- do nothing
+      </OnReceiveDrag>
       <OnEnter>
         ArkInventory.Frame_Changer_Vault_Action_OnEnter( self )
       </OnEnter>
-      
     </Scripts>
-      
   </Button>
   
   
@@ -1307,6 +1323,29 @@
     </Scripts>
     
   </Button>
+  
+  
+  <Frame virtual="true" name="ARKINV_TemplateFrameBag" >
+    
+    <Size x="1" y="1" />
+    
+    <Scripts>
+      <OnLoad>
+        ArkInventory.Frame_Bag_OnLoad( self )
+      </OnLoad>
+    </Scripts>
+    
+  </Frame>
+  
+  <Frame virtual="true" name="ARKINV_TemplateFrameBagPopup" inherits="ARKINV_TemplateFrameBag" >
+    
+    <Scripts>
+      <OnLoad>
+        ArkInventory.Frame_Bag_OnLoad( self, ArkInventory.Const.ItemFrameType.Popup )
+      </OnLoad>
+    </Scripts>
+    
+  </Frame>
   
   
   <Frame virtual="true" name="ARKINV_TemplateFrameBar" inherits="ARKINV_TemplateFrameStandard">
@@ -1361,17 +1400,6 @@
     
   </Frame>
   
-  <Frame virtual="true" name="ARKINV_TemplateFrameBag" hidden="false" >  <!-- 100000 mouseEnabled="true" -->
-    
-    <Size x="1" y="1" />
-    
-    <Scripts>
-      <OnLoad>
-        ArkInventory.Frame_Bag_OnLoad( self )
-      </OnLoad>
-    </Scripts>
-    
-  </Frame>
   
   <Frame virtual="true" name="ARKINV_TemplateFrameMainTitle" inherits="ARKINV_TemplateFrameStandard">
     
@@ -1674,13 +1702,15 @@
         self:SetHeight( self.icon:GetHeight( ) )
         self.UpdateTooltip = function( self )
           ArkInventory.GameTooltipSetPosition( self )
-          GameTooltip:SetCurrencyByID( self.currencyID )
+          --GameTooltip:SetCurrencyByID( self.currencyID )
+          ArkInventory.CrossClient.TooltipSetCurrencyByID( self, currencyID )
           GameTooltip:Show( )
         end
       </OnLoad>
       <OnEnter>
         ArkInventory.GameTooltipSetPosition( self )
-        GameTooltip:SetCurrencyByID( self.currencyID )
+        --GameTooltip:SetCurrencyByID( self.currencyID )
+        ArkInventory.CrossClient.TooltipSetCurrencyByID( self, currencyID )
         GameTooltip:Show( )
       </OnEnter>
       <OnLeave>
@@ -1816,14 +1846,21 @@
     </Layers>
     
     <Frames>
-    
-      <ScrollingMessageFrame name="$parentList" enableMouse="true">  <!-- 100000 fade="false"> -->
+      
+      <ScrollingMessageFrame name="$parentList" enableMouse="true">
         <Anchors>
           <Anchor point="TOPLEFT" x="10" y="-10" />
           <Anchor point="BOTTOMRIGHT" x="-40" y="10" />
         </Anchors>
-        <!-- 100000  <FontString inherits="ARKINV_TableRowFont" JustifyH="LEFT" /> -->
         <Scripts>
+          <OnLoad>
+            self:SetMaxLines( 400 )
+            self:SetFading( false )
+            self:SetFontObject( ChatFontNormal )
+            self:SetJustifyH( "LEFT" )
+            self:SetIndentedWordWrap( true )
+            self:SetInsertMode( SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM )
+          </OnLoad>
           <OnHyperlinkClick>
             SetItemRef( link, text, button, chatFrame )
           </OnHyperlinkClick>
@@ -1832,18 +1869,18 @@
           </OnMouseWheel>
         </Scripts>
       </ScrollingMessageFrame>
-
+      
     </Frames>
-  
+    
   </Frame>
-
+  
   <Frame virtual="true" name="ARKINV_TemplateFrameVaultInfo" inherits="ARKINV_TemplateFrameStandard" hidden="true">
     
     <Anchors>
       <Anchor point="TOPLEFT" relativeTo="$parentScroll" />
       <Anchor point="BOTTOMRIGHT" relativeTo="$parentScroll" />
     </Anchors>
-  
+    
     <Frames>
       
       <ScrollFrame name="$parentScroll" inherits="UIPanelScrollFrameTemplate">
@@ -1942,11 +1979,11 @@
         </Scripts>
         
       </Button>
-
+      
     </Frames>
-  
+    
   </Frame>
-
+  
   <Frame virtual="true" name="ARKINV_TemplateFrameMainScanOnly" parent="UIParent" toplevel="true" movable="true" enableMouse="true" hidden="true">
     <Scripts>
       <OnLoad>
@@ -2103,15 +2140,149 @@
     
   </Frame>
   
+  <Button virtual="true" frameStrata="DIALOG" name="ARKINV_TemplateLocationOverride" inherits="ARKINV_TemplateButton">
+    <NormalTexture file="Interface\Icons\INV_Misc_Bag_07_Green" />
+    <Anchors>
+      <Anchor point="TOPRIGHT" x="-28" y="-2" />
+    </Anchors>
+    <Scripts>
+      <OnEnter>
+        local loc_id = self:GetID( )
+        local text = string.format( ArkInventory.Localise["CONFIG_CONTROL_WITH_ARKINV"], ArkInventory.Const.Program.Name, ArkInventory.Global.Location[loc_id].Name )
+        ArkInventory.GameTooltipSetText( self, text )
+      </OnEnter>
+      <OnClick>
+        local loc_id = self:GetID( )
+        ArkInventory.LocationOverrideSet( loc_id, true )
+      </OnClick>
+    </Scripts>
+  </Button>
+
   
 <!-- ADDON FRAME STARTS HERE -->
   
-  <Frame hidden="true">
+  <Frame name="ARKINV_Debug" inherits="ARKINV_TemplateFrameStandard" parent="UIParent" toplevel="true" movable="true" enableMouse="true" hidden="true">
+    
+    <Size x="800" y="400" />
+    
+    <Anchors>
+      <Anchor point="TOPLEFT" x="50" y="-50" />
+    </Anchors>
+    
+    <Frames>
+      
+      <Frame parentKey="Title" name="$parentTitle" >
+        <Size x="1" y="40" />
+        <Anchors>
+          <Anchor point="TOPLEFT" x="10" y="-10" />
+          <Anchor point="RIGHT" x="-10" y="0" />
+        </Anchors>
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString parentKey="Who" name="$parentWho" inherits="ARKINV_GameFontNormalHuge" justifyH="LEFT" text="ArkInventory Debug">
+              <Anchors>
+                <Anchor point="TOPLEFT" x="4" y="-4" />
+                <Anchor point="BOTTOMRIGHT" x="-4" y="4" />
+              </Anchors>
+            </FontString>
+          </Layer>
+        </Layers>
+        <Scripts>
+          <OnLoad>
+            ArkInventory.Frame_AddBorder( self )
+          </OnLoad>
+        </Scripts>
+      </Frame>
+      
+      <Button name="$parentClose" inherits="ARKINV_TemplateButtonClose" hidden="false" >
+        <Size x="20" y="20" />
+        <Anchors>
+          <Anchor point="RIGHT" relativeTo="$parentTitle" x="-4" />
+        </Anchors>
+        <Scripts>
+          <OnClick>
+            ArkInventory.Debug.Frame_Hide( )
+          </OnClick>
+        </Scripts>
+      </Button>
+      
+      <ScrollingMessageFrame parentKey="List" name="$parentList" enableMouse="true">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-10" />
+          <Anchor point="BOTTOM" y="10" />
+          <Anchor point="RIGHT" relativeTo="$parentTitle" x="-30" />
+        </Anchors>
+        <Frames>
+          <Slider parentKey="ScrollBar" name="$parentScrollBar" obeyStepOnDrag="true" valueStep="1" minValue="0" maxValue="1" alpha="1">
+            <Size x="20" y="1"/>
+            <Anchors>
+              <Anchor point="TOP" />
+              <Anchor point="BOTTOM" />
+              <Anchor point="LEFT" relativePoint="RIGHT" x="10" />
+            </Anchors>
+            <ThumbTexture name="$parentThumbTexture" parentKey="ThumbTexture" atlas="chatframe-scrollbar-knob" useAtlasSize="true"/>
+            <Scripts>
+              <OnLoad>
+                --ArkInventory.Frame_AddBorder( self )
+              </OnLoad>
+              <OnValueChanged>
+                  local min, max = self:GetMinMaxValues( )
+                  self:GetParent( ):SetScrollOffset( max - value )
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+        </Frames>
+        <Scripts>
+          <OnLoad>
+            self:SetMaxLines( 20 )
+            self:SetFading( false )
+            self:SetFontObject( ChatFontNormal )
+            self:SetInsertMode( SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM )
+            self:SetJustifyH( "LEFT" )
+            self:SetIndentedWordWrap( true )
+            self:SetTextCopyable( true )
+            --ArkInventory.Frame_AddBorder( self )
+          </OnLoad>
+          <OnMouseWheel>
+            
+            self:ScrollByAmount( delta * 3 )
+            
+            local numMessages = self:GetNumMessages( )
+            self.ScrollBar:SetMinMaxValues( 1, numMessages )
+            self.ScrollBar:SetValue( numMessages - self:GetScrollOffset( ) )
+            
+          </OnMouseWheel>
+        </Scripts>
+      </ScrollingMessageFrame>
+      
+    </Frames>
+    
     <Scripts>
+      
       <OnLoad>
+        
+        ArkInventory.Frame_AddBorder( self )
+        
         ArkInventory.OnLoad( )
+        
+        self:RegisterForDrag( "LeftButton" )
+        
       </OnLoad>
+      
+      <OnShow>
+        ArkInventory.MediaFrameDefaultFontSet( self )
+      </OnShow>
+      
+      <OnDragStart>
+        self:StartMoving( )
+      </OnDragStart>
+      
+      <OnDragStop>
+        self:StopMovingOrSizing( )
+      </OnDragStop>
+      
     </Scripts>
+    
   </Frame>
   
   <Frame name="ARKINV_Frame1" inherits="ARKINV_TemplateFrameMain" id="1" /> <!-- bag -->
@@ -2341,9 +2512,43 @@
   
   <Frame name="ARKINV_Frame17" inherits="ARKINV_TemplateFrameMain" id="17" /> <!-- mount equipment -->
   
+  
+  <Frame name="ARKINV_PopupBarFrame" inherits="ARKINV_TemplateFrameBar" parent="UIParent" toplevel="true" movable="false" clampedToScreen="true" hidden="true" > <!-- compressed item bar -->
+    
+    <Scripts>
+      
+      <OnLoad>
+        ArkInventory.Frame_Bar_Popup_OnLoad( self )
+      </OnLoad>
+      
+      <OnEnter>
+        ArkInventory.Frame_Bar_Popup_OnEnter( self )
+      </OnEnter>
+      
+      <OnLeave>
+        ArkInventory.Frame_Bar_Popup_OnLeave( self )
+      </OnLeave>
+      
+      <OnShow>
+        ArkInventory.Frame_Bar_Popup_OnShow( self )
+      </OnShow>
+      
+      <OnHide>
+        ArkInventory.Frame_Bar_Popup_OnHide( self )
+      </OnHide>
+      
+      <OnUpdate>
+        ArkInventory.Frame_Bar_Popup_OnUpdate( self, elapsed )
+      </OnUpdate>
+      
+    </Scripts>
+    
+  </Frame>
+  
+  
 <!-- END OF ADD ON FRAME -->
   
-  <GameTooltip name="ARKINV_ScanTooltip" inherits="ArkScanTooltipTemplate" />
+  <GameTooltip name="ARKINV_ScanTooltip" inherits="ArkScanTooltipTemplate" hidden="false"/>
   
   <Frame name="ARKINV_ThreadTimer" hidden="true">
     <Scripts>
