@@ -38,7 +38,7 @@ local objectCorrections = {
 	},
 }
 
-local function helper_ResetObjectData( c, id, t, s )
+local function helper_ResetObjectDataTypes( c, id, t, s )
 	objectCorrections[c][id] = objectCorrections[id] or { }
 	objectCorrections[c][id][ArkInventory.Const.BLIZZARD.FUNCTION.GETITEMINFO.TYPEID] = t
 	objectCorrections[c][id][ArkInventory.Const.BLIZZARD.FUNCTION.GETITEMINFO.SUBTYPEID] = s
@@ -46,20 +46,21 @@ local function helper_ResetObjectData( c, id, t, s )
 	objectCorrections[c][id][ArkInventory.Const.BLIZZARD.FUNCTION.GETITEMINFO.SUBTYPE] = GetItemSubClassInfo( t, s )
 end
 
-local function helper_ResetItemData( id, t, s )
-	helper_ResetObjectData( "item", id, t, s )
+local function helper_ResetItemDataTypes( id, t, s )
+	helper_ResetObjectDataTypes( "item", id, t, s )
 end
 
-helper_ResetItemData( 186515, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Aspiring Aspirant's Regalia
-helper_ResetItemData( 186727, ArkInventory.ENUM.ITEM.TYPE.KEY.PARENT, ArkInventory.ENUM.ITEM.TYPE.KEY.KEY ) -- Seal Breaker Key
-helper_ResetItemData( 199752, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Crimson Valdrakken Clothing
-helper_ResetItemData( 199753, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Black Valdrakken Clothing
-helper_ResetItemData( 199754, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Azure Valdrakken Clothing
-helper_ResetItemData( 199756, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Bronze Valdrakken Clothing
-helper_ResetItemData( 198776, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Renowned Expeditioner's Leather Armor
-helper_ResetItemData( 208831, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Tyr's Titan Key
-helper_ResetItemData( 211383, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.FOOD_AND_DRINK ) -- Luvkip
-helper_ResetItemData( 224298, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.OTHER ) -- Dilated Eon Canister
+helper_ResetItemDataTypes( 186515, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Aspiring Aspirant's Regalia
+helper_ResetItemDataTypes( 186727, ArkInventory.ENUM.ITEM.TYPE.KEY.PARENT, ArkInventory.ENUM.ITEM.TYPE.KEY.KEY ) -- Seal Breaker Key
+helper_ResetItemDataTypes( 198776, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Renowned Expeditioner's Leather Armor
+helper_ResetItemDataTypes( 199752, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Crimson Valdrakken Clothing
+helper_ResetItemDataTypes( 199753, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Black Valdrakken Clothing
+helper_ResetItemDataTypes( 199754, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Azure Valdrakken Clothing
+helper_ResetItemDataTypes( 199756, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Bronze Valdrakken Clothing
+helper_ResetItemDataTypes( 208831, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Tyr's Titan Key
+helper_ResetItemDataTypes( 211383, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.FOOD_AND_DRINK ) -- Luvkip
+helper_ResetItemDataTypes( 211446, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Heritage of the Darkspear
+helper_ResetItemDataTypes( 224298, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.OTHER ) -- Dilated Eon Canister
 
 
 local function helper_CorrectData( info, tmp )

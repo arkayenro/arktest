@@ -320,18 +320,6 @@ function ArkInventory.Output( ... )
 	
 end
 
-function ArkInventory.Output2( ... )
-	if ArkInventory.Global.Debug2 then
-		ArkInventory.Output( "|cff17ffc1", ... ) -- fffff99a
-	end
-end
-
-function ArkInventory.OutputThread( ... )
-	if ArkInventory.db.option.thread.debug then
-		ArkInventory.Output( "|cffffff9aTHREAD> ", ... )
-	end
-end
-
 function ArkInventory.OutputDebugConfig( )
 	
 	local obj = _G[ArkInventory.Const.Frame.Debug.Name]
@@ -344,9 +332,7 @@ function ArkInventory.OutputDebugConfig( )
 	
 end
 
-function ArkInventory.OutputDebug( ... )
-	
-	if ArkInventory.db and not ArkInventory.db.option.ui.debug.enable then return end
+function ArkInventory.OutputDebugFrame( ... )
 	
 	local obj = _G[ArkInventory.Const.Frame.Debug.Name]
 	if not obj then
@@ -368,12 +354,24 @@ function ArkInventory.OutputDebug( ... )
 	
 end
 
+function ArkInventory.OutputDebug( ... )
+	if ArkInventory.db and ArkInventory.db.option.ui.debug.enable then
+		ArkInventory.OutputDebugFrame( ... )
+	end
+end
+
+function ArkInventory.OutputThread( ... )
+	if ArkInventory.db and ArkInventory.db.option.thread.debug then
+		ArkInventory.OutputDebugFrame( "THREAD> ", ... )
+	end
+end
+
 function ArkInventory.OutputWarning( ... )
-	ArkInventory.Output( "|cfffa8000WARNING> ", ... )
+	ArkInventory.Output( ORANGE_FONT_COLOR_CODE, string.upper( ArkInventory.Localise["WARNING"] ), "> ", ... )
 end
 
 function ArkInventory.OutputError( ... )
-	ArkInventory.Output( RED_FONT_COLOR_CODE, ERROR_CAPS, "> ", ... )
+	ArkInventory.Output( RED_FONT_COLOR_CODE, string.upper( ArkInventory.Localise["ERROR"] ), "> ", ... )
 end
 
 function ArkInventory.OutputDebugModeSet( value )

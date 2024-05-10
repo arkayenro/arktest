@@ -1494,7 +1494,7 @@ function ArkInventory.CategoryRebuildQueueAdd( i )
 	
 	if not i then return end
 	
-	--ArkInventory.Output2( "adding ", i )
+	--ArkInventory.OutputDebug( "adding ", i )
 	table.insert( CategoryRebuildQueue, i )
 	
 	ArkInventory:SendMessage( "EVENT_ARKINV_CATEGORY_REBUILD_QUEUE_UPDATE_BUCKET", "START" )
@@ -1503,11 +1503,11 @@ end
 
 local function Scan_Threaded( thread_id )
 	
-	--ArkInventory.Output2( "rebuilding ", ArkInventory.Table.Elements( CategoryRebuildQueue ) )
+	--ArkInventory.OutputDebug( "rebuilding ", ArkInventory.Table.Elements( CategoryRebuildQueue ) )
 	
 	for k, i in pairs( CategoryRebuildQueue ) do
 		
-		--ArkInventory.Output2( "rebuilding ", search_id )
+		--ArkInventory.OutputDebug( "rebuilding ", search_id )
 		
 		
 		-- get category here

@@ -124,8 +124,9 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	
 	
 	-- used for both item to currency mappings (itemid:currencyid), and just knowing what items are currencies
+	["ArkInventory.System.Currency.Dragonflight.Bullion"] = "213089", 
 	["ArkInventory.System.Currency.Dragonflight.Plunderstorm"] = "217397", 
-	["ArkInventory.System.Currency.Dragonflight.Mysterious Fragments"] = "205223:2657,212687:2657,212762:2657,212769:2657,212773:2657,212976:2657,212977:2657,212978:2657,213020:2657,213023:2657,213024:2657,213025:2657,213192:2657,213204:2657,213208:2657,213215:2657,213357:2657,213365:2657,213382:2657,213389:2657,213536:2657",
+	["ArkInventory.System.Currency.Dragonflight.Mysterious Fragments"] = "205223:2657,212687:2657,212762:2657,212769:2657,212773:2657,212976:2657,212977:2657,212978:2657,213020:2657,213022:2657,213023:2657,213024:2657,213025:2657,213192:2657,213204:2657,213208:2657,213215:2657,213357:2657,213365:2657,213382:2657,213389:2657,213536:2657",
 	["ArkInventory.System.Currency.Dragonflight.Time Rifts.Paracausal Flakes"] = "208945:2594,208951:2594",
 	["ArkInventory.System.Currency.Dragonflight.Time Rifts.Dilated"] = "207030,209856,224298",
 	["ArkInventory.System.Currency.Dragonflight.Flightstones"] = "210180:2245,212458:2245,217411:2245",

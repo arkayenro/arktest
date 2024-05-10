@@ -1628,10 +1628,10 @@ function ArkInventory:EVENT_ARKINV_CVAR_UPDATE( ... )
 	--ArkInventory.OutputDebug( "EVENT: ", event, ", ", arg1, ", ", arg2 )
 	
 	if arg1 == "USE_COLORBLIND_MODE" then
-		--ArkInventory.Output2( "cvar = ",  )
+		--ArkInventory.OutputDebug( "cvar = ",  )
 		--ArkInventory.Global.Mode.ColourBlind = ( arg2 == "1" )
 		ArkInventory.Global.Mode.ColourBlind = ArkInventory.CrossClient.GetCVarBool( "colorblindMode" )
-		--ArkInventory.Output2( "mode = ", ArkInventory.Global.Mode.ColourBlind )
+		--ArkInventory.OutputDebug( "mode = ", ArkInventory.Global.Mode.ColourBlind )
 		ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 		ArkInventory.LDB.Money:Update( )
 	end
@@ -1880,7 +1880,7 @@ function ArkInventory.Scan( bucket, rescan )
 			
 			if not ArkInventory.Global.Mode.World then
 				
-				--ArkInventory.Output2( "not in world - requeue scan [", blizzard_id, "] [", loc_id, "].[", bag_id, "]" )
+				--ArkInventory.OutputDebug( "not in world - requeue scan [", blizzard_id, "] [", loc_id, "].[", bag_id, "]" )
 				ArkInventory:SendMessage( "EVENT_ARKINV_BAG_RESCAN_BUCKET", blizzard_id )
 				
 			elseif ArkInventory.ScanRunStateGet( loc_id, bag_id ) then
@@ -4306,7 +4306,7 @@ function ArkInventory.ScanTradeskill( blizzard_id )
 	
 	local loc_id, bag_id = ArkInventory.BlizzardBagIdToInternalId( blizzard_id )
 	
-	--ArkInventory.Output2( "ScanTradeskill( ", bag_id, " ) start" )
+	--ArkInventory.OutputDebug( "ScanTradeskill( ", bag_id, " ) start" )
 	
 	if not ArkInventory.isLocationMonitored( loc_id ) then
 		return
@@ -5464,7 +5464,7 @@ function ArkInventory.ObjectCountGetRaw( search_id, thread_id )
 							
 --							if loc_id == ArkInventory.Const.Location.Reputation then
 --								if icr_loc.e then
---									ArkInventory.Output2( pid, " / ", icr_loc.e )
+--									ArkInventory.OutputDebug( pid, " / ", icr_loc.e )
 --								end
 --							end
 							
@@ -5472,15 +5472,15 @@ function ArkInventory.ObjectCountGetRaw( search_id, thread_id )
 								
 								local rc = nil
 								
-								--ArkInventory.Output2( " " )
-								--ArkInventory.Output2( "player: ", pid )
-								--ArkInventory.Output2( "extra: [", icr_loc.e, "]" )
+								--ArkInventory.OutputDebug( " " )
+								--ArkInventory.OutputDebug( "player: ", pid )
+								--ArkInventory.OutputDebug( "extra: [", icr_loc.e, "]" )
 								
 								local objectType, info = ArkInventory.Tradeskill.isTradeskillObject( search_id )
 								
 								if info and not ArkInventory.Table.IsEmpty( info ) then
 									
-									--ArkInventory.Output2( search_id, " / ", icr_loc.e, " / ", objectType, " / ", info )
+									--ArkInventory.OutputDebug( search_id, " / ", icr_loc.e, " / ", objectType, " / ", info )
 									local skillName = ArkInventory.Localise["UNKNOWN"]
 									local skillKnown = false
 									
@@ -5517,11 +5517,11 @@ function ArkInventory.ObjectCountGetRaw( search_id, thread_id )
 										
 									end
 									
-									--ArkInventory.Output2( "skill known = ", skillKnown, " / ", pid )
+									--ArkInventory.OutputDebug( "skill known = ", skillKnown, " / ", pid )
 									
 									if icr_loc.e then
 										
-										--ArkInventory.Output2( "matched: ", icr_loc.e )
+										--ArkInventory.OutputDebug( "matched: ", icr_loc.e )
 										if skillKnown then
 											-- should hope so, you matched on the enchant
 											if objectType == ArkInventory.Tradeskill.Const.Type.Enchant then
@@ -5542,7 +5542,7 @@ function ArkInventory.ObjectCountGetRaw( search_id, thread_id )
 										
 									else
 										
-										--ArkInventory.Output2( "did not match: ", icr_loc.e )
+										--ArkInventory.OutputDebug( "did not match: ", icr_loc.e )
 										if skillKnown then
 											-- but i dont know how to craft that enchant
 											if objectType == ArkInventory.Tradeskill.Const.Type.Enchant then

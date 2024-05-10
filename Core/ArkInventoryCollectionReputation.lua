@@ -49,7 +49,7 @@ function ArkInventory.Collection.Reputation.ImportCrossRefTable( )
 			key1 = ArkInventory.ObjectIDCount( string.format( "item:%s", item ) )
 			key2 = ArkInventory.ObjectIDCount( string.format( "reputation:%s", rid ) )
 			
-			--ArkInventory.Output2( key1, " / ", key2 )
+			--ArkInventory.OutputDebug( key1, " / ", key2 )
 			
 			if not ArkInventory.Global.ItemCrossReference[key1] then
 				ArkInventory.Global.ItemCrossReference[key1] = { }
@@ -134,7 +134,7 @@ local function FilterActionRestore( )
 end
 
 function ArkInventory.Collection.Reputation.OnHide( )
-	--ArkInventory.Output2( "Reputation.OnHide" )
+	--ArkInventory.OutputDebug( "Reputation.OnHide" )
 	ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_REPUTATION_UPDATE_BUCKET", "FRAME_CLOSED" )
 end
 
@@ -359,10 +359,10 @@ function ArkInventory.Collection.Reputation.ToggleShowAsExperienceBar( id )
 		local object = ArkInventory.Collection.Reputation.GetByID( id )
 		if object then
 			if object.isWatched then
-				--ArkInventory.Output2( "SetWatchedFactionIndex( 0 )" )
+				--ArkInventory.OutputDebug( "SetWatchedFactionIndex( 0 )" )
 				SetWatchedFactionIndex( 0 )
 			else
-				--ArkInventory.Output2( "SetWatchedFactionIndex( ", object.index, " )" )
+				--ArkInventory.OutputDebug( "SetWatchedFactionIndex( ", object.index, " )" )
 				SetWatchedFactionIndex( object.index )
 			end
 		end

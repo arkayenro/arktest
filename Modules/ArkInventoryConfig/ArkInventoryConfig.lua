@@ -10138,6 +10138,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 												ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Restart )
 											end,
 										},
+										
 										compress_enable = {
 											order = 200,
 											name = ArkInventory.Localise["ENABLE"],
@@ -10158,6 +10159,90 @@ function ArkInventory.ConfigInternalDesignData( path )
 												local id = ConfigGetNodeArg( info, #info - 5 )
 												local style = ArkInventory.ConfigInternalDesignGet( id )
 												style.slot.stack.compress.enable = not style.slot.stack.compress.enable
+												ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Restart )
+											end,
+										},
+										compress_include_empty = {
+											order = 210,
+											name = ArkInventory.Localise["EMPTY"],
+											desc = ArkInventory.Localise["CONFIG_DESIGN_ITEM_STACK_COMPRESS_INCLUDE_EMPTY_DESC"],
+											type = "toggle",
+											width = "half",
+											hidden = function( info )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												return style.slot.stack.mode ~= ArkInventory.Const.Slot.Stack.Mode.Compress
+											end,
+											disabled = function( info )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												return ( not style.slot.stack.compress.enable )
+											end,
+											get = function( info )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												return style.slot.stack.compress.include.empty
+											end,
+											set = function( info, v )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												style.slot.stack.compress.include.empty = v
+												ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Restart )
+											end,
+										},
+										compress_include_single = {
+											order = 220,
+											name = ArkInventory.Localise["CONFIG_DESIGN_ITEM_STACK_COMPRESS_INCLUDE_SINGLE"],
+											desc = ArkInventory.Localise["CONFIG_DESIGN_ITEM_STACK_COMPRESS_INCLUDE_SINGLE_DESC"],
+											type = "toggle",
+											width = "half",
+											hidden = function( info )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												return style.slot.stack.mode ~= ArkInventory.Const.Slot.Stack.Mode.Compress
+											end,
+											disabled = function( info )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												return ( not style.slot.stack.compress.enable )
+											end,
+											get = function( info )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												return style.slot.stack.compress.include.single
+											end,
+											set = function( info, v )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												style.slot.stack.compress.include.single = v
+												ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Restart )
+											end,
+										},
+										compress_include_stack = {
+											order = 230,
+											name = ArkInventory.Localise["CONFIG_DESIGN_ITEM_STACK_COMPRESS_INCLUDE_STACK"],
+											desc = ArkInventory.Localise["CONFIG_DESIGN_ITEM_STACK_COMPRESS_INCLUDE_STACK_DESC"],
+											type = "toggle",
+											width = "half",
+											hidden = function( info )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												return style.slot.stack.mode ~= ArkInventory.Const.Slot.Stack.Mode.Compress
+											end,
+											disabled = function( info )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												return ( not style.slot.stack.compress.enable )
+											end,
+											get = function( info )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												return style.slot.stack.compress.include.stack
+											end,
+											set = function( info, v )
+												local id = ConfigGetNodeArg( info, #info - 5 )
+												local style = ArkInventory.ConfigInternalDesignGet( id )
+												style.slot.stack.compress.include.stack = v
 												ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Restart )
 											end,
 										},
@@ -10253,7 +10338,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 											end,
 										},
 										compress_sort = {
-											order = 600,
+											order = 700,
 											name = ArkInventory.Localise["CONFIG_SORTING"],
 											desc = ArkInventory.Localise["CONFIG_SORTING_WHEN_INSTANT_DESC"],
 											type = "toggle",

@@ -1376,7 +1376,7 @@ end
 
 function ArkInventory.Collection.Mount.IsFlyableAdvanced( )
 	
-	local IsFlyable = IsAdvancedFlyableArea( ) and IsOutdoors( )
+	local IsFlyable = ArkInventory.CrossClient.IsAdvancedFlyableArea( ) and IsOutdoors( )
 	
 	return IsFlyable
 	
@@ -1471,7 +1471,7 @@ function ArkInventory.Collection.Mount.IsFlyable( )
 		
 		-- world pvp battle in progress?
 		
-		for index = 1, GetNumWorldPVPAreas( ) do
+		for index = 1, ArkInventory.CrossClient.GetNumWorldPVPAreas( ) do
 			
 			local pvpID, pvpZone, isActive = GetWorldPVPAreaInfo( index )
 			--ArkInventory.Output( pvpID, " / ", pvpZone, " / ", isActive )
@@ -1753,7 +1753,7 @@ local function Scan_Threaded( thread_id )
 	local numOwned = 0
 	local YieldCount = 0
 	
-	--ArkInventory.Output2( "Mount: Start Scan @ ", time( ) )
+	--ArkInventory.OutputDebug( "Mount: Start Scan @ ", time( ) )
 	
 	if not collection.isInit then
 		ScanInit( )
@@ -1878,7 +1878,7 @@ local function Scan_Threaded( thread_id )
 	
 	ArkInventory.Collection.Mount.ApplyUserCorrections( )
 	
-	--ArkInventory.Output2( "Mount: End Scan @ ", time( ), " [", collection.numOwned, "] [", collection.numTotal, "] [", update, "]" )
+	--ArkInventory.OutputDebug( "Mount: End Scan @ ", time( ), " [", collection.numOwned, "] [", collection.numTotal, "] [", update, "]" )
 	
 	collection.isReady = true
 	
@@ -1916,7 +1916,7 @@ end
 
 function ArkInventory:EVENT_ARKINV_COLLECTION_MOUNT_UPDATE_BUCKET( events )
 	
-	--ArkInventory.Output2( "MOUNT BUCKET [", events, "]" )
+	--ArkInventory.OutputDebug( "MOUNT BUCKET [", events, "]" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	

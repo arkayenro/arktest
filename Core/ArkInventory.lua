@@ -445,7 +445,6 @@ ArkInventory.Const.Slot.Data = {
 ArkInventory.Global = { -- globals
 	
 	Enabled = false,
-	--Debug2 = true, -- comment out when done
 	--dataexport = true, -- comment out when done
 	actions_enabled = false,
 	
@@ -712,7 +711,7 @@ ArkInventory.Global = { -- globals
 		
 		[ArkInventory.Const.Location.Mount] = {
 			id = ArkInventory.Const.Location.Mount,
-			ClientCheck = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.PANDARIA ),
+			ClientCheck = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM ),
 			isAccount = true,
 			isActive = true,
 			Internal = "mount",
@@ -759,7 +758,7 @@ ArkInventory.Global = { -- globals
 		
 		[ArkInventory.Const.Location.Toybox] = {
 			id = ArkInventory.Const.Location.Toybox,
-			ClientCheck = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.PANDARIA ),
+			ClientCheck = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM ),
 			isAccount = true,
 			isActive = true,
 			Internal = "toybox",
@@ -1428,6 +1427,11 @@ ArkInventory.Const.DatabaseDefaults.global = {
 								["tooltip"] = true,
 								["bar"] = {
 									["width"] = 10,
+								},
+								["include"] = {
+									["empty"] = true,
+									["single"] = true,
+									["stack"] = true,
 								},
 							},
 						},
@@ -3098,7 +3102,7 @@ function ArkInventory.OnEnable( )
 	
 	ArkInventory.OutputDebug( "OnEnable - Start" )
 	
-	ArkInventory.Output2( "debug2 mode is enabled" )
+	ArkInventory.OutputDebug( "debug2 mode is enabled" )
 	
 	-- Called when the addon is enabled
 	
@@ -5172,7 +5176,7 @@ function ArkInventory.Frame_Main_OnMouseUp( frame )
 	ArkInventory.Frame_Main_Level( frame )
 	
 	ArkInventory.Lib.Dewdrop:Close( )
-	--ArkInventory.Output2( "mouse up" )
+	--ArkInventory.OutputDebug( "mouse up" )
 	
 end
 
@@ -5462,6 +5466,25 @@ function ArkInventory.Frame_Container_CalculateBars( frame )
 							
 							if ArkInventory.Global.Location[loc_id].canCompress then
 								
+								local ok = true
+								local info = ArkInventory.GetObjectInfo( i.h, i )
+								
+								if info.osd.class == "empty" then
+									if not codex.style.slot.stack.compress.include.empty then
+										ok = false
+									end
+								else
+									if info.stacksize == 1 then
+										if not codex.style.slot.stack.compress.include.single then
+											ok = false
+										end
+									else
+										if not codex.style.slot.stack.compress.include.stack then
+											ok = false
+										end
+									end
+								end
+								
 								stack_id = ArkInventory.ObjectIDStack( bar_id, i )
 								
 								if not codex.workpad.compress[stack_id] then
@@ -5476,7 +5499,7 @@ function ArkInventory.Frame_Container_CalculateBars( frame )
 								table.insert( codex.workpad.compress[stack_id].item, { ["bag"] = bag_id, ["slot"] = slot_id } )
 								
 								local count = codex.workpad.compress[stack_id].count
-								if count > 1 then
+								if ok and count > 1 then
 									
 									if count == 2 then
 										
@@ -6598,7 +6621,7 @@ function ArkInventory.Frame_Bar_Label( frame )
 				if align == ArkInventory.ENUM.ANCHOR.RIGHT then
 					obj:SetJustifyH( "RIGHT" )
 				elseif align == ArkInventory.ENUM.ANCHOR.CENTER then
-					obj:SetJustifyH( "MIDDLE" )
+					obj:SetJustifyH( "CENTER" )
 				else
 					obj:SetJustifyH( "LEFT" )
 				end
@@ -7229,7 +7252,7 @@ function ArkInventory.Frame_Bar_Edit_OnReceiveDrag( frame )
 		if state == 1 then
 			ArkInventory.Frame_Bar_Move( loc_id, ArkInventory.Global.Options.OnDragSourceBar, bar_id )
 			ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
-			--ArkInventory.Output2( "dropped bar ", bar_id, " here" )
+			--ArkInventory.OutputDebug( "dropped bar ", bar_id, " here" )
 		elseif state == 2 then
 			--ArkInventory.OutputWarning( string.format( ArkInventory.Localise["MENU_MOVE_FAIL_SAME"], ArkInventory.Localise["MENU_BAR"] ) )
 		elseif state == 3 then
@@ -9639,7 +9662,7 @@ function ArkInventory.Frame_Item_OnReceiveDrag( frame )
 				if state == 1 then
 					ArkInventory.Frame_Bar_Move( loc_id, ArkInventory.Global.Options.OnDragSourceBar, bar_id )
 					ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
-					--ArkInventory.Output2( "dropped bar ", bar_id, " here" )
+					--ArkInventory.OutputDebug( "dropped bar ", bar_id, " here" )
 				elseif state == 2 then
 					--ArkInventory.OutputWarning( string.format( ArkInventory.Localise["MENU_MOVE_FAIL_SAME"], ArkInventory.Localise["MENU_BAR"] ) )
 				elseif state == 3 then
@@ -9661,7 +9684,7 @@ function ArkInventory.Frame_Item_OnReceiveDrag( frame )
 						local di = ArkInventory.Frame_Item_GetDB( ArkInventory.Global.Options.OnDragSourceFrame )
 						ArkInventory.ItemCategorySet( di, cat_id )
 						ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
-						--ArkInventory.Output2( "assigned ", cat_id, " to ", di.h )
+						--ArkInventory.OutputDebug( "assigned ", cat_id, " to ", di.h )
 					else
 						--ArkInventory.OutputWarning( "category assignment aborted, destination is not a custom category" )
 					end
@@ -9676,7 +9699,7 @@ function ArkInventory.Frame_Item_OnReceiveDrag( frame )
 				if state == 1 then
 					ArkInventory.CategoryLocationSet( loc_id, ArkInventory.Global.Options.OnDragSourceCategory, bar_id )
 					ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
-					--ArkInventory.Output2( "dropped category ", ArkInventory.Global.Options.OnDragSourceCategory, " here" )
+					--ArkInventory.OutputDebug( "dropped category ", ArkInventory.Global.Options.OnDragSourceCategory, " here" )
 				elseif state == 2 then
 					--ArkInventory.OutputWarning( string.format( ArkInventory.Localise["MENU_MOVE_FAIL_SAME"], ArkInventory.Localise["CATEGORY"] ) )
 				elseif state == 3 then
@@ -9733,7 +9756,7 @@ function ArkInventory.Frame_Item_Update_Cooldown( frame, codex )
 	if loc_id == ArkInventory.Const.Location.Toybox then
 		local i = ArkInventory.Frame_Item_GetDB( frame )
 		if i and i.item then
-			start, duration, enable = GetItemCooldown( i.item )
+			start, duration, enable = ArkInventory.CrossClient.GetItemCooldown( i.item )
 			--ArkInventory.Output( "toybox cooldown: ", obj:GetName( ) )
 		end
 	elseif loc_id == ArkInventory.Const.Location.Wearing then
@@ -11817,7 +11840,7 @@ end
 
 function ArkInventory.HookOpenBackpack( self, ... )
 
---	ArkInventory.Output2( "HookOpenBackpack( )" )
+--	ArkInventory.OutputDebug( "HookOpenBackpack( )" )
 	
 	local loc_id = ArkInventory.Const.Location.Bag
 	
@@ -11834,7 +11857,7 @@ end
 
 function ArkInventory.HookToggleBackpack( self, ... )
 
---	ArkInventory.Output2( "HookToggleBackpack( )" )
+--	ArkInventory.OutputDebug( "HookToggleBackpack( )" )
 	
 	local loc_id = ArkInventory.Const.Location.Bag
 	
@@ -11879,7 +11902,7 @@ function ArkInventory.HookCloseBag( self, ... )
 	
 	local blizzard_id = ...
 	
---	ArkInventory.Output2( "HookCloseBag( ", blizzard_id, " )" )
+--	ArkInventory.OutputDebug( "HookCloseBag( ", blizzard_id, " )" )
 	
 	return ArkInventory.hooks.CloseBag( ... )
 	
@@ -11889,7 +11912,7 @@ function ArkInventory.HookToggleBag( self, ... )
 	
 	local blizzard_id = ...
 	
---	ArkInventory.Output2( "HookToggleBag( ", blizzard_id, " )" )
+--	ArkInventory.OutputDebug( "HookToggleBag( ", blizzard_id, " )" )
 	
 	if blizzard_id then
 		
@@ -12071,7 +12094,7 @@ function ArkInventory.HookOpenAllBags( self, ... )
 	
 	local loc_id = ArkInventory.Const.Location.Bag
 	if not ArkInventory.isLocationControlled( loc_id ) then
---		ArkInventory.Output2( "HookOpenAllBags - closing all bags" )
+--		ArkInventory.OutputDebug( "HookOpenAllBags - closing all bags" )
 		CloseAllBags( )
 	end
 	
@@ -12081,7 +12104,7 @@ function ArkInventory.HookOpenAllBags( self, ... )
 		if not ArkInventory.isLocationControlled( loc_id ) then
 			for x = ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + 1, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS do
 				if ArkInventory.CrossClient.GetContainerNumSlots( x ) > 0 then
-					--ArkInventory.Output2( "HookOpenAllBags - closing bag ", x )
+					--ArkInventory.OutputDebug( "HookOpenAllBags - closing bag ", x )
 					CloseBag( x )
 				end
 			end
@@ -12090,7 +12113,7 @@ function ArkInventory.HookOpenAllBags( self, ... )
 	end
 	
 	local loc_id = ArkInventory.Const.Location.Bag
---	ArkInventory.Output2( "HookOpenAllBags - opening all bags by ", whoname )
+--	ArkInventory.OutputDebug( "HookOpenAllBags - opening all bags by ", whoname )
 	ArkInventory.Global.BagsOpenedBy = whoname
 	ArkInventory.hooks.OpenAllBags( who )
 	
@@ -12101,7 +12124,7 @@ function ArkInventory.HookOpenAllBags( self, ... )
 		if not ArkInventory.isLocationControlled( loc_id ) then
 			for x = ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + 1, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS do
 				if ArkInventory.CrossClient.GetContainerNumSlots( x ) > 0 then
---					ArkInventory.Output2( "HookOpenAllBags - opening bag ", x )
+--					ArkInventory.OutputDebug( "HookOpenAllBags - opening bag ", x )
 					ArkInventory.hooks.OpenBag( x )
 				end
 			end
@@ -12115,7 +12138,7 @@ end
 
 function ArkInventory.HookCloseAllBags( self, ... )
 	
---	ArkInventory.Output2( "HookCloseAllBags( )" )
+--	ArkInventory.OutputDebug( "HookCloseAllBags( )" )
 	
 	local who = ...
 	local whoname = who
@@ -12123,7 +12146,7 @@ function ArkInventory.HookCloseAllBags( self, ... )
 		whoname = who:GetName( )
 	end
 	
---	ArkInventory.Output2( "closed by ", whoname )
+--	ArkInventory.OutputDebug( "closed by ", whoname )
 	
 	return ArkInventory.hooks.CloseAllBags( ... )
 	
@@ -12400,14 +12423,14 @@ function ArkInventory.HookVoidStorageHide( self, ... )
 end
 
 function ArkInventory.HookVoidStorageEvent( self, event )
---	ArkInventory.Output2( "void storage event ", event )
+--	ArkInventory.OutputDebug( "void storage event ", event )
 end
 
 function ArkInventory.HookFloatingBattlePet_Show( ... )
 	
 	-- speciesID, level, breedQuality, maxHealth, power, speed, customName, bPetID
 	
-	--ArkInventory.Output2( "0 - HookFloatingBattlePet_Show" )
+	--ArkInventory.OutputDebug( "0 - HookFloatingBattlePet_Show" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
@@ -12463,9 +12486,12 @@ function ArkInventory.BlizzardAPIHook( disable, reload )
 		ArkInventory.LoadAddOn( "Blizzard_EngravingUI" )
 	end
 	
+	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM ) then
+		ArkInventory.LoadAddOn( "Blizzard_Collections" )
+	end
+	
 	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.PANDARIA ) then
 		
-		ArkInventory.LoadAddOn( "Blizzard_Collections" )
 		--ArkInventory.LoadAddOn( "Blizzard_ScrappingMachineUI" )
 		
 		
@@ -12832,7 +12858,7 @@ function ArkInventory.CreateColour( r, g, b, a, f )
 	
 	if type( r ) == "string" then
 		
-		--ArkInventory.Output2( string.gsub( c, "\124", "\124\124" ) )
+		--ArkInventory.OutputDebug( string.gsub( c, "\124", "\124\124" ) )
 		f = g
 		a, r, g, b = string.match( c, "^|c(%x%x)([%x%s]%x)(%x%x)(%x%x)" )
 		if not a then
@@ -12845,7 +12871,7 @@ function ArkInventory.CreateColour( r, g, b, a, f )
 		
 		if f and ( not a or not r or not g or not b ) then return end
 		
-		--ArkInventory.Output2( r, "-", g, "-", b, "+", a )
+		--ArkInventory.OutputDebug( r, "-", g, "-", b, "+", a )
 		-- the trading parts colour has a space instead of a zero in the 3rd position for some reason
 		-- at some point i need to work out if its from the alpha or the red value, im guessing red at the moment as they are a fairly bright light blue, almost heirloom
 		
@@ -12866,7 +12892,7 @@ function ArkInventory.CreateColour( r, g, b, a, f )
 		return ("%.2x%.2x%.2x%.2x"):format( a, r, g, b )
 	end
 	
-	--ArkInventory.Output2( c:WrapTextInColorCode( "this should be coloured text" ) )
+	--ArkInventory.OutputDebug( c:WrapTextInColorCode( "this should be coloured text" ) )
 	
 	return c
 	
@@ -13130,7 +13156,7 @@ end
 
 function ArkInventory.LocationMonitorChanged( loc_id )
 	
-	--ArkInventory.Output2( "LocationMonitorChanged( ", loc_id, " )" )
+	--ArkInventory.OutputDebug( "LocationMonitorChanged( ", loc_id, " )" )
 	
 	ArkInventory.ObjectCacheCountClear( nil, nil, loc_id )
 	

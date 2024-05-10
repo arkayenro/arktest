@@ -812,6 +812,30 @@ function ArkInventory.CrossClient.GetCreateFrameItemType( )
 	return "Button"
 end
 
+function ArkInventory.CrossClient.IsAdvancedFlyableArea( )
+	if IsAdvancedFlyableArea then
+		return IsAdvancedFlyableArea( )
+	end
+end
+
+function ArkInventory.CrossClient.GetItemCooldown( ... )
+	
+	if C_Container and C_Container.GetItemCooldown then
+		return C_Container.GetItemCooldown( ... )
+	end
+	
+	if GetItemCooldown then
+		return GetItemCooldown( ... )
+	end
+	
+end
+
+function ArkInventory.CrossClient.GetNumWorldPVPAreas( ... )
+	if GetNumWorldPVPAreas then
+		return GetNumWorldPVPAreas( ... )
+	end
+	return 0
+end
 
 
 

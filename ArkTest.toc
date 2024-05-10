@@ -1,12 +1,13 @@
 ## Interface: 100206
 
 ## Title: ArkTest
+## Notes: test mod for packager testing
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
 ## Version: 10096
 ## X-ReleaseType: Do Not Use
 
-## Notes: test mod
+## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
 
 ## DefaultState: Disabled
 ## LoadOnDemand: 0
@@ -17,7 +18,8 @@
 ## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0, LibDataBroker-1.1, LibDialog-1.0, BattlePetBreedID, Outfitter, ItemRack, GearQuipper, ClosetGnome, SellJunk, Scrap, ReagentRestocker, TradeSkillMaster, Skillet, Peddler
 ## X-Embeds: Ace3, AceGUI-3.0-SharedMediaWidgets, LibPeriodicTable-3.1, LibSharedMedia-3.0, LibDataBroker-1.1, LibDialog-1.0
 
-## X-Website: https://github.com/arkayenro
+## X-Category: Test
+## X-Website: https://github.com/arkayenro/arktest
 
 ## X-Curse-Project-ID: 581591
 ## Z-WoWI-ID: 26395
@@ -28,12 +30,9 @@ ArkInventoryExternals.xml
 #@end-no-lib-strip@
 Core\ArkInventoryExternals.lua
 
-Libs\ArkDewdrop\lib.xml
-Libs\LibDataBroker\lib.xml
-
-
 Core\ArkInventoryConst.lua
 Core\ArkInventoryClient.lua
+
 Core\ArkInventoryPT.lua
 Core\ArkInventoryCPU.lua
 Core\ArkInventoryCodex.lua
@@ -51,6 +50,7 @@ Core\ArkInventoryTransfer.lua
 Core\ArkInventoryMenu.lua
 Core\ArkInventoryRules.lua
 Core\ArkInventorySearch.lua
+Core\ArkInventoryDebug.lua
 Core\ArkInventoryUpgrades.lua
 
 Core\ArkInventoryCollectionPet.lua
@@ -65,7 +65,7 @@ Core\ArkInventoryTooltip.lua
 Core\ArkInventoryMoney.lua
 Core\ArkInventoryMedia.lua
 
-Core\ArkInventoryJunk.lua
+Core\ArkInventoryAction.lua
 
 Core\ArkInventory.xml
 

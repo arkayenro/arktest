@@ -1374,9 +1374,9 @@ function ArkInventory.BarTransfer( loc_id, bar_id, dst_id )
 					
 					local cat_id = ArkInventory.ItemCategoryGet( i )
 					local xbar_id = ArkInventory.CategoryLocationGet( loc_id, cat_id )
-					--ArkInventory.Output2( cat_id, " / ", xbar_id, " = ", h )
+					--ArkInventory.OutputDebug( cat_id, " / ", xbar_id, " = ", h )
 					if xbar_id == bar_id then
-						ArkInventory.Output2( "move ", i.h )
+						ArkInventory.OutputDebug( "move ", i.h )
 					end
 				end
 			end

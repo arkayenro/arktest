@@ -1679,7 +1679,7 @@ local function LinkTrainerSpecies( speciesID )
 	
 	
 	if not collection.isTrainerDataLoaded then
-		--ArkInventory.Output2( "linking saved trainer species data into cache" )
+		--ArkInventory.OutputDebug( "linking saved trainer species data into cache" )
 		collection.trainer = ArkInventory.db.cache.trainerspecies
 		local c = 0
 		for k, v in pairs( collection.trainer ) do
@@ -1688,7 +1688,7 @@ local function LinkTrainerSpecies( speciesID )
 				species[k] = v
 			end
 		end
-		--ArkInventory.Output2( c, " trainer species entries were linked" )
+		--ArkInventory.OutputDebug( c, " trainer species entries were linked" )
 		collection.isTrainerDataLoaded = true
 	end
 	
@@ -1700,7 +1700,7 @@ local function LinkTrainerSpecies( speciesID )
 	-- add the trainer data back
 	trainer[speciesID].td = td or { }
 	
-	--ArkInventory.Output2( "linked species ", speciesID, " to trainer species" )
+	--ArkInventory.OutputDebug( "linked species ", speciesID, " to trainer species" )
 	
 end
 
@@ -1843,7 +1843,7 @@ local function Scan_Threaded( thread_id )
 			
 			
 			if not canBattle then
-				--ArkInventory.Output2( petName, " / ", health, " / ", maxHealth )
+				--ArkInventory.OutputDebug( petName, " / ", health, " / ", maxHealth )
 			end
 			
 			numOwned = numOwned + 1
@@ -1955,7 +1955,7 @@ local function Scan_Threaded( thread_id )
 	
 	if not collection.isReady then
 		collection.isReady = true
-		--ArkInventory.Output2( "pet data is now ready" )
+		--ArkInventory.OutputDebug( "pet data is now ready" )
 	end
 	
 	ArkInventory.Collection.Pet.ImportCrossRefTable( )
@@ -2123,7 +2123,7 @@ function ArkInventory:EVENT_ARKINV_BATTLEPET_OPENING_DONE( event, ... )
 			
 			if C_PetBattles.IsWildBattle( ) then
 				
-				--ArkInventory.Output2( "wild battle" )
+				--ArkInventory.OutputDebug( "wild battle" )
 				
 				if sd.isTrainer then
 					-- elite/legendary, dont add anything
@@ -2199,7 +2199,7 @@ function ArkInventory:EVENT_ARKINV_BATTLEPET_OPENING_DONE( event, ... )
 			--ArkInventory.Output( YELLOW_FONT_COLOR_CODE, ArkInventory.Localise["BATTLEPET"], " #", i, ": ", h, " ", YELLOW_FONT_COLOR_CODE, info )
 			
 		end
-		--ArkInventory.Output2( { speciesID, level, quality, maxHealth, power, speed, "", name } )
+		--ArkInventory.OutputDebug( { speciesID, level, quality, maxHealth, power, speed, "", name } )
 		
 		if ArkInventory.db.option.message.battlepet.opponent then
 			local h = string.format( "%s|Hbattlepet:%s:%s:%s:%s:%s:%s:%s|h[%s]|h|r", select( 5, ArkInventory.GetItemQualityColor( quality ) ), speciesID, level, quality, maxHealth, power, speed, "", name )

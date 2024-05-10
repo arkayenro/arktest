@@ -349,7 +349,7 @@ function ArkInventoryRules.System.boolean_itemstring( ... )
 		
 		local e = string.sub( string.format( "%s:", ArkInventoryRules.Object.info.osd.h ), 1, string.len( arg ) )
 --		if ArkInventoryRules.Object.bag_id == 2 then
---			ArkInventory.Output2( string.lower( e ), " == ", string.lower( arg ) )
+--			ArkInventory.OutputDebug( string.lower( e ), " == ", string.lower( arg ) )
 --		end
 		if string.lower( e ) == string.lower( arg ) then
 			return true
@@ -1720,7 +1720,7 @@ function ArkInventoryRules.System.boolean_bonusids( ... )
 	end
 	
 	local bids = ArkInventoryRules.Object.info.osd.bonusids
-	--ArkInventory.Output2( ArkInventoryRules.Object.h, " = ", bids )
+	--ArkInventory.OutputDebug( ArkInventoryRules.Object.h, " = ", bids )
 	if not bids then return false end
 	
 	local fn = "bonus"
@@ -3174,7 +3174,7 @@ function ArkInventoryRules.SetObject( tbl )
 		end
 		
 		if not ArkInventory.TooltipIsReady( ArkInventoryRules.Tooltip ) then
-			--ArkInventory.Output2( "2 tooltip not ready: ", i.h )
+			--ArkInventory.OutputDebug( "2 tooltip not ready: ", i.h )
 			return nil
 		end
 		

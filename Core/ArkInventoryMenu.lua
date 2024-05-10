@@ -614,7 +614,7 @@ function ArkInventory.MenuBarOpen( frame )
 							local t = cat.type_code
 							local cat_bar, def_bar = ArkInventory.CategoryLocationGet( loc_id, cat.id )
 							
-							----ArkInventory.Output2( "loc_id=[", loc_id, "], cat_id=[", cat.id, "], cat_bar=[", cat_bar, "], def_bar=[", def_bar, "]" )
+							----ArkInventory.OutputDebug( "loc_id=[", loc_id, "], cat_id=[", cat.id, "], cat_bar=[", cat_bar, "], def_bar=[", def_bar, "]" )
 							
 							if int_type == "ASSIGN" and abs( cat_bar ) == bar_id and not def_bar then
 								t = "DO_NOT_DISPLAY"
@@ -3758,12 +3758,12 @@ function ArkInventory.MenuLDBTrackingCurrencyListEntries( value, showTitle, code
 			
 		end
 		
-		--ArkInventory.Output2( "" )
+		--ArkInventory.OutputDebug( "" )
 		--ArkInventory.OutputDebug( "HEADER: ", parent.index, " = ", parent.name )
 		
 		for _, entry in ArkInventory.Collection.Currency.ListIterate( ) do
 			
-			--ArkInventory.Output2( "ENTRY: ", entry.index, " / ", entry.parentIndex, " / ", entry.name, " / ", entry.isHeader )
+			--ArkInventory.OutputDebug( "ENTRY: ", entry.index, " / ", entry.parentIndex, " / ", entry.name, " / ", entry.isHeader )
 			
 			local currencyHeader = entry.isHeader and entry.hasCurrency
 			
@@ -4035,7 +4035,7 @@ function ArkInventory.MenuLDBTrackingReputationListHeaders( offset, level, value
 			
 			if entry.parentIndex == nil and entry.name then
 				
-				--ArkInventory.Output2( "HEADER: ", entry )
+				--ArkInventory.OutputDebug( "HEADER: ", entry )
 				
 				local expand = codex.player.data.ldb.tracking.reputation.expand[entry.id]
 				local value = string.format( "HEADER_%s", entry.index )
@@ -4114,7 +4114,7 @@ function ArkInventory.MenuLDBTrackingReputationListEntries( value, showTitle, co
 			
 		end
 		
-		--ArkInventory.Output2( "" )
+		--ArkInventory.OutputDebug( "" )
 		--ArkInventory.OutputDebug( "HEADER: ", parent.index, " = ", parent.name )
 		
 		for _, entry in ArkInventory.Collection.Reputation.ListIterate( ) do

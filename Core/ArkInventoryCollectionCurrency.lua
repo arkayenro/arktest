@@ -47,7 +47,7 @@ function ArkInventory.Collection.Currency.ImportCrossRefTable( )
 			key1 = ArkInventory.ObjectIDCount( string.format( "item:%s", item ) )
 			key2 = ArkInventory.ObjectIDCount( string.format( "currency:%s", cid ) )
 			
-			--ArkInventory.Output2( key1, " / ", key2 )
+			--ArkInventory.OutputDebug( key1, " / ", key2 )
 			
 			if not ArkInventory.Global.ItemCrossReference[key1] then
 				ArkInventory.Global.ItemCrossReference[key1] = { }
@@ -180,7 +180,7 @@ function ArkInventory.Collection.Currency.ListSetActive( index, state, bulk )
 	local entry = ArkInventory.Collection.Currency.GetByIndex( index )
 	if entry then
 		
-		--ArkInventory.Output2( index, " / ", state, " / ", entry.active )
+		--ArkInventory.OutputDebug( index, " / ", state, " / ", entry.active )
 		
 		if state ~= entry.active then
 			--ArkInventory.Output( "Change: ", state, ", INDEX[=", entry.index, "] NAME=[", entry.name, "]" )
