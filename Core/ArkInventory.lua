@@ -2709,13 +2709,10 @@ end
 
 function ArkInventory.OnLoad( )
 	
-	-- called via hidden frame in xml
+	-- called via the debug frame onload (its the first frame that gets created)
 	
 	ArkInventory.Const.StartupTime = time( ) - ( debugprofilestop( ) / 1000 )
 	ArkInventory.OutputDebug( "OnLoad - Start" )
-	
-	ArkInventory.Debug.frame = ARKINV_Debug
-	table.insert( UISpecialFrames, ArkInventory.Debug.frame:GetName( ) )
 	
 	ArkInventory.Const.Program.Version = ArkInventory.CrossClient.GetAddOnMetadata( ArkInventory.Const.Program.Name, "Version" )
 	
@@ -2779,7 +2776,7 @@ function ArkInventory.OnLoad( )
 	
 	
 	-- keyring
-	if ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.CATACLYSM ) then
+	if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Keyring].ClientCheck ) then
 		
 		loc_id = ArkInventory.Const.Location.Keyring
 		bags = ArkInventory.Global.Location[loc_id].Bags
@@ -2800,7 +2797,7 @@ function ArkInventory.OnLoad( )
 	end
 	
 	-- reagent bank
-	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAENOR ) then
+	if ArkInventory.ClientCheck( ArkInventory.Const.Slot.Data[ArkInventory.Const.Slot.Type.Reagent].ClientCheck ) then
 		local x = ArkInventory.ENUM.BAG.INDEX.REAGENTBANK
 		bags[#bags + 1] = x
 		ArkInventory.Global.BlizzardReagentContainerIDs[x] = true

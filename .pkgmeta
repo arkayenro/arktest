@@ -33,13 +33,23 @@ externals:
   
   Externals/SharedMedia: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
   Externals/SharedMediaWidgets: https://repos.wowace.com/wow/ace-gui-3-0-shared-media-widgets/trunk/AceGUI-3.0-SharedMediaWidgets
-
-
+  
+  
+  Externals/LibDataBroker: https://repos.curseforge.com/wow/libdatabroker-1-1
+  
+  
+  
+ignore:
+  ArkInventory/Web
+  ArkInventory/Profiles
+  ArkInventory/Core/ArkInventoryDeprecated.lua
+  
 move-folders:
-  ArkTest/Modules/ArkInventoryConfig: ArkInventoryConfig
-  ArkTest/Modules/ArkInventorySearch: ArkInventorySearch
-  ArkTest/Modules/ArkInventoryRules: ArkInventoryRules
-  ArkTest/Modules/ArkInventoryRules_Example: ArkInventoryRules_Example
+  ArkInventory/Modules/ArkInventoryActions: ArkInventoryActions
+  ArkInventory/Modules/ArkInventoryConfig: ArkInventoryConfig
+  ArkInventory/Modules/ArkInventoryRules: ArkInventoryRules
+  ArkInventory/Modules/ArkInventoryRules_Example: ArkInventoryRules_Example
+  ArkInventory/Modules/ArkInventorySearch: ArkInventorySearch
 
 manual-changelog:
   filename: ChangeHistory.md
