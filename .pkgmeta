@@ -35,9 +35,6 @@ externals:
   Externals/SharedMediaWidgets: https://repos.wowace.com/wow/ace-gui-3-0-shared-media-widgets/trunk/AceGUI-3.0-SharedMediaWidgets
   
   
-  Externals/LibDataBroker: https://repos.curseforge.com/wow/libdatabroker-1-1
-  
-  
   
 ignore:
   ArkInventory/Web
