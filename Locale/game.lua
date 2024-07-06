@@ -16,8 +16,8 @@ end
 local function FormatForCapture( var )
 	
 	if type( var ) ~= "string" then
-		print( RED_FONT_COLOR_CODE .. "ArkInventory: code failure - FormatForCapture - a non string value wast used." )
-		--assert( false, "code failure" )
+		print( RED_FONT_COLOR_CODE .. "ArkInventory: code failure - FormatForCapture - a non string value was used." )
+		--ArkInventory.Util.Error( "FormatForCapture - a non string value was used" )
 		return
 	end
 	
@@ -120,6 +120,7 @@ L["WOW_ITEM_TOOLTIP_10P12T"] = FOURTH_NUMBER
 
 -- generic words & passthru
 L["ACCEPT"] = ACCEPT or true
+L["ACCOUNTBANK"] = ACCOUNT_BANK_PANEL_TITLE or true
 L["ACTIVATE"] = ACTIVATE or true
 L["ACTIVE"] = ACTIVE_PETS or true
 L["ADD"] = ADD or true
@@ -223,7 +224,7 @@ L["ITEM_LEVEL"] = STAT_AVERAGE_ITEM_LEVEL or true
 L["ITEM_NOT_READY"] = SPELL_FAILED_ITEM_NOT_READY or true
 L["ITEM_SOCKETABLE"] = ITEM_SOCKETABLE or true
 L["ITEM_WRONG_ZONE"] = SPELL_FAILED_INCORRECT_AREA or true
-L["ITEMS"] = ITEMS or true
+L["ITEMS"] = ITEMS or WARDROBE_ITEMS or true
 L["JUNK"] = BAG_FILTER_JUNK or true
 L["KEYRING"] = KEYRING or true
 L["LEARN"] = LEARN or true
@@ -258,7 +259,6 @@ L["OBLITERUM_FORGE"] = OBLITERUM_FORGE_TITLE
 L["OFFLINE"] = PLAYER_OFFLINE or true
 L["OKAY"] = OKAY or true
 L["ONLINE"] = FRIENDS_LIST_ONLINE or true
-L["OPEN"] = OPEN or true
 L["OPTION_TOOLTIP_REVERSE_NEW_LOOT"] = OPTION_TOOLTIP_REVERSE_NEW_LOOT or true
 L["OPTIONS"] = GAMEOPTIONS_MENU or true
 L["OTHER"] = OTHER or true
@@ -266,6 +266,7 @@ L["PET"] = PET or true
 L["PETS"] = PETS or true
 L["POWER"] = POWER_TYPE_POWER or true
 L["PREVIOUS_RANK_UNKNOWN"] = TOOLTIP_SUPERCEDING_SPELL_NOT_KNOWN or true
+L["PROFESSIONS"] = TRADE_SKILLS or true
 L["PROFESSION_TOOL"] = INVTYPE_PROFESSION_TOOL or true
 L["QUALITY"] = QUALITY or true
 L["QUEST"] = BATTLE_PET_SOURCE_2 or true
@@ -284,6 +285,7 @@ L["REVERSE_NEW_LOOT_TEXT"] = REVERSE_NEW_LOOT_TEXT or true
 L["RULES"] = BRAWL_TOOLTIP_RULES or true
 L["SAVE"] = SAVE or true
 L["SANCTUM_SPECIAL_AREA_NIGHTFAE"] = GARDENWEALD_STATUS_HEADER or true
+L["SCRAP"] = SCRAP_BUTTON or true
 L["SEARCH"] = SEARCH or true
 L["SEARCH_LOADING"] = SEARCH_LOADING_TEXT or true
 L["SECONDARY_SKILLS"] = SECONDARY_SKILLS or true
@@ -313,6 +315,7 @@ L["TRADE"] = TRADE or true
 L["TRADESKILL"] = BATTLE_PET_SOURCE_4 or true
 L["TRADESKILLS"] = TRADE_SKILLS or true
 L["TRANSMOGRIFY"] = TRANSMOGRIFY or true
+L["TRANSMOGRIFICATION"] = TRANSMOGRIFICATION or true
 L["TRANSMOGRIFIER"] = MINIMAP_TRACKING_TRANSMOGRIFIER or true
 L["TYPE"] = TYPE or true
 L["UNAVAILABLE"] = UNAVAILABLE or true
@@ -320,12 +323,12 @@ L["UNKNOWN"] = UNKNOWN or true
 L["UNLEARNED"] = TRADE_SKILLS_UNLEARNED_TAB or true
 L["UNTRACK"] = UNTRACK_QUEST_ABBREV or true
 L["UNUSED"] = UNUSED or true
+L["USE"] = USE or true
 L["UPGRADE"] = UPGRADE or true
 L["VAULT"] = GUILD_BANK or true
 L["VENDOR"] = BATTLE_PET_SOURCE_3 or true
 L["VOID_STORAGE"] = VOID_STORAGE or true
 L["VIEW"] = VIEW or true
-L["WARNING"] = PING_TYPE_WARNING or true
 L["WEEKLY"] = WEEKLY or true
 L["YES"] = YES or true
 
@@ -373,7 +376,7 @@ L["PET_CANNOT_BATTLE"] = string.gsub( BATTLE_PET_CANNOT_BATTLE, "\n", " " )
 L["MINUTES"] = string.match( D_MINUTES, ":(.-);$" ) or true
 L["SECONDS"] = string.match( D_SECONDS, ":(.-);$" ) or true
 
-L["SPELL_DRUID_TRAVEL_FORM"] = ( GetSpellInfo( 783 ) ) or true
+L["SPELL_DRUID_TRAVEL_FORM"] = ( ArkInventory.CrossClient.GetSpellInfo( 783 ).name ) or true
 
 L["UNKNOWN_OBJECT"] = "Unknown Object [%s]"
 
@@ -410,6 +413,7 @@ local itemClassTable = {
 	{ "WOW_ITEM_CLASS_CONTAINER_INSCRIPTION", ArkInventory.ENUM.EXPANSION.WRATH, nil, ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONTAINER.INSCRIPTION },
 	{ "WOW_ITEM_CLASS_CONTAINER_FISHING", ArkInventory.ENUM.EXPANSION.CATACLYSM, nil, ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONTAINER.FISHING },
 	{ "WOW_ITEM_CLASS_CONTAINER_COOKING", ArkInventory.ENUM.EXPANSION.PANDARIA, nil, ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONTAINER.COOKING },
+	{ "WOW_ITEM_CLASS_CONTAINER_REAGENT", ArkInventory.ENUM.EXPANSION.PANDARIA, nil, ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONTAINER.REAGENT },
 	
 	{ "WOW_ITEM_CLASS_WEAPON", nil, nil, ArkInventory.ENUM.ITEM.TYPE.WEAPON.PARENT },
 	-- 01 = one-handed axes
@@ -575,9 +579,9 @@ for _, v in ipairs( itemClassTable ) do
 			local text = nil
 			
 			if i1 and i2 then
-				text = GetItemSubClassInfo( i1, i2 )
+				text = ArkInventory.CrossClient.GetItemSubClassInfo( i1, i2 )
 			elseif i1 then
-				text = GetItemClassInfo( i1 )
+				text = ArkInventory.CrossClient.GetItemClassInfo( i1 )
 			end
 			
 			if text then
@@ -630,6 +634,7 @@ L["WOW_ITEM_CLASS_CONTAINER_HERBALISM"] = true
 L["WOW_ITEM_CLASS_CONTAINER_INSCRIPTION"] = true
 L["WOW_ITEM_CLASS_CONTAINER_LEATHERWORKING"] = true
 L["WOW_ITEM_CLASS_CONTAINER_MINING"] = true
+L["WOW_ITEM_CLASS_CONTAINER_REAGENT"] = true
 L["WOW_ITEM_CLASS_CONTAINER_SOULSHARD"] = true
 
 L["WOW_ITEM_CLASS_QUIVER"] = true
@@ -702,3 +707,6 @@ L["WOW_SKILL_TAILORING"] = true
 L["WOW_ITEM_SOULSHARD"] = true
 L["WOW_ITEM_PROJECTILE_ARROW"] = true
 L["WOW_ITEM_PROJECTILE_BULLET"] = true
+
+L["DEBUG_SCAN_ABORT_NOT_CONTROLLED"] = "scan aborted - blizzard bag [%1$s] is not controlled by %2$s"
+L["DEBUG_SCAN_ABORT_WRONG_CLIENT"] = "scan aborted - %1$s [%2$s.%3$s]/[%4$s] is not enabled for this client"

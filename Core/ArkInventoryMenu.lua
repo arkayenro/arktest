@@ -80,7 +80,7 @@ end
 
 function ArkInventory.MenuMainOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -89,7 +89,7 @@ function ArkInventory.MenuMainOpen( frame )
 	
 	
 	local loc_id = frame:GetParent( ):GetParent( ).ARK_Data.loc_id
-	local codex = ArkInventory.GetLocationCodex( loc_id )
+	local codex = ArkInventory.Codex.GetLocation( loc_id )
 	
 	local anchorpoints = {
 		[ArkInventory.ENUM.ANCHOR.TOPRIGHT] = ArkInventory.Localise["TOPRIGHT"],
@@ -264,7 +264,7 @@ end
 
 function ArkInventory.MenuBarOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -274,7 +274,7 @@ function ArkInventory.MenuBarOpen( frame )
 	
 	local loc_id = frame.ARK_Data.loc_id
 	local bar_id = frame.ARK_Data.bar_id
-	local codex = ArkInventory.GetLocationCodex( loc_id )
+	local codex = ArkInventory.Codex.GetLocation( loc_id )
 	local bar_name = codex.layout.bar.data[bar_id].name.text or ""
 	
 	local sid_def = codex.style.sort.method or 9999
@@ -288,8 +288,6 @@ function ArkInventory.MenuBarOpen( frame )
 	
 	--ArkInventory.Output( "sid=[", sid, "] default=[", sid_def, "]" )
 	
-	
-	local category = ArkInventory.Const.CategoryTypes
 	
 	ArkInventory.Lib.Dewdrop:Open( frame,
 		"point", helper_DewdropMenuPosition( frame ),
@@ -434,7 +432,7 @@ function ArkInventory.MenuBarOpen( frame )
 						)
 						
 						local has_entries = false
-						for _, v in ipairs( ArkInventory.Const.CategoryTypes ) do
+						for _, v in ipairs( ArkInventory.Const.Category.Headers ) do
 							if ArkInventory.CategoryBarHasAssigned( loc_id, bar_id, v ) then
 								has_entries = true
 								ArkInventory.Lib.Dewdrop:AddLine(
@@ -445,7 +443,7 @@ function ArkInventory.MenuBarOpen( frame )
 							end
 						end
 						
-						for bag_id in pairs( ArkInventory.Global.Location[loc_id].Bags ) do
+						for bag_id in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
 							if codex.layout.bag[bag_id].bar == bar_id then
 								has_entries = true
 								ArkInventory.Lib.Dewdrop:AddLine(
@@ -486,7 +484,7 @@ function ArkInventory.MenuBarOpen( frame )
 					
 					else
 						
-						for _, v in ipairs( ArkInventory.Const.CategoryTypes ) do
+						for _, v in ipairs( ArkInventory.Const.Category.Headers ) do
 							ArkInventory.Lib.Dewdrop:AddLine(
 								"text", ArkInventory.Localise[string.format( "CATEGORY_%s", v )],
 								"hasArrow", true,
@@ -695,7 +693,7 @@ function ArkInventory.MenuBarOpen( frame )
 					
 					ArkInventory.Lib.Dewdrop:AddLine( )
 					
-					for bag_id in pairs( ArkInventory.Global.Location[loc_id].Bags ) do
+					for bag_id in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
 						
 						local cat_bar = codex.layout.bag[bag_id].bar
 						
@@ -1053,7 +1051,7 @@ end
 
 function ArkInventory.MenuBarLabelOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -1112,7 +1110,7 @@ end
 
 function ArkInventory.MenuItemOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Global.Mode.Edit == false then
 		return
@@ -1126,9 +1124,9 @@ function ArkInventory.MenuItemOpen( frame )
 	
 	local loc_id = frame.ARK_Data.loc_id
 	local bag_id = frame.ARK_Data.bag_id
-	local blizzard_id = ArkInventory.InternalIdToBlizzardBagId( loc_id, bag_id )
+	local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromWindowId( loc_id, bag_id )
 	local slot_id = frame.ARK_Data.slot_id
-	local codex = ArkInventory.GetLocationCodex( loc_id )
+	local codex = ArkInventory.Codex.GetLocation( loc_id )
 	local i = ArkInventory.Frame_Item_GetDB( frame )
 	local info = ArkInventory.GetObjectInfo( i.h, i )
 	
@@ -1143,8 +1141,6 @@ function ArkInventory.MenuItemOpen( frame )
 	
 	local cat0, cat1, cat2 = ArkInventory.ItemCategoryGet( i )
 	local bar_id = math.abs( ArkInventory.CategoryLocationGet( loc_id, cat0 ) )
-	
-	local categories = { "SYSTEM", "CONSUMABLE", "TRADEGOODS", "SKILL", "CLASS", "EMPTY", "CUSTOM", }
 	
 	cat0 = ArkInventory.Global.Category[cat0] or cat0
 	if type( cat0 ) ~= "table" then
@@ -1310,7 +1306,7 @@ function ArkInventory.MenuItemOpen( frame )
 						
 					else
 						
-						for _, v in ipairs( categories ) do
+						for _, v in ipairs( ArkInventory.Const.Category.Headers ) do
 							ArkInventory.Lib.Dewdrop:AddLine(
 								"text", ArkInventory.Localise[string.format( "CATEGORY_%s", v )],
 								"disabled", isEmpty,
@@ -1652,7 +1648,7 @@ function ArkInventory.MenuItemOpen( frame )
 						ArkInventory.Lib.Dewdrop:AddLine( "text", string.format( "%s%s", LIGHTYELLOW_FONT_COLOR_CODE, ArkInventory.Localise["MENU_ITEM_DEBUG_PT_NONE"] ) )
 					
 					else
-					
+						
 						for k, v in ArkInventory.spairs( pt_set ) do
 							ArkInventory.Lib.Dewdrop:AddLine(
 								"text", k,
@@ -1898,6 +1894,12 @@ function ArkInventory.MenuItemCategoryAssignOpen( offset, level, value, i, loc_i
 					state = ArkInventory.Localise["MAIL"]
 				elseif catset.action.t == ArkInventory.ENUM.ACTION.TYPE.MOVE then
 					state = ArkInventory.Localise["MOVE"]
+				elseif catset.action.t == ArkInventory.ENUM.ACTION.TYPE.USE then
+					state = ArkInventory.Localise["USE"]
+				elseif catset.action.t == ArkInventory.ENUM.ACTION.TYPE.DELETE then
+					state = ArkInventory.Localise["DELETE"]
+				elseif catset.action.t == ArkInventory.ENUM.ACTION.TYPE.SCRAP then
+					state = ArkInventory.Localise["SCRAP"]
 				end
 				
 				text = string.format( "%s: %s%s", text, colour, state )
@@ -1994,6 +1996,7 @@ function ArkInventory.MenuItemCategoryAssignOpen( offset, level, value, i, loc_i
 				
 				ArkInventory.Lib.Dewdrop:AddLine( )
 				
+				
 				local text = ArkInventory.Localise["DISABLED"]
 				local desc = string.format( ArkInventory.Localise["CONFIG_ACTION_TYPE_DESC"], cat.fullname, text )
 				local state = ArkInventory.ENUM.ACTION.TYPE.DISABLED
@@ -2008,6 +2011,7 @@ function ArkInventory.MenuItemCategoryAssignOpen( offset, level, value, i, loc_i
 						catset.action.t = state
 					end
 				)
+				
 				
 				local text = ArkInventory.Localise["VENDOR"]
 				local desc = string.format( ArkInventory.Localise["CONFIG_ACTION_TYPE_DESC"], cat.fullname, text )
@@ -2024,6 +2028,7 @@ function ArkInventory.MenuItemCategoryAssignOpen( offset, level, value, i, loc_i
 					end
 				)
 				
+				
 				local text = ArkInventory.Localise["MAIL"]
 				local desc = string.format( ArkInventory.Localise["CONFIG_ACTION_TYPE_DESC"], cat.fullname, text )
 				local state = ArkInventory.ENUM.ACTION.TYPE.MAIL
@@ -2039,6 +2044,7 @@ function ArkInventory.MenuItemCategoryAssignOpen( offset, level, value, i, loc_i
 					end
 				)
 				
+				
 				local text = ArkInventory.Localise["MOVE"]
 				local desc = string.format( ArkInventory.Localise["CONFIG_ACTION_TYPE_DESC"], cat.fullname, text )
 				local state = ArkInventory.ENUM.ACTION.TYPE.MOVE
@@ -2048,6 +2054,56 @@ function ArkInventory.MenuItemCategoryAssignOpen( offset, level, value, i, loc_i
 					"tooltipTitle", text,
 					"tooltipText", desc,
 					"hidden", true,
+					"isRadio", true,
+					"checked", catset.action.t == state,
+					"func", function( )
+						catset.action.t = state
+					end
+				)
+				
+				
+				local text = ArkInventory.Localise["USE"]
+				local desc = string.format( ArkInventory.Localise["CONFIG_ACTION_TYPE_DESC"], cat.fullname, text )
+				local state = ArkInventory.ENUM.ACTION.TYPE.USE
+				
+				ArkInventory.Lib.Dewdrop:AddLine(
+					"text", text,
+					"tooltipTitle", text,
+					"tooltipText", desc,
+					"hidden", true,
+					"isRadio", true,
+					"checked", catset.action.t == state,
+					"func", function( )
+						catset.action.t = state
+					end
+				)
+				
+				
+				local text = ArkInventory.Localise["DELETE"]
+				local desc = string.format( ArkInventory.Localise["CONFIG_ACTION_TYPE_DESC"], cat.fullname, text )
+				local state = ArkInventory.ENUM.ACTION.TYPE.DELETE
+				
+				ArkInventory.Lib.Dewdrop:AddLine(
+					"text", text,
+					"tooltipTitle", text,
+					"tooltipText", desc,
+					"hidden", true,
+					"isRadio", true,
+					"checked", catset.action.t == state,
+					"func", function( )
+						catset.action.t = state
+					end
+				)
+				
+				
+				local text = ArkInventory.Localise["SCRAP"]
+				local desc = string.format( ArkInventory.Localise["CONFIG_ACTION_TYPE_DESC"], cat.fullname, text )
+				local state = ArkInventory.ENUM.ACTION.TYPE.SCRAP
+				
+				ArkInventory.Lib.Dewdrop:AddLine(
+					"text", text,
+					"tooltipTitle", text,
+					"tooltipText", desc,
 					"isRadio", true,
 					"checked", catset.action.t == state,
 					"func", function( )
@@ -2114,6 +2170,7 @@ function ArkInventory.MenuItemCategoryAssignOpen( offset, level, value, i, loc_i
 					"text", text,
 					"tooltipTitle", text,
 					"tooltipText", desc,
+					"disabled", catset.action.t == ArkInventory.ENUM.ACTION.TYPE.DELETE,
 					"isRadio", true,
 					"checked", catset.action.w == state,
 					"func", function( )
@@ -2200,7 +2257,7 @@ end
 
 function ArkInventory.MenuBagOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -2210,8 +2267,9 @@ function ArkInventory.MenuBagOpen( frame )
 	
 	local loc_id = frame.ARK_Data.loc_id
 	local bag_id = frame.ARK_Data.bag_id
-	local blizzard_id = ArkInventory.InternalIdToBlizzardBagId( loc_id, bag_id )
-	local codex = ArkInventory.GetLocationCodex( loc_id )
+	local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromWindowId( loc_id, bag_id )
+	local map = ArkInventory.Util.MapGetBlizzard( blizzard_id )
+	local codex = ArkInventory.Codex.GetLocation( loc_id )
 	local player_id = codex.player.data.info.player_id
 	
 	local i = ArkInventory.Frame_Item_GetDB( frame )
@@ -2239,6 +2297,70 @@ function ArkInventory.MenuBagOpen( frame )
 					"icon", ArkInventory.Const.ButtonData[ArkInventory.ENUM.BUTTONID.EditMode].Texture,
 					"isTitle", true
 				)
+				
+				-- purchase
+				if bag.status == ArkInventory.Const.Bag.Status.Purchase then
+					
+					if loc_id == ArkInventory.Const.Location.Bank then
+						
+						ArkInventory.Lib.Dewdrop:AddLine( )
+						
+						if map.loc_id_storage == ArkInventory.Const.Location.AccountBank then
+							
+							local cost = C_Bank.FetchNextPurchasableBankTabCost( Enum.BankType.Account )
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", BANKSLOTPURCHASE,
+								"tooltipTitle", ArkInventory.Localise["ACCOUNTBANK"],
+								"tooltipText", string.format( "%s\n\n%s %s", ACCOUNT_BANK_TAB_PURCHASE_PROMPT, COSTS_LABEL, ArkInventory.MoneyText( cost, true ) ),
+								"closeWhenClicked", true,
+								"func", function( )
+									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+									StaticPopup_Show( "CONFIRM_BUY_BANK_TAB", nil, nil, { bankType = Enum.BankType.Account } )
+								end
+							)
+							
+						end
+						
+						if map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
+							
+							local cost = GetReagentBankCost( )
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", BANKSLOTPURCHASE,
+								"tooltipTitle", ArkInventory.Localise["REAGENTBANK"],
+								"tooltipText", string.format( "%s\n\n%s %s", REAGENTBANK_PURCHASE_TEXT, COSTS_LABEL, ArkInventory.MoneyText( cost, true ) ),
+								"closeWhenClicked", true,
+								"func", function( )
+									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+									StaticPopup_Show( "CONFIRM_BUY_REAGENTBANK_TAB" )
+								end
+							)
+							
+						end
+						
+						if map.loc_id_storage == ArkInventory.Const.Location.Bank then
+							
+							local numSlots = GetNumBankSlots( )
+							local cost = GetBankSlotCost( numSlots )
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", BANKSLOTPURCHASE,
+								"tooltipTitle", BANK_BAG,
+								"tooltipText", string.format( "%s\n\n%s %s", BANKSLOTPURCHASE_LABEL, COSTS_LABEL, ArkInventory.MoneyText( cost, true ) ),
+								"closeWhenClicked", true,
+								"func", function( )
+									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+									StaticPopup_Show( "CONFIRM_BUY_BANK_SLOT" )
+								end
+							)
+							
+						end
+						
+					end
+					
+				end
+				
 				ArkInventory.Lib.Dewdrop:AddLine( )
 				
 				ArkInventory.Lib.Dewdrop:AddLine(
@@ -2259,7 +2381,7 @@ function ArkInventory.MenuBagOpen( frame )
 					"tooltipText", ArkInventory.Localise["MENU_BAG_ISOLATE_DESC"],
 					"closeWhenClicked", true,
 					"func", function( )
-						for x in pairs( ArkInventory.Global.Location[loc_id].Bags ) do
+						for x in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
 							if x == bag_id then
 								codex.player.data.option[loc_id].bag[x].display = true
 							else
@@ -2276,7 +2398,7 @@ function ArkInventory.MenuBagOpen( frame )
 					"tooltipText", ArkInventory.Localise["MENU_BAG_SHOWALL_DESC"],
 					"closeWhenClicked", true,
 					"func", function( )
-						for x in pairs( ArkInventory.Global.Location[loc_id].Bags ) do
+						for x in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
 							codex.player.data.option[loc_id].bag[x].display = true
 						end
 						ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
@@ -2299,47 +2421,10 @@ function ArkInventory.MenuBagOpen( frame )
 					
 				end
 				
-				
-				if not ArkInventory.Global.Mode.Edit and loc_id == ArkInventory.Const.Location.Bank and bag.status == ArkInventory.Const.Bag.Status.Purchase then
-					
-					if bag_id == ArkInventory.Global.Location[loc_id].ReagentBag then
-						
-						local cost = GetReagentBankCost( )
-						
-						ArkInventory.Lib.Dewdrop:AddLine( )
-						ArkInventory.Lib.Dewdrop:AddLine(
-							"text", BANKSLOTPURCHASE,
-							"tooltipTitle", ArkInventory.Localise["REAGENTBANK"],
-							"tooltipText", string.format( "%s\n\n%s %s", REAGENTBANK_PURCHASE_TEXT, COSTS_LABEL, ArkInventory.MoneyText( cost, true ) ),
-							"closeWhenClicked", true,
-							"func", function( )
-								PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
-								StaticPopup_Show( "CONFIRM_BUY_REAGENTBANK_TAB" )
-							end
-						)
-						
-					else
-						
-						local numSlots = GetNumBankSlots( )
-						local cost = GetBankSlotCost( numSlots )
-						
-						ArkInventory.Lib.Dewdrop:AddLine( )
-						ArkInventory.Lib.Dewdrop:AddLine(
-							"text", BANKSLOTPURCHASE,
-							"tooltipTitle", BANK_BAG,
-							"tooltipText", string.format( "%s\n\n%s %s", BANKSLOTPURCHASE_LABEL, COSTS_LABEL, ArkInventory.MoneyText( cost, true ) ),
-							"closeWhenClicked", true,
-							"func", function( )
-								PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
-								StaticPopup_Show( "CONFIRM_BUY_BANK_SLOT" )
-							end
-						)
-						
-					end
-					
-				elseif not ArkInventory.Global.Mode.Edit and loc_id == ArkInventory.Const.Location.Bank and bag_id == ArkInventory.Global.Location[loc_id].ReagentBag then
+				if loc_id == ArkInventory.Const.Location.Bank and map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
 					
 					ArkInventory.Lib.Dewdrop:AddLine( )
+					
 					ArkInventory.Lib.Dewdrop:AddLine(
 						"text", REAGENTBANK_DEPOSIT,
 						"tooltipTitle", REAGENTBANK_DEPOSIT,
@@ -2476,7 +2561,7 @@ function ArkInventory.MenuBagOpen( frame )
 									
 									if bag_id == 1 then
 										ArkInventory.CrossClient.SetBankAutosortDisabled( checked )
-									elseif bag_id == ArkInventory.Global.Location[loc_id].ReagentBag then
+									elseif map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
 										-- already set
 									else
 										ArkInventory.CrossClient.SetBankBagSlotFlag( blizzard_id - ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.IGNORECLEANUP, checked )
@@ -2570,7 +2655,7 @@ end
 
 function ArkInventory.MenuChangerVaultTabOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -2580,7 +2665,7 @@ function ArkInventory.MenuChangerVaultTabOpen( frame )
 	
 	local loc_id = frame.ARK_Data.loc_id
 	local bag_id = frame.ARK_Data.bag_id
-	local codex = ArkInventory.GetLocationCodex( loc_id )
+	local codex = ArkInventory.Codex.GetLocation( loc_id )
 	local bag = codex.player.data.location[loc_id].bag[bag_id]
 	local button = _G[string.format( "%s%s%sWindowBag%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Changer.Name, bag_id )]
 	
@@ -2704,7 +2789,7 @@ end
 
 function ArkInventory.MenuChangerVaultActionOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -2713,7 +2798,7 @@ function ArkInventory.MenuChangerVaultActionOpen( frame )
 	
 	
 	local loc_id = ArkInventory.Const.Location.Vault
-	local codex = ArkInventory.GetLocationCodex( loc_id )
+	local codex = ArkInventory.Codex.GetLocation( loc_id )
 	local bag_id = ArkInventory.Global.Location[loc_id].view_tab
 	local mode = ArkInventory.Global.Location[loc_id].view_mode
 	local bag = codex.player.data.location[loc_id].bag[bag_id]
@@ -2979,8 +3064,8 @@ function ArkInventory.MenuSwitchLocation( offset, level, value, frame )
 			
 		else
 			
-			for loc_id, loc_data in ArkInventory.spairs( ArkInventory.Global.Location ) do
-				if loc_data.canView and ArkInventory.ClientCheck( loc_data.ClientCheck ) then
+			for loc_id, loc_data in pairs( ArkInventory.Global.Location ) do
+				if loc_data.isMapped and loc_data.canView then
 					ArkInventory.Lib.Dewdrop:AddLine(
 						"text", loc_data.Name,
 						"tooltipTitle", loc_data.Name,
@@ -3041,7 +3126,7 @@ end
 
 function ArkInventory.MenuSwitchLocationOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -3069,7 +3154,7 @@ end
 function ArkInventory.MenuSwitchCharacter( offset, level, value, frame )
 	
 	local loc_id = frame:GetParent( ):GetParent( ).ARK_Data.loc_id
-	local codex = ArkInventory.GetLocationCodex( loc_id )
+	local codex = ArkInventory.Codex.GetLocation( loc_id )
 	
 	if ( level == 1 + offset ) then
 		
@@ -3097,7 +3182,6 @@ function ArkInventory.MenuSwitchCharacter( offset, level, value, frame )
 		for n, tp in ArkInventory.spairs( ArkInventory.db.player.data, function( a, b ) return ( a < b ) end ) do
 			
 			show = true
-			
 			if tp.info.account_id ~= codex.player.data.info.account_id and not ArkInventory.Global.Location[loc_id].isAccount then
 				show = false
 				local a = ArkInventory.db.account.data[tp.info.account_id]
@@ -3147,7 +3231,7 @@ function ArkInventory.MenuSwitchCharacter( offset, level, value, frame )
 			
 		end
 		
-		if not ArkInventory.Table.IsEmpty( realms ) then
+		if ArkInventory.Table.Elements( realms ) > 1 then
 			
 			ArkInventory.Lib.Dewdrop:AddLine( )
 			
@@ -3314,7 +3398,7 @@ function ArkInventory.MenuSwitchCharacter( offset, level, value, frame )
 		local player_id = string.match( value, "^SWITCH_CHARACTER_ERASE_(.+)" )
 		if player_id then
 			
-			local tp = ArkInventory.GetPlayerStorage( player_id )
+			local tp = ArkInventory.GetPlayerInfo( player_id )
 			
 			ArkInventory.Lib.Dewdrop:AddLine(
 				"text", ArkInventory.DisplayName4( tp.data.info, codex.player.data.info.faction ),
@@ -3355,7 +3439,7 @@ end
 
 function ArkInventory.MenuSwitchCharacterOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -3381,7 +3465,7 @@ end
 
 function ArkInventory.MenuLDBBagsOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -3389,7 +3473,7 @@ function ArkInventory.MenuLDBBagsOpen( frame )
 	end
 	
 	
-	local codex = ArkInventory.GetPlayerCodex( )
+	local codex = ArkInventory.Codex.GetPlayer( )
 	
 	
 	ArkInventory.Lib.Dewdrop:Open( frame,
@@ -3608,7 +3692,7 @@ end
 
 function ArkInventory.MenuLDBTrackingCurrencyOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -3632,7 +3716,7 @@ function ArkInventory.MenuLDBTrackingCurrencyListHeaders( offset, level, value )
 	local offset = math.abs( offset )
 	
 	local loc_id = ArkInventory.Const.Location.Currency
-	local codex = ArkInventory.GetPlayerCodex( )
+	local codex = ArkInventory.Codex.GetPlayer( )
 	
 	if ( level == 1 + offset ) then
 		
@@ -3964,7 +4048,7 @@ end
 
 function ArkInventory.MenuLDBTrackingReputationOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -3988,7 +4072,7 @@ function ArkInventory.MenuLDBTrackingReputationListHeaders( offset, level, value
 	local offset = math.abs( offset )
 	
 	local loc_id = ArkInventory.Const.Location.Reputation
-	local codex = ArkInventory.GetPlayerCodex( )
+	local codex = ArkInventory.Codex.GetPlayer( )
 	
 	if ( level == 1 + offset ) then
 		
@@ -4380,7 +4464,7 @@ end
 
 function ArkInventory.MenuLDBTrackingItemOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -4388,7 +4472,7 @@ function ArkInventory.MenuLDBTrackingItemOpen( frame )
 	end
 	
 	
-	local codex = ArkInventory.GetPlayerCodex( )
+	local codex = ArkInventory.Codex.GetPlayer( )
 	
 	
 	ArkInventory.Lib.Dewdrop:Open( frame,
@@ -4417,7 +4501,7 @@ function ArkInventory.MenuLDBTrackingItemOpen( frame )
 					
 					numTokenTypes = numTokenTypes + 1
 					
-					local count = GetItemCount( k )
+					local count = ArkInventory.CrossClient.GetItemCount( k )
 					local info = ArkInventory.GetObjectInfo( k )
 					local checked = codex.player.data.ldb.tracking.item.tracked[k]
 					local t1 = info.name
@@ -4490,7 +4574,7 @@ function ArkInventory.MenuLDBMountsEntries( offset, level, value )
 	if not offset or type( offset ) ~= "number" then return end
 	local offset = math.abs( offset )
 	
-	local codex = ArkInventory.GetPlayerCodex( )
+	local codex = ArkInventory.Codex.GetPlayer( )
 	local icon = ""
 	
 	if ( level == 1 + offset ) then
@@ -4722,9 +4806,9 @@ function ArkInventory.MenuLDBMountsEntries( offset, level, value )
 		ArkInventory.Lib.Dewdrop:AddLine( )
 		
 		ArkInventory.Lib.Dewdrop:AddLine(
-			"text", ArkInventory.Localise["LDB_MOUNTS_SUMMON"],
+			"text", ArkInventory.Localise["LDB_MOUNT_SUMMON"],
 			"tooltipTitle", md.name,
-			"tooltipText", ArkInventory.Localise["LDB_MOUNTS_SUMMON"],
+			"tooltipText", ArkInventory.Localise["LDB_MOUNT_SUMMON"],
 			"disabled", not usable,
 			"func", function( )
 				ArkInventory.Collection.Mount.Summon( index )
@@ -4737,7 +4821,7 @@ end
 
 function ArkInventory.MenuLDBMountsOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -4770,7 +4854,7 @@ function ArkInventory.MenuLDBPetsEntries( offset, level, value )
 	if not offset or type( offset ) ~= "number" then return end
 	local offset = math.abs( offset )
 	
-	local codex = ArkInventory.GetPlayerCodex( )
+	local codex = ArkInventory.Codex.GetPlayer( )
 	local selected = codex.player.data.ldb.pets.selected
 	
 	--ArkInventory.Output( level, " / ", offset, " / ", value )
@@ -5015,7 +5099,7 @@ end
 
 function ArkInventory.MenuLDBPetsOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -5035,8 +5119,8 @@ end
 
 function ArkInventory.MenuItemPetJournal( frame, index )
 	
-	assert( frame, "code error: frame argument is missing" )
-	assert( index, "code error: index argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
+	ArkInventory.Util.Assert( index, "index is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -5192,8 +5276,8 @@ end
 
 function ArkInventory.MenuItemMountJournal( frame, index )
 	
-	assert( frame, "code error: frame argument is missing" )
-	assert( index, "code error: index argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
+	ArkInventory.Util.Assert( index, "index is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -5273,7 +5357,7 @@ end
 
 function ArkInventory.MenuRestackOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -5483,7 +5567,7 @@ end
 
 function ArkInventory.MenuRefreshOpen( frame )
 	
-	assert( frame, "code error: frame argument is missing" )
+	ArkInventory.Util.Assert( frame, "frame is nil" )
 	
 	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
 		ArkInventory.Lib.Dewdrop:Close( )
@@ -5492,7 +5576,7 @@ function ArkInventory.MenuRefreshOpen( frame )
 	
 	
 	local loc_id = frame:GetParent( ):GetParent( ).ARK_Data.loc_id
-	local codex = ArkInventory.GetLocationCodex( loc_id )
+	local codex = ArkInventory.Codex.GetLocation( loc_id )
 	
 	
 	ArkInventory.Lib.Dewdrop:Open( frame,

@@ -187,5 +187,14 @@ function ArkInventory.ExtractData( )
 		
 	end
 	
+	if true then
+		if C_TransmogSets then
+			for k, v in pairs (C_TransmogSets.GetAllSets( )) do
+				if v.expansionID == 4 then
+					ArkInventory.db.extract[v.setID] = v
+				end
+			end
+		end
+	end
 	
 end

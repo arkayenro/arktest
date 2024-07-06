@@ -134,7 +134,6 @@ function ArkInventory.API.ItemFrameLoadedIterate( loc, bag )
 	
 	ArkInventory.API.ItemFrameLoadedIterate( ) = everything
 	ArkInventory.API.ItemFrameLoadedIterate( ArkInventory.Const.Location.Bank ) = just the bank
-	ArkInventory.API.ItemFrameLoadedIterate( ArkInventory.Const.Location.Bank, ArkInventory.Global.Location[ArkInventory.Const.Location.Bank].ReagentBag ) = just the reagent bank
 	
 	for framename, frame, loc_id, bag_id, slot_id in ArkInventory.API.ItemFrameLoadedIterate( loc, bag ) do
 		your code goes here
@@ -149,8 +148,7 @@ function ArkInventory.API.ItemFrameLoadedIterate( loc, bag )
 	local loc_key, loc_data = next( ArkInventory.Global.Location, nil )
 	local loc_id = loc_data.id
 	
-	local bag_id = next( ArkInventory.Global.Location[loc_id].Bags, nil )
-	
+	local bag_id = next( ArkInventory.Util.MapGetWindowBags( loc_id ), nil )
 	local slot_id = 1
 	
 	
@@ -177,7 +175,7 @@ function ArkInventory.API.ItemFrameLoadedIterate( loc, bag )
 			
 			if slot_id > ( ArkInventory.Global.Location[loc_id].maxSlot[bag_id] or 0 ) then
 				slot_id = 1
-				bag_id = next( ArkInventory.Global.Location[loc_id].Bags, bag_id )
+				bag_id = next( ArkInventory.Util.MapGetWindowBags( loc_id ), bag_id )
 			end
 			
 			if not bag_id then
@@ -189,7 +187,7 @@ function ArkInventory.API.ItemFrameLoadedIterate( loc, bag )
 				end
 				loc_id = loc_data.id
 				-- get first bag for the next location
-				bag_id = next( ArkInventory.Global.Location[loc_id].Bags, nil )
+				bag_id = next( ArkInventory.Util.MapGetWindowBags( loc_id ), nil )
 			end
 			
 		end
@@ -221,14 +219,14 @@ function ArkInventory.API.ItemFrameItemTableGet( frame )
 	
 end
 
-function ArkInventory.API.InternalIdToBlizzardBagId( loc_id, bag_id )
+function ArkInventory.API.getBlizzardBagIdFromStorageId( loc_id, bag_id )
 --[[
 	
 	converts from an arkinventory loc_id + bag_id combination to a blizzard bag id that the blizzard functions will accept
 	
 	
 	usage
-		local blizzard_id = ArkInventory.API.InternalIdToBlizzardBagId( loc_id, bag_id )
+		local blizzard_id = ArkInventory.API.getBlizzardBagIdFromStorageId( loc_id, bag_id )
 		
 	notes
 		only container frame based locations/bags will have a valid blizzard id that will work with the container API
@@ -236,28 +234,38 @@ function ArkInventory.API.InternalIdToBlizzardBagId( loc_id, bag_id )
 		
 ]]--
 	
-	return ArkInventory.InternalIdToBlizzardBagId( loc_id, bag_id )
+	return ArkInventory.Util.getBlizzardBagIdFromStorageId( loc_id, bag_id )
 	
+end
+
+function ArkInventory.API.InternalIdToBlizzardBagId( loc_id, bag_id )
+	-- deprecated -- do not use
+	return ArkInventory.API.getBlizzardBagIdFromStorageId( loc_id, bag_id )
 end
 
 function ArkInventory.API.BlizzardBagId( loc_id, bag_id )
 	-- deprecated -- do not use
-	return ArkInventory.API.InternalIdToBlizzardBagId( loc_id, bag_id )
+	return ArkInventory.API.getBlizzardBagIdFromStorageId( loc_id, bag_id )
 end
 
-function ArkInventory.API.BlizzardBagIdToInternalId( blizzard_id )
+function ArkInventory.API.getStorageIdFromBlizzardBagId( blizzard_id )
 --[[
 	
 	converts from a blizzard bag id to an arkinventory loc_id + bag_id combination that ArkInventory functions will accept
 	
 	
 	usage
-		local loc_id, bag_id = ArkInventory.API.BlizzardBagIdToInternalId( blizzard_id )
+		local loc_id, bag_id = ArkInventory.API.getStorageIdFromBlizzardBagId( blizzard_id )
 		
 ]]--
 	
-	return ArkInventory.BlizzardBagIdToInternalId( blizzard_id )
+	return ArkInventory.Util.getStorageIdFromBlizzardBagId( blizzard_id )
 	
+end
+
+function ArkInventory.API.BlizzardBagIdToInternalId( blizzard_id )
+	-- deprecated -- do not use
+	return ArkInventory.API.getStorageIdFromBlizzardBagId( blizzard_id )
 end
 
 function ArkInventory.API.LocationIsOffline( loc_id )

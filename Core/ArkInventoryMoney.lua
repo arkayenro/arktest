@@ -5,7 +5,7 @@ ArkInventory.Const.MoneyTypeInfo["PLAYER"] = {
 
 	OnloadFunc = function( moneyFrame )
 	
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		moneyFrame.events = { "PLAYER_MONEY", "PLAYER_TRADE_MONEY", "SEND_MAIL_MONEY_CHANGED", "SEND_MAIL_COD_CHANGED" }
 		for _, v in pairs( moneyFrame.events ) do
@@ -36,7 +36,7 @@ ArkInventory.Const.MoneyTypeInfo["STATIC"] = {
 
 	OnloadFunc = function( moneyFrame )
 	
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 
 		moneyFrame.events = { }
 		
@@ -54,7 +54,7 @@ ArkInventory.Const.MoneyTypeInfo["AUCTION"] = {
 
 	OnloadFunc = function( moneyFrame )
 	
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		moneyFrame.events = { }
 		for _, v in pairs( moneyFrame.events ) do
@@ -65,7 +65,7 @@ ArkInventory.Const.MoneyTypeInfo["AUCTION"] = {
 
 	UpdateFunc = function( moneyFrame )
 	
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 
 		return moneyFrame.staticMoney
 		
@@ -82,7 +82,7 @@ ArkInventory.Const.MoneyTypeInfo["PLAYER_TRADE"] = {
 
 	OnloadFunc = function( moneyFrame )
 	
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		moneyFrame.events = { "PLAYER_TRADE_MONEY" }
 		for _, v in pairs( moneyFrame.events ) do
@@ -112,7 +112,7 @@ ArkInventory.Const.MoneyTypeInfo["TARGET_TRADE"] = {
 
 	OnloadFunc = function( moneyFrame )
 	
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		moneyFrame.events = { "TRADE_MONEY_CHANGED" }
 		for _, v in pairs( moneyFrame.events ) do
@@ -133,7 +133,7 @@ ArkInventory.Const.MoneyTypeInfo["SEND_MAIL"] = {
 
 	OnloadFunc = function( moneyFrame )
 	
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		moneyFrame.events = { "SEND_MAIL_MONEY_CHANGED" }
 		for _, v in pairs( moneyFrame.events ) do
@@ -164,7 +164,7 @@ ArkInventory.Const.MoneyTypeInfo["SEND_MAIL_COD"] = {
 	
 	OnloadFunc = function( moneyFrame )
 	
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		moneyFrame.events = { "SEND_MAIL_COD_CHANGED" }
 		for _, v in pairs( moneyFrame.events ) do
@@ -196,7 +196,7 @@ ArkInventory.Const.MoneyTypeInfo["GUILDBANK"] = {
 		
 		if not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) then return end -- FIX ME
 		
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		moneyFrame.events = { "GUILDBANK_UPDATE_MONEY" }
 		for _, v in pairs( moneyFrame.events ) do
@@ -227,7 +227,7 @@ ArkInventory.Const.MoneyTypeInfo["GUILDBANK_WITHDRAW"] = {
 		
 		if not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) then return end -- FIX ME
 		
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		moneyFrame.events = { "GUILDBANK_UPDATE_WITHDRAWMONEY" }
 		for _, v in pairs( moneyFrame.events ) do
@@ -262,7 +262,7 @@ ArkInventory.Const.MoneyTypeInfo["GUILDBANK_REPAIR"] = {
 		
 		if not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) then return end -- FIX ME
 		
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		moneyFrame.events = { }
 		for _, v in pairs( moneyFrame.events ) do
@@ -273,7 +273,7 @@ ArkInventory.Const.MoneyTypeInfo["GUILDBANK_REPAIR"] = {
 	
 	UpdateFunc = function( moneyFrame )
 		
-		assert( moneyFrame, "code error: moneyFrame argument is missing" )
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 		
 		return moneyFrame.staticMoney
 		
@@ -286,7 +286,7 @@ ArkInventory.Const.MoneyTypeInfo["GUILDBANK_REPAIR"] = {
 
 function ArkInventory.MoneyFrame_OnEvent( moneyFrame, event, ... )
 
-	assert( moneyFrame, "code error: moneyFrame argument is missing" )
+	ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 
 	if not moneyFrame.info or not moneyFrame:IsVisible( ) then
 		return
@@ -298,7 +298,7 @@ end
 
 function ArkInventory.MoneyFrame_OnEnter( moneyFrame )
 	
-	assert( moneyFrame, "code error: moneyFrame argument is missing" )
+	ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 	
 	if not moneyFrame:IsVisible( ) then
 		return
@@ -336,7 +336,7 @@ end
 
 function ArkInventory.SmallMoneyFrame_OnLoad( moneyFrame, moneyType )
 
-	assert( moneyFrame, "code error: moneyFrame argument is missing" )
+	ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 	
 	local moneyType = moneyType or "PLAYER"
 	moneyFrame.small = 1
@@ -347,7 +347,7 @@ end
 
 function ArkInventory.MoneyFrame_SetType( moneyFrame, moneyType )
 	
-	assert( moneyFrame, "code error: moneyFrame argument is missing" )
+	ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 	
 	local info = ArkInventory.Const.MoneyTypeInfo[moneyType]
 	if not info then
@@ -386,7 +386,7 @@ end
 
 function ArkInventory.MoneyFrame_UpdateMoney( moneyFrame )
 
-	assert( moneyFrame, "code error: moneyFrame argument is missing" )
+	ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
 	
 	if not moneyFrame:IsVisible( ) then
 		return
@@ -501,12 +501,12 @@ function ArkInventory.MoneyFrame_Tooltip( tooltip, loc_id )
 	
 	local tc = ArkInventory.db.option.tooltip.money.colour
 	
-	local codex = ArkInventory.GetPlayerCodex( loc_id )
+	local codex = ArkInventory.Codex.GetPlayer( loc_id )
 	if loc_id then
-		local codex = ArkInventory.GetLocationCodex( loc_id )
+		local codex = ArkInventory.Codex.GetLocation( loc_id )
 	end
 	
-	tooltip:AddDoubleLine( ArkInventory.Localise["CHARACTER"], ArkInventory.Localise["TOOLTIP_GOLD_AMOUNT"] )
+	tooltip:AddDoubleLine( ArkInventory.Localise["CHARACTER"], ArkInventory.Localise["TOOLTIP_AMOUNT"] )
 	
 	local just_me = ArkInventory.db.option.tooltip.money.justme
 	local ignore_vaults = not ArkInventory.db.option.tooltip.money.vault
@@ -576,7 +576,7 @@ function ArkInventory.MoneyFrame_Tooltip( tooltip, loc_id )
 			tooltip:AddDoubleLine( " ", " " )
 			tooltip:AddDoubleLine( " ", " " )
 			
-			tooltip:AddDoubleLine( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name, ArkInventory.Localise["TOOLTIP_GOLD_AMOUNT"] )
+			tooltip:AddDoubleLine( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name, ArkInventory.Localise["TOOLTIP_AMOUNT"] )
 			
 			for pn, pd in ArkInventory.spairs( ArkInventory.db.player.data ) do
 				

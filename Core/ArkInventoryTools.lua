@@ -6,18 +6,17 @@ ArkInventory.Tools = { }
 
 
 --[[
--- /dump GetItemClassInfo( ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT )
--- /dump GetItemSubClassInfo( ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.LEATHER )
+-- /dump ArkInventory.CrossClient.GetItemClassInfo( ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT )
+-- /dump ArkInventory.CrossClient.GetItemSubClassInfo( ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.LEATHER )
 
-for x = 4, 4 do
-	--local x = ArkInventory.ENUM.ITEM.TYPE.TRADEGOODS.HERBS
-	local n = GetItemClassInfo( x )
-	--if n and n ~= "" then
+for x = 0, 3 do
+	local n = ArkInventory.CrossClient.GetItemClassInfo( x )
+	if n and n ~= "" then
 		ArkInventory.Output( "----------" )
 		ArkInventory.Output( x, " ", n )
-	--end
+	end
 	for y = 0, 50 do
-		n = GetItemSubClassInfo( x, y )
+		local n = ArkInventory.CrossClient.GetItemSubClassInfo( x, y )
 		if n and n ~= "" then
 			ArkInventory.Output( y, " ", n )
 		end
@@ -29,10 +28,10 @@ end
 local name
 for x = 352170, 352180 do
 --	if IsSpellKnown( x ) then
-		name = GetSpellInfo( x )
+		name = ArkInventory.CrossClient.GetSpellInfo( x ).name
 --		if name and string.match( string.lower( name ), "flying" ) then
 			ArkInventory.Output( x, " = ", name, " / ", IsSpellKnown( x ) )
---			GetSpellInfo( 352177 )
+--			ArkInventory.CrossClient.GetSpellInfo( 352177 )
 --			IsSpellKnown( 352177 )
 --		end
 --	end
@@ -40,20 +39,25 @@ end
 ]]--
 
 
+function ArkInventory.Tools.GlobalSearch( )
 --[[
-local z = "_FONT_COLOR_CODE"
-ArkInventory.Output( "search=", z )
-for k, v in pairs (_G) do
-	if type( k ) == "string" and type( v ) == "string" then
-		if string.match( string.lower( k ), string.lower( z ) ) then -- found in key
-		--if string.match( string.lower( v ), string.lower( z ) ) then -- found in value
-		--if string.lower( v ) == string.lower( z ) then -- exact match with value
-			v = string.gsub( v, "\124", "\124\124" )
-			ArkInventory.Output( k, "=", v )
+	local z = "reagent bag"
+	ArkInventory.Output( "search=", z )
+	for k, v in pairs (_G) do
+		if type( k ) == "string" and type( v ) == "string" then
+			--if string.match( string.lower( k ), string.lower( z ) ) then -- found in key
+			if string.match( string.lower( v ), string.lower( z ) ) then -- found in value
+			--if string.lower( v ) == string.lower( z ) then -- exact match with value
+				v = string.gsub( v, "\124", "\124\124" )
+				ArkInventory.Output( k, "=", v )
+			end
 		end
 	end
-end
 ]]--
+end
+
+
+
 
 function ArkInventory.Tools.dump_enum( value, path, search )
 	if type( value ) == "table" then

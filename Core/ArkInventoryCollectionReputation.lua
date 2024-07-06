@@ -160,7 +160,7 @@ end
 function ArkInventory.Collection.Reputation.LevelText( ... )
 	
 	if not ArkInventory.Collection.Reputation.IsReady( ) then
-		return "data not ready"  -- !!!fix me
+		return ArkInventory.Localise["DATA_NOT_READY"]
 	end
 	
 	local id, style, standingText, barValue, barMin, barMax, isCapped, paragonLevel, hasReward, rankValue, rankMax = ...
@@ -332,12 +332,12 @@ function ArkInventory.Collection.Reputation.ListSetActive( index, state, bulk )
 		if state then
 			if not entry.active then
 				--ArkInventory.Output( "Active: INDEX=[", entry.index, "] NAME=[", entry.name, "]" )
-				SetFactionActive( entry.index )
+				ArkInventory.CrossClient.SetFactionActive( entry.index )
 			end
 		else
 			if entry.active then
 				--ArkInventory.Output( "Inactive: INDEX=[", entry.index, "] NAME=[", entry.name, "]" )
-				SetFactionInactive( entry.index )
+				ArkInventory.CrossClient.SetFactionInactive( entry.index )
 			end
 		end
 		
@@ -359,11 +359,11 @@ function ArkInventory.Collection.Reputation.ToggleShowAsExperienceBar( id )
 		local object = ArkInventory.Collection.Reputation.GetByID( id )
 		if object then
 			if object.isWatched then
-				--ArkInventory.OutputDebug( "SetWatchedFactionIndex( 0 )" )
-				SetWatchedFactionIndex( 0 )
+				--ArkInventory.OutputDebug( "SetWatchedFactionByIndex( 0 )" )
+				ArkInventory.CrossClient.SetWatchedFactionByIndex( 0 )
 			else
-				--ArkInventory.OutputDebug( "SetWatchedFactionIndex( ", object.index, " )" )
-				SetWatchedFactionIndex( object.index )
+				--ArkInventory.OutputDebug( "SetWatchedFactionByIndex( ", object.index, " )" )
+				ArkInventory.CrossClient.SetWatchedFactionByIndex( object.index )
 			end
 		end
 		
@@ -510,13 +510,28 @@ local function Scan_Threaded( thread_id )
 	
 	for index = 1, ArkInventory.CrossClient.GetNumFactions( ) do
 		
-		YieldCount = YieldCount + 1
-		
 		if ReputationFrame:IsVisible( ) then
-			ArkInventory.OutputDebug( "ABORTED (REPUTATION FRAME WAS OPENED)" )
-			--FilterActionRestore( )
-			--return
+			ArkInventory.OutputDebug( "REPUTATION: ABORTED (REPUTATION FRAME WAS OPENED)" )
+			FilterActionRestore( )
+			return
 		end
+		
+		if ArkInventory.Global.Mode.Combat then
+			ArkInventory.OutputDebug( "REPUTATION: ABORTED (ENTERED COMBAT)" )
+			ArkInventory.Global.ScanAfterCombat[loc_id] = true
+			FilterActionRestore( )
+			return
+		end
+		
+		if ArkInventory.Global.Mode.DragonRace then
+			ArkInventory.OutputDebug( "REPUTATION: ABORTED (DRAGON RACE)" )
+			ArkInventory.Global.ScanAfterDragonRace[loc_id] = true
+			FilterActionRestore( )
+			return
+		end
+		
+		
+		YieldCount = YieldCount + 1
 		
 		local factionInfo = ArkInventory.CrossClient.GetFactionInfo( index )
 		if factionInfo then
@@ -598,8 +613,8 @@ local function Scan_Threaded( thread_id )
 							update = true
 						end
 						
-						if cache[id].owned ~= true then
-							cache[id].owned = true
+						if cache[id].isOwned ~= true then
+							cache[id].isOwned = true
 							update = true
 						end
 						
@@ -833,7 +848,7 @@ local function Scan_Threaded( thread_id )
 	
 	if update then
 		--ArkInventory.Output( "UPDATING" )
-		ArkInventory.ScanLocation( loc_id )
+		ArkInventory.ScanLocationWindow( loc_id )
 	else
 		--ArkInventory.Output( "IGNORED (NO UPDATES FOUND)" )
 	end
@@ -844,20 +859,11 @@ local function Scan( )
 	
 	local thread_id = string.format( ArkInventory.Global.Thread.Format.Collection, "reputation" )
 	
-	if not ArkInventory.Global.Thread.Use then
-		local tz = debugprofilestop( )
-		ArkInventory.OutputThread( thread_id, " start" )
-		Scan_Threaded( )
-		tz = debugprofilestop( ) - tz
-		ArkInventory.OutputThread( string.format( "%s took %0.0fms", thread_id, tz ) )
-		return
-	end
-	
-	local tf = function ( )
+	local thread_func = function( )
 		Scan_Threaded( thread_id )
 	end
 	
-	ArkInventory.ThreadStart( thread_id, tf )
+	ArkInventory.ThreadStart( thread_id, thread_func )
 	
 end
 
@@ -865,20 +871,10 @@ function ArkInventory:EVENT_ARKINV_COLLECTION_REPUTATION_UPDATE_BUCKET( events )
 	
 	--ArkInventory.Output( "REPUTATION BUCKET [", events, "]" )
 	
-	if not ArkInventory:IsEnabled( ) then
-		--ArkInventory.Output( "IGNORED (MOD IS DISABLED)" )
-		return
-	end
+	if not ArkInventory:IsEnabled( ) then return end
 	
 	if not ArkInventory.isLocationMonitored( loc_id ) then
 		--ArkInventory.Output( "IGNORED (REPUTATION NOT MONITORED)" )
-		return
-	end
-	
-	if ArkInventory.Global.Mode.Combat then
-		-- set to scan when leaving combat
-		--ArkInventory.Output( "IGNORED (YOU ARE IN COMBAT - WILL SCAN WHEN OUT OF COMBAT)" )
-		ArkInventory.Global.ScanAfterCombat[loc_id] = true
 		return
 	end
 	
@@ -886,6 +882,17 @@ function ArkInventory:EVENT_ARKINV_COLLECTION_REPUTATION_UPDATE_BUCKET( events )
 		--ArkInventory.Output( "IGNORED (REPUTATION FRAME IS OPEN)" )
 		return
 	end
+	
+	if ArkInventory.Global.Mode.Combat then
+		ArkInventory.Global.ScanAfterCombat[loc_id] = true
+		return
+	end
+	
+	if ArkInventory.Global.Mode.DragonRace then
+		ArkInventory.Global.ScanAfterDragonRace[loc_id] = true
+		return
+	end
+	
 	
 	if not collection.isScanning then
 		collection.isScanning = true

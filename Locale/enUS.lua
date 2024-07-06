@@ -79,6 +79,7 @@ if not L then return end
 --	system category descriptions
 	L["CATEGORY_SYSTEM_CORE_MATS"] = "Core Mats"
 	L["CATEGORY_SYSTEM_MYTHIC_KEYSTONE"] = "Mythic Keystone"
+	L["CATEGORY_SYSTEM_OPENABLE"] = "Openable"
 	
 	L["CATEGORY_RULE"] = "Rule"
 	
@@ -99,6 +100,13 @@ if not L then return end
 	L["CATEGORY_CONSUMABLE_CHAMPION_EQUIPMENT"] = "Champion Equipment"
 	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_OLD"] = "Power Systems (Old)"
 	L["CATEGORY_CONSUMABLE_ABILITIES_AND_ACTIONS"] = "Abilities and Actions"
+	
+	L["CATEGORY_TIMERUNNING"] = "Timerunning"
+	L["CATEGORY_TIMERUNNING_GEM_PRISMATIC"] = "Gem (Prismatic)"
+	L["CATEGORY_TIMERUNNING_GEM_TINKER"] = "Gem (Tinker)"
+	L["CATEGORY_TIMERUNNING_GEM_COGWHEEL"] = "Gem (Cogwheel)"
+	L["CATEGORY_TIMERUNNING_GEM_META"] = "Gem (Meta)"
+	L["CATEGORY_TIMERUNNING_SCROLL"] = "Scroll"
 	
 	
 --	bag names - used to name the empty slots in the status frame (and LDB)
@@ -124,6 +132,7 @@ if not L then return end
 	L["STATUS_SHORTNAME_REPUTATION"] = "Rep"
 	L["STATUS_SHORTNAME_PROJECTILE"] = "Ammo"
 	L["STATUS_SHORTNAME_SOULSHARD"] = "Shrd"
+	L["STATUS_SHORTNAME_ACCOUNTBANK"] = "Acc"
 	
 	
 --	main menu
@@ -300,6 +309,11 @@ if not L then return end
 	L["CONFIG_GENERAL_TOOLTIP_REPUTATION_ITEMCOUNT"] = "Item Count"
 	L["CONFIG_GENERAL_TOOLTIP_REPUTATION_ITEMCOUNT_DESC"] = "What text you want displayed for reputation values in item counts."
 	L["CONFIG_GENERAL_TOOLTIP_REPUTATION_TOKEN_DESC"] = "\n\nIf you use one of the tokens below it will be replaced with the appropriate reputation information.\n\n*nn* = faction name\n*st* = standing text\n*bv* = bar value\n*bm* = bar max\n*bp* = bar percent\n*br* = bar remaining\n*rv* = rank value\n*rm* = rank max\n*pv* = paragon level (+N)\n*pr* = paragon reward icon"
+	L["CONFIG_GENERAL_TOOLTIP_TRANSMOG_ENABLE_DESC"] = "include transmog state information in tooltips (Timerunning only)"
+	L["CONFIG_GENERAL_TOOLTIP_TRANSMOG_SET_ENABLE_DESC"] = "include transmog state information for sets"
+	L["CONFIG_GENERAL_TOOLTIP_TRANSMOG_ITEM_ENABLE_DESC"] = "include transmog state information for items"
+	L["CONFIG_GENERAL_TOOLTIP_TRANSMOG_FROM_THIS_ITEM"] = "this item"
+	L["CONFIG_GENERAL_TOOLTIP_TRANSMOG_FROM_THIS_ITEM_NOT"] = "not this item"
 	
 	L["CONFIG_GENERAL_WORKAROUND"] = "Workarounds"
 	L["CONFIG_GENERAL_WORKAROUND_DESC"] = "toggle the code to fix or work around this issue"
@@ -591,45 +605,76 @@ if not L then return end
 	L["CONFIG_ACTION_ENABLE_DESC"] = "Enable the %s action"
 	
 	L["CONFIG_ACTION_MANUAL_RUN"] = "Manual Action (Vendor, Mail)"
-	L["CONFIG_ACTION_TESTMODE"] = "Test Mode"
+	L["CONFIG_ACTION_TESTING"] = "Test Mode"
+	L["CONFIG_ACTION_CONFLICT"] = "The %1$s action and its options have been disabled due to the %2$s addon being loaded"
+	L["CONFIG_ACTION_RUNNING"] = "The %1$s action is already running, please wait"
+	L["CONFIG_ACTION_ABORT_COMBAT"] = "The %1$s action has been aborted as you are in combat"
+	L["CONFIG_ACTION_AFTER_COMBAT"] = "The %1$s action has been paused, and will resume once you leave combat"
+	L["CONFIG_ACTION_AFTER_LOOTING"] = "The %1$s action has been paused, and will resume once you have finished looting"
+	L["CONFIG_ACTION_BOOKEND"] = "%1$s (%2$s): %3$s - %4$s"
 	
-	L["CONFIG_ACTION_VENDOR_SELL"] = "Vendor items"
+	L["CONFIG_ACTION_VENDOR"] = "Vendor items"
 	L["CONFIG_ACTION_VENDOR_AUTOMATIC_DESC"] = "Process automatic junk action items when you open a vendor"
 	L["CONFIG_ACTION_VENDOR_MANUAL_DESC"] = "Process all junk action items when you press the manual action keybinding at a vendor"
 	L["CONFIG_ACTION_VENDOR_LIMIT"] = "Limit to Buyback"
-	L["CONFIG_ACTION_VENDOR_LIMIT_DESC"] = "As a safety precaution stop selling your junk items when the buyback limit (%i) is reached"
+	L["CONFIG_ACTION_VENDOR_LIMIT_DESC"] = "As a safety precaution stop selling your junk items when the buyback limit (%s) is reached"
 	L["CONFIG_ACTION_VENDOR_LIMIT_ABORT"] = "Processing aborted due to buyback limit (%s) being reached."
 	L["CONFIG_ACTION_VENDOR_SOLD"] = "Sold your junk items for %s."
 	L["CONFIG_ACTION_VENDOR_SOLD_DESC"] = "Display a notification about how much gold you sold your items for"
-	L["CONFIG_ACTION_VENDOR_QUALITY_CUTOFF_DESC"] = "Only sell/destroy an item if its quality is at or below: %s%s|r"
-	L["CONFIG_ACTION_VENDOR_LIST_DESC"] = "Display a notification for each item that is sold or destroyed."
-	L["CONFIG_ACTION_VENDOR_LIST_SELL_DESC"] = "Sold: %s x %s for %s"
+	L["CONFIG_ACTION_VENDOR_QUALITY_CUTOFF_DESC"] = "Only vendor an item if its quality is at or below: %s%s|r"
+	L["CONFIG_ACTION_VENDOR_LIST"] = "%1$s Sold: %2$s x %3$s for %4$s"
+	L["CONFIG_ACTION_VENDOR_LIST_DESC"] = "Display a notification for each item that is sold."
+	L["CONFIG_ACTION_VENDOR_MORE"] = "You have %s more junk item(s) that can be sold."
 	L["CONFIG_ACTION_VENDOR_TIMER_DESC"] = "the number of millseconds to wait before processing the next item"
-	L["CONFIG_ACTION_VENDOR_COMBAT_DESC"] = "If enabled will keep selling/destroying items while in combat"
-	
-	L["CONFIG_ACTION_VENDOR_DESTROY"] = "Destroy junk items"
-	L["CONFIG_ACTION_VENDOR_DESTROY_DESC"] = "Delete items that cannot be vendored (have no sell price)\n\nnote - you can only delete items via the keybinding, and only one item at a time, or by right clicking on the item when at a vendor."
-	L["CONFIG_ACTION_VENDOR_DESTROY_LIST"] = "Destroyed: %s x %s"
-	L["CONFIG_ACTION_VENDOR_DESTROY_MORE"] = "You have %s more item(s) that can be destroyed."
-	L["CONFIG_ACTION_VENDOR_DESTROY_TEST"] = "Test mode is enabled, no items were actually destroyed."
-	
-	L["CONFIG_ACTION_VENDOR_TESTMODE"] = "Test mode is enabled, no items were actually sold."
-	L["CONFIG_ACTION_VENDOR_TESTMODE_DESC"] = "When this option is enabled no items are actually sold or destroyed.\n\nUse with the List option to see what would normally get sold or destroyed."
-	L["CONFIG_ACTION_VENDOR_PROCESSING_DISABLED_DESC"] = "All junk selling options have been disabled due to the %s addon being loaded"
+	L["CONFIG_ACTION_VENDOR_COMBAT_DESC"] = "If enabled will keep selling items while in combat"
+	L["CONFIG_ACTION_VENDOR_TEST"] = "Test mode is enabled, no items were actually sold."
+	L["CONFIG_ACTION_VENDOR_TEST_DESC"] = "When this option is enabled no items are actually sold.\n\nUse with the List option to see what would normally get sold."
 	
 	L["CONFIG_ACTION_VENDOR_SOULBOUND_ALREADY_KNOWN_DESC"] = "Categorise any soulbound item (typically recipes), that you already know, as junk"
 	L["CONFIG_ACTION_VENDOR_SOULBOUND_EQUIPMENT_DESC"] = "Categorise soulbound equipable items, that you cannot use, as junk"
 	L["CONFIG_ACTION_VENDOR_SOULBOUND_ITEMLEVEL_DESC"] = "Ignore the item level requirement when categorising soulbound equipable items, that you cannot use, as junk"
 	
-	L["CONFIG_ACTION_MAIL_SEND"] = "Send items"
-	L["CONFIG_ACTION_MAIL_AUTOMATIC_DESC"] = "Process automatic mail action items when you open a mailbox"
+	L["CONFIG_ACTION_DELETE"] = "Delete items"
+	L["CONFIG_ACTION_DELETE_DESC"] = "Delete junk items that cannot be vendored (have no sell price)\n\nnote - you can only delete items via the keybinding, and only one item at a time, or by right clicking on the item when at a vendor."
+	L["CONFIG_ACTION_DELETE_QUALITY_CUTOFF_DESC"] = "Only delete an item if its quality is at or below: %s%s|r"
+	L["CONFIG_ACTION_DELETE_LIST"] = "%1$s Deleted: %2$s x %3$s"
+	L["CONFIG_ACTION_DELETE_LIST_DESC"] = "Display a notification for each item that is deleted."
+	L["CONFIG_ACTION_DELETE_MORE"] = "You have %s more non sellable junk item(s) that can be deleted."
+	L["CONFIG_ACTION_DELETE_COMBAT_DESC"] = "If enabled will keep deleting items while in combat"
+	L["CONFIG_ACTION_DELETE_TEST"] = "Test mode is enabled, no junk items were actually deleted."
+	L["CONFIG_ACTION_DELETE_TEST_DESC"] = "When this option is enabled no items are actually deleted.\n\nUse with the List option to see what would normally get deleted."
+	
+	L["CONFIG_ACTION_SCRAP"] = "Scrap items"
+	L["CONFIG_ACTION_SCRAP_AUTOMATIC_DESC"] = "Process automatic scrap action items when you open a scapping machine"
+	L["CONFIG_ACTION_SCRAP_MANUAL_DESC"] = "Process all scrap action items when you press the manual action keybinding at a scrapping machine"
+	L["CONFIG_ACTION_SCRAP_QUALITY_CUTOFF_DESC"] = "Only scrap an item if its quality is at or below: %s%s|r"
+	L["CONFIG_ACTION_SCRAP_LIST"] = "%1$s Added %3$s to %2$s"
+	L["CONFIG_ACTION_SCRAP_LIST_DESC"] = "Display a notification for each item that is scrapped."
+	L["CONFIG_ACTION_SCRAP_MORE"] = "You have %s more item(s) that can be scrapped."
+	L["CONFIG_ACTION_SCRAP_TIMER_DESC"] = "the number of millseconds to wait before processing the next item"
+	L["CONFIG_ACTION_SCRAP_COMBAT_DESC"] = "If enabled will keep scrapping items while in combat"
+	L["CONFIG_ACTION_SCRAP_TEST"] = "Test mode is enabled, no items were actually added."
+	L["CONFIG_ACTION_SCRAP_TEST_DESC"] = "When this option is enabled no items will be added to the scrap window.\n\nUse with the List option to see what would normally get added."
+	
+	L["CONFIG_ACTION_MAIL"] = "Send items"
+	L["CONFIG_ACTION_MAIL_AUTOMATIC_DESC"] = "Process mail action items when you open a mailbox"
 	L["CONFIG_ACTION_MAIL_MANUAL_DESC"] = "Process all mail action items when you press the manual action keybinding at a mailbox"
-	L["CONFIG_ACTION_MAIL_TESTMODE"] = "Test mode is enabled, no items were actually sent."
-	L["CONFIG_ACTION_MAIL_TESTMODE_DESC"] = "When this option is enabled no items are actually sent.\n\nUse with the List option to see what would normally get sent."
+	L["CONFIG_ACTION_MAIL_TEST"] = "Test mode is enabled, no items were actually sent."
+	L["CONFIG_ACTION_MAIL_TEST_DESC"] = "When this option is enabled no items are actually sent.\n\nUse with the List option to see what would normally get sent."
 	L["CONFIG_ACTION_MAIL_QUALITY_CUTOFF_DESC"] = "Only send an item if its quality is at or below: %s%s|r"
+	L["CONFIG_ACTION_MAIL_LIST_ATTATCH"] = "%1$s Attached #%2$s: %3$s x %4$s"
 	L["CONFIG_ACTION_MAIL_LIST_DESC"] = "Display a notification for each item that is sent."
 	L["CONFIG_ACTION_MAIL_TIMER_DESC"] = "the number of millseconds (approx) to wait before treating the send as failed"
 	
+	L["CONFIG_ACTION_USE"] = "Use items"
+	L["CONFIG_ACTION_USE_AUTOMATIC_DESC"] = "Process use action items as you loot them"
+	L["CONFIG_ACTION_USE_MANUAL_DESC"] = "Process all use action items when you press the manual action keybinding"
+	L["CONFIG_ACTION_USE_LIST"] = "%1$s Used: %2$s"
+	L["CONFIG_ACTION_USE_LIST_DESC"] = "Display a notification for each item that is used."
+	L["CONFIG_ACTION_USE_TIMER_DESC"] = "the number of millseconds to wait before processing the next item"
+	L["CONFIG_ACTION_USE_COMBAT_DESC"] = "If enabled will keep using items while in combat"
+	L["CONFIG_ACTION_USE_TEST"] = "Test mode is enabled, no items were actually used."
+	L["CONFIG_ACTION_USE_TEST_DESC"] = "When this option is enabled no items will be used.\n\nUse with the List option to see what would normally get used."
 	
 -- sorting
 	L["CONFIG_SORTING"] = "Sorting"
@@ -829,7 +874,10 @@ if not L then return end
 	
 --	item count tooltip
 	L["TOOLTIP_VAULT_TABS"] = "Tab"
-	L["TOOLTIP_GOLD_AMOUNT"] = "Amount"
+	L["TOOLTIP_AMOUNT"] = "Amount"
+	L["TOOLTIP_APPEARANCE_FORMAT1"] = "%1$s (%2$s)"
+	L["TOOLTIP_APPEARANCE_FORMAT2"] = "%1$s%2$s of %3$s"
+	L["TOOLTIP_APPEARANCE_SET"] = "Set"
 	
 	
 --	generic text
@@ -881,8 +929,7 @@ if not L then return end
 	L["ORDER"] = "Order"
 	L["MOUSEOVER"] = "Mouse Over"
 	L["NO_DATA_AVAILABLE"] = "No Data Available"
-	L["TOOLTIP_PURCHASE_BANK_BAG_SLOT"] = "Click to purchase the next available bank bag slot."
-	L["TOOLTIP_PURCHASE_BANK_TAB_REAGENT"] = "Click to purchase the reagent bank tab."
+	L["TOOLTIP_PURCHASE_BANK_BAG_SLOT"] = "Click to purchase the next available %s slot."
 	L["LABEL"] = "Label"
 	L["ABORTED"] = "Aborted"
 	L["RESTORE"] = "Restore"
@@ -938,6 +985,12 @@ if not L then return end
 	L["OVERRIDE"] = "Override"
 	L["SELECTED"] = "Selected"
 	L["UNSELECTED"] = "Unselected"
+	L["KNOWLEDGE"] = "Knowledge"
+	L["OPEN"] = "Open"
+	L["USING"] = "Using"
+	L["DATA_NOT_READY"] = "Data not ready"
+	L["DATA_NOT_FOUND"] = "Data not found"
+	L["REAGENT"] = "Reagent"
 	
 	
 -- libdatabroker
@@ -973,7 +1026,7 @@ if not L then return end
 	L["LDB_MOUNTS_FLYING_DISMOUNT_DESC"] = "Enabled = allows you to dismount while flying.\n\nDisabled = you need to land before you can dismount\n\nnote: does not effect spell casting while flying, use the interface options to set that"
 	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = "You are currently flying, please land to select another mount"
 	L["LDB_MOUNTS_FLYING_DRAGONRIDING_DESC"] = "which mounts to use by default in dragonriding capable zones\n\nEnabled = Dragonriding mounts\n\nDisabled = Normal flying mounts\n\nholding CTRL will use the other type when using the mount macro or clicking on the mount icon"
-	L["LDB_MOUNTS_SUMMON"] = "Summon Mount"
+	L["LDB_MOUNT_SUMMON"] = "Summon Mount"
 	L["LDB_MOUNTS_NODATA"] = "Unknown / Changed"
 	L["LDB_MOUNTS_TRAVEL_FORM"] = "Use %1$s"
 	L["LDB_MOUNTS_TRAVEL_FORM_DESC"] = "Use %1$s instead of a mount."

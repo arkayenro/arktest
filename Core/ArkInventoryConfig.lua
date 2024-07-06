@@ -184,7 +184,7 @@ function ArkInventory.ConfigBlizzard( )
 					return
 				end
 				
-				local me = ArkInventory.GetPlayerCodex( )
+				local me = ArkInventory.Codex.GetPlayer( )
 				
 				if ArkInventory.db.option.tracking.items[a.id] then
 					--remove
@@ -233,7 +233,7 @@ function ArkInventory.ConfigBlizzard( )
 			args = {
 				mount = {
 					order = 100,
-					name = ArkInventory.Localise["LDB_MOUNTS_SUMMON"],
+					name = ArkInventory.Localise["LDB_MOUNT_SUMMON"],
 					type = "execute",
 					func = function( )
 						ArkInventory.LDB.Mounts:OnClick( )
@@ -378,7 +378,7 @@ function ArkInventory.ConfigInternalDesignGet( id, default )
 	local defaulted = nil
 	
 	if not default then
-		assert( id, "code error: id is nil" )
+		ArkInventory.Util.Assert( id, "id is nil" )
 		return ArkInventory.db.option.design.data[id]
 	end
 	
@@ -446,10 +446,10 @@ end
 
 
 function ArkInventory.ConfigInternalCategoryGet( cat_type, cat_num )
-	assert( cat_type, "code error: cat_type is nil" )
-	assert( type( cat_type ) == "number", "code error: cat_type is a " .. type( cat_type ) .. ", not a number" )
-	assert( cat_num, "code error: cat_num is nil" )
-	assert( type( cat_num ) == "number", "code error: cat_num is a " .. type( cat_num ) .. ", not a number" )
+	ArkInventory.Util.Assert( cat_type, "cat_type is nil" )
+	ArkInventory.Util.Assert( type( cat_type ) == "number", "cat_type is [", type( cat_type ), ", should be [number]" )
+	ArkInventory.Util.Assert( cat_num, "cat_num is nil" )
+	ArkInventory.Util.Assert( type( cat_num ) == "number", "cat_num is [", type( cat_num ), "], should be [number]" )
 	return ArkInventory.db.option.category[cat_type].data[cat_num]
 end
 
@@ -956,7 +956,7 @@ function ArkInventory.ConfigInternalSortMethodGet( id, default )
 	local id = id
 	
 	if not default then
-		assert( id, "code error: id is nil" )
+		ArkInventory.Util.Assert( id, "id is nil" )
 		return ArkInventory.db.option.sort.method.data[id]
 	end
 	
@@ -1059,7 +1059,7 @@ function ArkInventory.ConfigInternalCategorysetGet( id, default )
 	local defaulted = nil
 	
 	if not default then
-		assert( id, "code error: id is nil" )
+		ArkInventory.Util.Assert( id, "id is nil" )
 		return ArkInventory.db.option.catset.data[id]
 	end
 	
@@ -1148,7 +1148,7 @@ function ArkInventory.ConfigInternalAccountGet( id, default )
 	local id = id
 	
 	if not default then
-		assert( id, "code error: id is nil" )
+		ArkInventory.Util.Assert( id, "id is nil" )
 		return ArkInventory.db.account.data[id]
 	end
 	
@@ -1237,7 +1237,7 @@ function ArkInventory.ConfigInternalProfileGet( id, default )
 	local id = id
 	
 	if not default then
-		assert( id, "code error: id is nil" )
+		ArkInventory.Util.Assert( id, "id is nil" )
 		return ArkInventory.db.option.profile.data[id]
 	end
 	

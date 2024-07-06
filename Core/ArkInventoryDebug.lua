@@ -3,12 +3,14 @@ ArkInventory.Debug = { }
 
 function ArkInventory.Debug.Frame_OnLoad( frame )
 	
+	-- thiws is the first frame created in xml so the onload gets triggered from here
+	ArkInventory.OnLoad( )
+	
+	
 	table.insert( UISpecialFrames, frame:GetName( ) )
 	
 	ArkInventory.Frame_AddBorder( frame )
 	frame:RegisterForDrag( "LeftButton" )
-	
-	ArkInventory.OnLoad( )
 	
 end
 

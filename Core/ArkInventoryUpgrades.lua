@@ -778,7 +778,7 @@ local function helper_UpgradeProfile( profile, profile_name )
 			
 			for k1, v1 in pairs( ARKINVDB.profileKeys ) do
 				if v1 == profile_name then
-					local player = ArkInventory.GetPlayerStorage( k1 )
+					local player = ArkInventory.Codex.GetStorage( k1 )
 					player.data.profile = id
 				end
 			end
@@ -1507,7 +1507,7 @@ function ArkInventory.DatabaseUpgradePostLoad( )
 						local player
 						for k1, v1 in pairs( ARKINVDB.profileKeys ) do
 							if v1 == profile_name then
-								player = ArkInventory.GetPlayerStorage( k1 )
+								player = ArkInventory.Codex.GetStorage( k1 )
 								player.data.profile = id
 							end
 						end
@@ -2223,9 +2223,19 @@ function ArkInventory.DatabaseUpgradePostLoad( )
 	end
 	
 	
+	upgrade_version = 31033.06
+	if ArkInventory.acedb.global.player.version < upgrade_version then
+		ArkInventory.EraseSavedData( nil, ArkInventory.Const.Location.Bag, false )
+		ArkInventory.EraseSavedData( nil, ArkInventory.Const.Location.Bank, false )
+		ArkInventory.EraseSavedData( nil, ArkInventory.Const.Location.Reputation, false )
+	end
+	
+	
+	
 	if ArkInventory.acedb.global.vendor then
 		ArkInventory.acedb.global.vendor = nil
 	end
+	
 	
 	
 	-- check sort keys
@@ -2233,7 +2243,7 @@ function ArkInventory.DatabaseUpgradePostLoad( )
 	
 	
 	-- check for character rename and move old data to new name
-	local info = ArkInventory.GetPlayerInfo( )
+	local info = ArkInventory.PlayerInfoGet( )
 	info.renamecheck = true
 	for k, v in pairs( ArkInventory.acedb.global.player.data ) do
 		if info.guid and info.guid == v.info.guid and not v.info.renamecheck then
@@ -2254,6 +2264,6 @@ function ArkInventory.DatabaseUpgradePostLoad( )
 	ArkInventory.acedb.global.player.version = ArkInventory.Const.Program.Version
 	ArkInventory.acedb.global.cache.version = ArkInventory.Const.Program.Version
 	
-	ArkInventory.CodexReset( )
+	ArkInventory.Codex.Reset( )
 	
 end

@@ -119,7 +119,7 @@ local function GetItemBasedTranslations( )
 	-- cant be completely done at game load as it depends on items being in your cache, thus its "scheduled"
 	
 	local L = LibStub("AceLocale-3.0"):GetLocale( "ArkInventory", true )
-	assert( L, "locale failed to load" )
+	ArkInventory.Util.Assert( L, "locale failed to load" )
 	
 	local ok = true
 	
@@ -186,7 +186,7 @@ local spellTable = { -- key, project, table of spell ids
 }
 
 local function GetWowSpellNameHelper( id )
-	local name = GetSpellInfo( id )
+	local name = ArkInventory.CrossClient.GetSpellInfo( id ).name
 	if name then
 		--ArkInventory.Output( "spell [", id, "] = [", name, "]" )
 		return name
@@ -213,7 +213,7 @@ local function GetSpellBasedTranslations( )
 	-- cant be completely done at game load as it depends on items being in your cache, thus its "scheduled"
 	
 	local L = LibStub("AceLocale-3.0"):GetLocale( "ArkInventory", true )
-	assert( L, "locale failed to load" )
+	ArkInventory.Util.Assert( L, "locale failed to load" )
 	
 	local ok = true
 	
@@ -301,7 +301,7 @@ local function GetTooltipBasedTranslations( )
 	-- cant be completely done at game load as it depends on items being in your cache, thus its "scheduled"
 	
 	local L = LibStub("AceLocale-3.0"):GetLocale( "ArkInventory", true )
-	assert( L, "locale failed to load" )
+	ArkInventory.Util.Assert( L, "locale failed to load" )
 	
 	local ok = true
 	
@@ -424,7 +424,7 @@ frame:SetScript( "OnUpdate",
 				--ArkInventory.OutputWarning( "translations - .Recalculate" )
 				
 				--ArkInventory.ItemCacheClear( )
-				--ArkInventory.ScanLocation( )
+				--ArkInventory.ScanLocationWindow( )
 				
 				ArkInventory.PlayerInfoSet( )
 				--ArkInventory.Tradeskill.ScanHeaders( )

@@ -198,7 +198,7 @@ end
 function ArkInventory.MediaAllFontSet( face, size )
 	
 	for loc_id, loc_data in pairs( ArkInventory.Global.Location ) do
-		if loc_data.canView then
+		if loc_data.isMapped and loc_data.canView then
 			local frame = ArkInventory.Frame_Main_Get( loc_id )
 			ArkInventory.MediaFrameFontSet( frame, face, size )
 		end

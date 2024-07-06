@@ -175,7 +175,8 @@ end
 
 function ArkInventorySearch.Frame_Table_Reset( f )
 	
-	assert( f and type( f ) == "string" and _G[f], "CODE ERROR: Invalid parameter passed to Search.Frame_Table_Reset( )" )
+	ArkInventory.Util.Assert( type( f ) == "string", "f is [", type( f ), "], should be [string]" )
+	ArkInventory.Util.Assert( _G[f], "xml element [", f, "] does not exist" )
 	
 	-- hide and reset all rows
 	
@@ -201,23 +202,11 @@ function ArkInventorySearch.Frame_Table_Refresh( )
 	
 	ArkInventorySearch.cycle = 0
 	
-	if not ArkInventory.Global.Thread.Use then
-		local tz = debugprofilestop( )
-		ArkInventory.OutputThread( thread_id, " starting" )
-		ArkInventorySearch.Frame_Table_Refresh_Threaded( frame, thread_id )
-		tz = debugprofilestop( ) - tz
-		ArkInventory.OutputThread( string.format( "%s dead after %0.0fms", thread_id, tz ) )
-		return
-	end
-	
-	-- load the co-routine, overwite existing, the garbage collector will sort it out
-	local tf = function ( )
+	local thread_func = function( )
 		ArkInventorySearch.Frame_Table_Refresh_Threaded( frame, thread_id )
 	end
 	
-	ArkInventory.ThreadStart( thread_id, tf )
-	
-	--ArkInventory.Output( "draw location ", loc_id, " complete" )
+	ArkInventory.ThreadStart( thread_id, thread_func )
 	
 end
 
@@ -242,7 +231,7 @@ function ArkInventorySearch.Frame_Table_Refresh_Threaded( frame, thread_id )
 	
 	local id, name, txt, info
 	local item_not_ready = string.format( " %s", ArkInventory.Localise["ITEM_NOT_READY"] )
-	local me = ArkInventory.GetPlayerCodex( )
+	local me = ArkInventory.Codex.GetPlayer( )
 	ArkInventorySearch.rebuild = 0
 	
 	ArkInventory.OutputDebug( "search - building cache - start" )

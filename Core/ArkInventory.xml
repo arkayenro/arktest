@@ -371,11 +371,11 @@
       </OnMouseUp>
       
       <PreClick>
-        ArkInventory.Frame_Item_PreClick( self, button, down )
+        return ArkInventory.Frame_Item_PreClick( self, button, down )
       </PreClick>
       
       <PostClick>
-        ArkInventory.Frame_Item_PostClick( self, button )
+        ArkInventory.Frame_Item_PostClick( self, button, down )
       </PostClick>
       
     </Scripts>
@@ -494,7 +494,7 @@
       </PreClick>
       
       <PostClick>
-        ArkInventory.Frame_Item_PostClick( self, button )
+        ArkInventory.Frame_Item_PostClick( self, button, down )
       </PostClick>
       
     </Scripts>
