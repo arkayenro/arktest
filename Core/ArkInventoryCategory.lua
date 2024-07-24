@@ -1125,6 +1125,12 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	
 	local codex = ArkInventory.Codex.GetLocation( i.loc_id )
 	
+	if not codex.player.data.info.tradeskill then
+		ArkInventory.OutputDebug( i.loc_id )
+		ArkInventory.OutputDebug( codex.player.data.info )
+	end
+	
+	
 	-- categorise based off characters primary professions
 	if codex.player.data.tradeskill and codex.player.data.tradeskill.priority > 0 then
 		
@@ -1418,7 +1424,7 @@ end
 
 function ArkInventory.ItemCategoryGetDefaultEmpty( loc_id_storage, bag_id_storage )
 	
-	local map = ArkInventory.Util.MapGetStorageBags( loc_id_storage, bag_id_storage )
+	local map = ArkInventory.Util.MapGetStorage( loc_id_storage, bag_id_storage )
 	
 	local loc_id_window = map.loc_id_window
 	
@@ -1945,7 +1951,7 @@ end
 
 local function Scan_Threaded( thread_id )
 	
-	--ArkInventory.OutputDebug( "rebuilding ", ArkInventory.Table.Elements( CategoryRebuildQueue ) )
+	--ArkInventory.OutputDebug( "rebuilding CategoryRebuildQueue [", ArkInventory.Table.Elements( CategoryRebuildQueue ), "]" )
 	
 	for k, i in pairs( CategoryRebuildQueue ) do
 		

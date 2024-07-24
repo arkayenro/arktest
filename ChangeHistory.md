@@ -1,8 +1,73 @@
-# 3.10.33 Alpha 6 (07-JUL-2024)
+# 3.10.33 Alpha 21 (xx-JUL-2024)
+ - 
+ 
+# 3.10.33 Alpha 20 (24-JUL-2024)
+ - fixed - API changed from GetMouseFocus to GetMouseFoci
+ - fixed - caged battlepets and pet tooltips displaying while scanning
+ - fixed - bank window not opening when interacting with warband bank convergence (bank and reagent bank slots are currently visible but not usable)
+ - fixed - warbank being in use should now show the locked tooltip and not prompt you to buy the next slot
+ 
+# 3.10.33 Alpha 19 (23-JUL-2024)
+ - fixed - (maybe) https://github.com/arkayenro/arkinventory/issues/1920 - issue with codex generation
+
+# 3.10.33 Alpha 18 (22-JUL-2024)
+ - removed - leftover debug output
+ - fixed - (maybe) https://github.com/arkayenro/arkinventory/issues/1920 - issue with codex generation
+
+# 3.10.33 Alpha 17 (21-JUL-2024)
+ - fixed - (maybe) https://github.com/arkayenro/arkinventory/issues/1920 - issue with codex generation
+
+# 3.10.33 Alpha 16 (21-JUL-2024)
+ - no longer available
+ 
+# 3.10.33 Alpha 15 (20-JUL-2024)
+ - fixed - https://github.com/arkayenro/arkinventory/issues/1917 - issue with displaying data from other characters
+
+# 3.10.33 Alpha 14 (18-JUL-2024)
+ - fixed - https://github.com/arkayenro/arkinventory/issues/1917 - issue with switch character menu
+ - removed - leftover tooltip debug output
+ 
+# 3.10.33 Alpha 13 (14-JUL-2024)
+ - fixed - https://github.com/arkayenro/arkinventory/issues/1916 - issue with profile import
+
+# 3.10.33 Alpha 12 (13-JUL-2024)
+ - fixed - https://github.com/arkayenro/arkinventory/issues/1910 - issue with mailbox scanning
+ - fixed - item counts for recipes will now show correctly, not the count for the item they create
+ 
+# 3.10.33 Alpha 11 (12-JUL-2024)
+ - removed - vault changer action button
+ - changed - the actions from the vault changer action button have been moved to a right click menu off the vault changer bag icons to be consistent with the other locations
+ - fixed - account bank and vault tab name and icon assignment
+ 
+# 3.10.33 Alpha 10 (11-JUL-2024)
+ - fixed - issue with GetItemQualityColor being deprecated
+ - changed - the status bar will only display gold amounts in the the bag, vault, and bank windows, all other windows will no longer display a gold amount.
+ - added - warbank deposit and withdraw access is via the action button in the status bar
+ - changed - guild bank deposit and withdraw access is via the action button in the status bar
+
+# 3.10.33 Alpha 9 (09-JUL-2024)
+ - fixed - (regression) issue with restack
+ - fixed - (regression) issue with action code
+
+# 3.10.33 Alpha 8 (09-JUL-2024)
+ - fixed - (regression) issue with empty slot background
+ - changed - empty slot icon/background config option
+ - changed - (war within) the dragonriding/normal mount preference config option has been removed and is now determined by the skyriding/steady flight aura you have enabled at the time
+ - fixed - (cata) on the very first login after game launch there is keyring bag update even though it no longer exists.  this is now ignored instead of generating an error.
+ - fixed - (i think) https://github.com/arkayenro/arkinventory/issues/1910 - issue with API functions
+
+# 3.10.33 Alpha 7 (07-JUL-2024)
+ - fixed - (regression) guild bank scanning
+ - fixed - (regression) account bank bags showing in dragonflight
+ - fixed - transmog events had the wrong expansion assigned to them so were trying to load in earlier clients
+ - note - all saved data for currency has been erased
+ - note - (war within) currency and reputation are not currently supported
+ 
+# 3.10.33 Alpha 6 (06-JUL-2024)
  - fixed - issue with switch character menu showing other realm menu when you only have characters on a single realm
  - added - timerunner identifier icon next to character names (will need to login to each timerunning character to update its status)
  - changed - (war within) C_Spell.IsSpellUsable( ) replaces IsUsableSpell( )
- - added - (war within) account bank access - account bank gold isnt supported yet
+ - added - (war within) account bank access - account bank gold is not supported yet
  - changed - (retail) toc updated to 110002
  - changed - bag changer slots will now only show the first purchasable slot instead of all of them.  no config option to disable this yet.
  - note - all saved data for the bag, bank, and reputation, has been erased.  please login to each character to update its data
@@ -37,7 +102,6 @@
 # known issues
  - some default frames (vendor/merchant at minimum) that would normally open via the PlayerInteractionFrameManager no longer open if you are in combat, you just get an addon error.  there is currently no workaround.
  - (dragonflight) reagentbank slots are no longer readable unless the bank is open
- - recipes on vendors are showing item counts for the items they create, not the recipe
  - Enum.ItemConsumableSubclass is missing the Flask entry and everything after has moved down a value which screws up the category names (have hardcoded a workaround for the moment)
  - items with an active cooldown dont allow comparison tooltips to generate
  - cooldowns no longer start automatically.  you can close/open the bag to get them to show (if you enable that option).  all of the cooldown events ACTIONBAR_UPDATE_COOLDOWN, BAG_UPDATE_COOLDOWN, PET_BAR_UPDATE_COOLDOWN, SPELL_UPDATE_COOLDOWN, appear to trigger off other players as well, but do not provide any indication whether the event was triggered by you or them, so cooldowns will trigger window refreshes fairly constantly when you are around large numbers of players.  even limiting it to one update per second generated too much lag, especially in massive groups.
@@ -46,10 +110,12 @@
 
 # to do
  - double check all categories show/hide for the right clients
- - confirm things havent broken in classic, wrath, or shadowlands
  - restack disable - maybe change this to require a modifier key instead of a straight disable?  might be easier to shift/alt/ctrl click on it than turning it on/off and its not like youll accidentally do it (which is why the disable was added)
  - backpack tokens to scroll when max width reached on second line
  - extend the categoryset actions to individual items for additional granular control.
  - add action; move (bank to bag, bag to bank, bag to vault, vault to bag)
  - add actions to items
  - allow multiple actions on a category / item
+ 
+ - secure action button for toybox (and keyring)
+ - only show bank bags for the specific tabs (bank/reagent bank/account tabs)

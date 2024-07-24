@@ -24,6 +24,7 @@ for x = 0, 3 do
 end
 ]]--
 
+
 --[[
 local name
 for x = 352170, 352180 do
@@ -41,7 +42,7 @@ end
 
 function ArkInventory.Tools.GlobalSearch( )
 --[[
-	local z = "reagent bag"
+	local z = "used by another member"
 	ArkInventory.Output( "search=", z )
 	for k, v in pairs (_G) do
 		if type( k ) == "string" and type( v ) == "string" then

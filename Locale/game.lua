@@ -708,5 +708,5 @@ L["WOW_ITEM_SOULSHARD"] = true
 L["WOW_ITEM_PROJECTILE_ARROW"] = true
 L["WOW_ITEM_PROJECTILE_BULLET"] = true
 
-L["DEBUG_SCAN_ABORT_NOT_CONTROLLED"] = "scan aborted - blizzard bag [%1$s] is not controlled by %2$s"
-L["DEBUG_SCAN_ABORT_WRONG_CLIENT"] = "scan aborted - %1$s [%2$s.%3$s]/[%4$s] is not enabled for this client"
+L["DEBUG_SCAN_ABORT_NOT_MONITORED"] = "scan aborted - blizzard bag [%1$s] is not monitored"
+L["DEBUG_SCAN_ABORT_NOT_MAPPED"] = "scan aborted - blizzard bag [%1$s] is not mapped"

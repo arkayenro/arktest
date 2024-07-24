@@ -871,6 +871,26 @@ function ArkInventory.CrossClient.TransmogCollection_GetItemInfo( ... )
 	end
 end
 
+function ArkInventory.CrossClient.GetMouseFocus( )
+	if GetMouseFoci then
+		local regions = GetMouseFoci( )
+--		for _, foci in ipairs( regions ) do
+--			ArkInventory.Output( foci:GetName( ) )
+--		end
+--		ArkInventory.Output( "---" )
+		return regions[1]
+	else
+		return GetMouseFocus( )
+	end
+end
+
+function ArkInventory.CrossClient.IsWarbankInUseByAnotherCharacter( )
+	
+	if C_PlayerInfo and C_PlayerInfo.HasAccountInventoryLock then
+		return not C_PlayerInfo.HasAccountInventoryLock( )
+	end
+	
+end
 
 
 function ArkInventory.CrossClient.LoadAddOn( ... )
@@ -1081,14 +1101,40 @@ function ArkInventory.CrossClient.GetItemIcon( ... )
 	
 end
 
-function ArkInventory.CrossClient.GetItemQualityColor( ... )
-	local r, g, b = GetItemQualityColor( ... )
-	if type( r ) == "table" then
-		b = r.b
-		g = r.g
-		r = r.r
+function ArkInventory.CrossClient.GetItemQualityColor( quality )
+	
+	if quality then
+		
+		local c = { }
+		local v1, v2, v3, v4, r, g, b, a
+		
+		if C_Item and C_Item.GetItemQualityColor then
+			
+			v1, v2, v3, v4 = C_Item.GetItemQualityColor( quality )
+			
+		elseif GetItemQualityColor then
+			
+			v1, v2, v3, v4 = GetItemQualityColor( quality )
+			
+		end
+		
+		if v1 then
+			
+			if type( v1 ) == "number" then
+				c.r = v1
+				c.g = v2
+				c.b = v3
+				c.a = 1
+			elseif type( v1 ) == "table" then
+				c = v1
+			end
+			
+			return c.r, c.g, c.b, c.a
+			
+		end
+		
 	end
-	return r, g, b
+	
 end
 
 function ArkInventory.CrossClient.IsUsableSpell( ... )

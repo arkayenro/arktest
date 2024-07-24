@@ -3156,6 +3156,7 @@ function ArkInventoryRules.SetObject( tbl )
 	ArkInventory.Table.Merge( tbl, i )
 	
 	local codex = ArkInventory.Codex.GetLocation( i.loc_id )
+	
 	i.playerinfo = codex.player.data.info
 	
 	i.info = ArkInventory.GetObjectInfo( i.h )

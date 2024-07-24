@@ -10,8 +10,7 @@ local table = _G.table
 -- stuff to look at later? maybe
 -- BattlePetTooltipTemplate_AddTextLine
 
-local DragonFlightTooltips = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT, ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT )
-local WarWithinTooltips = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WARWITHIN, ArkInventory.ENUM.EXPANSION.WARWITHIN )
+local DragonFlightTooltips = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT )
 
 local MissingFunctions = { }
 
@@ -415,7 +414,7 @@ local function helper_TooltipSetVoidItem( tooltip, bag_id, slot_id )
 	
 end
 
-function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_id, h, i )
+function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_id, h, i, msg_id, att_id )
 	
 	-- this is the only tooltip function that should be used
 	-- where possible this will generate an online tooltip, but if that is not possible then a hyperlink based tooltip will be generated instead
@@ -449,9 +448,23 @@ function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_
 		tooltip = nil
 	end
 	
+	
 	if loc_id_storage then
 		
-		local map = ArkInventory.Util.MapGetStorageBags( loc_id_storage, bag_id_storage )
+--[[
+		local msg_id, att_id
+		
+		if loc_id_storage == ArkInventory.Const.Location.Mailbox then
+			
+			msg_id = bag_id_storage
+			att_id = slot_id
+			
+			bag_id_storage = 1
+			
+		end
+]]--
+		
+		local map = ArkInventory.Util.MapGetStorage( loc_id_storage, bag_id_storage )
 		
 		local loc_id_window = map.loc_id_window
 		local bag_id_window = map.bag_id_window
@@ -497,8 +510,8 @@ function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_
 			
 		elseif loc_id_window == ArkInventory.Const.Location.Mailbox and ArkInventory.Global.Mode.Mailbox then
 			
-			if bag_id_storage and slot_id then
-				tooltipInfo = helper_TooltipSetMailboxItem( tooltip, bag_id_storage, slot_id )
+			if msg_id and att_id then
+				tooltipInfo = helper_TooltipSetMailboxItem( tooltip, msg_id, att_id )
 			end
 			
 		elseif loc_id_window == ArkInventory.Const.Location.Wearing then
@@ -571,6 +584,7 @@ function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_
 	return tooltipInfo
 	
 end
+
 
 function ArkInventory.TooltipSetCustomReputation( tooltip, h )
 	
@@ -1033,7 +1047,8 @@ function ArkInventory.HookBattlePetToolTip_Show( ... )
 	if h then
 		
 		-- anchor gametooltip to whatever originally called it
-		ArkInventory.GameTooltipSetPosition( GetMouseFocus( ) )
+		local frame = ArkInventory.CrossClient.GetMouseFocus( )
+		ArkInventory.GameTooltipSetPosition( frame )
 		ArkInventory.TooltipCustomBattlepetShow( GameTooltip, h )
 		
 	end
@@ -1530,6 +1545,7 @@ function ArkInventory.HookTooltipSetHyperlink( ... )
 end
 
 function ArkInventory.HookTooltipSetInboxItem( ... )
+	--ArkInventory.Output( "SetInboxItem" )
 	ArkInventory.HookTooltipSetGeneric( "SetInboxItem", ... )
 end
 
@@ -2050,6 +2066,13 @@ end
 
 function ArkInventory.HookTooltipSetGeneric( fn, tooltip, ... )
 	
+	local arg1, arg2, arg3, arg4 = ...
+	if type( arg1 ) == "string" then
+		arg1 = string.gsub( arg1, "\124", "\124\124" )
+	end
+	--ArkInventory.Output( "G0: ", tooltip:GetName( ), ":", fn, " ( ", arg1, ", ", arg2, ", ", arg3, ", ", arg4, " )" )
+	
+	
 	if not fn then return end
 	
 	if not tooltip then return end
@@ -2085,11 +2108,6 @@ function ArkInventory.HookTooltipSetGeneric( fn, tooltip, ... )
 	
 	--ArkInventory.Output( "SetGeneric [", tooltip:GetName( ), "] [", fn, "]"  )
 	
---	local arg1, arg2, arg3, arg4 = ...
---	if type( arg1 ) == "string" then
---		arg1 = string.gsub( arg1, "\124", "\124\124" )
---	end
---	ArkInventory.OutputDebug( "G0: ", tooltip:GetName( ), ":", fn, " ( ", arg1, ", ", arg2, ", ", arg3, ", ", arg4, " )" )
 	
 	local h
 	local afn = string.format( "TooltipValidateDataFrom%s", fn )
@@ -2439,7 +2457,7 @@ function ArkInventory.TooltipAddItemCount( tooltip, h )
 	--ArkInventory.Output( "4 - TooltipAddItemCount - ", osd.class )
 	
 	search_id = ArkInventory.ObjectIDCount( h )
-	--ArkInventory.Output( "search_id = [", search_id, "]" )
+	--ArkInventory.Output( "search_id = [", search_id, "] h=", h )
 	
 	ArkInventory.TooltipRebuildQueueAdd( search_id )
 	
@@ -2585,7 +2603,7 @@ function ArkInventory.TooltipObjectCountGet( search_id, thread_id )
 		return ArkInventory.Global.Cache.ItemCountTooltip[search_id]
 	end
 	
-	--ArkInventory.OutputDebug( "building tooltip count ", search_id )
+	--ArkInventory.Output( "building tooltip count ", search_id )
 	
 	if thread_id then
 		ArkInventory.ThreadYield( thread_id )
@@ -3074,7 +3092,7 @@ function ArkInventory.TooltipRebuildQueueAdd( search_id )
 	if not ArkInventory.db.option.tooltip.itemcount.enable then return end
 	if not search_id then return end
 	
-	--ArkInventory.OutputDebug( "adding ", search_id )
+	--ArkInventory.Output( "adding ", search_id )
 	TooltipRebuildQueue[search_id] = true
 	
 	ArkInventory:SendMessage( "EVENT_ARKINV_TOOLTIP_REBUILD_QUEUE_UPDATE_BUCKET", "START" )
@@ -3083,7 +3101,7 @@ end
 
 local function Scan_Threaded( thread_id )
 	
-	ArkInventory.OutputDebug( "rebuilding ", ArkInventory.Table.Elements( TooltipRebuildQueue ) )
+	--ArkInventory.OutputDebug( "rebuilding TooltipRebuildQueue [", ArkInventory.Table.Elements( TooltipRebuildQueue ), "]" )
 	
 	for search_id in pairs( TooltipRebuildQueue ) do
 		
@@ -3134,6 +3152,12 @@ end
 function ArkInventory.TooltipProcessorSetItem( ... )
 	
 	local tooltip, tooltipInfo = ...
+	
+--	ArkInventory.Output( tooltipInfo )
+--	ArkInventory.Output( tooltipInfo.guid )
+--	ArkInventory.Output( tooltipInfo.id )
+--	ArkInventory.Output( tooltipInfo.hyperlink )
+	
 	if checkAbortShow( tooltip ) then return true end
 	
 	if DragonFlightTooltips then
@@ -3145,12 +3169,25 @@ function ArkInventory.TooltipProcessorSetItem( ... )
 	
 	local hyperlink = nil
 	
-	if not hyperlink and tooltipInfo.hyperlink then
-		hyperlink = tooltipInfo.hyperlink
-	end
+	
+--	tooltipInfo.hyperlink for recipe items contains the result item, not the recipe itself, so dont use it
+	
+--	if not hyperlink and tooltipInfo.hyperlink then
+--		hyperlink = tooltipInfo.hyperlink
+--	end
+	
+	
+--	nearly everything has a .guid (except inbox items) so start here
 	
 	if not hyperlink and tooltipInfo.guid then
 		hyperlink = C_Item.GetItemLinkByGUID( tooltipInfo.guid )
+	end
+	
+	
+	-- inbox items dont have a .guid but do have a .id which is basically just the item id, easy enough to turn into an itemstring, which is an acceptable alterantive for a hyperlink
+	
+	if not hyperlink and tooltipInfo.id then
+		hyperlink = string.format( "item:%d", tooltipInfo.id )
 	end
 	
 	

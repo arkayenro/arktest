@@ -11,25 +11,47 @@ ArkInventory.Const.MoneyTypeInfo["PLAYER"] = {
 		for _, v in pairs( moneyFrame.events ) do
 			moneyFrame:RegisterEvent( v )
 		end
-
+		
 	end,
 	
 	UpdateFunc = function( )
 		return GetMoney( ) - GetCursorMoney( ) - GetPlayerTradeMoney( )
 	end,
-
+	
 	PickupFunc = function( amount )
 		PickupPlayerMoney( amount )
 	end,
-
+	
 	DropFunc = function( )
 		DropCursorMoney( )
 	end,
-
+	
 	collapse = 1,
 	canPickup = 1,
 	showSmallerCoins = "Backpack"
 
+}
+
+ArkInventory.Const.MoneyTypeInfo["ACCOUNT"] = {
+	
+	OnloadFunc = function( moneyFrame )
+		
+		ArkInventory.Util.Assert( moneyFrame, "moneyFrame is nil" )
+		
+		moneyFrame.events = { "ACCOUNT_MONEY" }
+		for _, v in pairs( moneyFrame.events ) do
+			moneyFrame:RegisterEvent( v )
+		end
+		
+	end,
+
+	UpdateFunc = function( moneyFrame )
+		return C_Bank.FetchDepositedMoney( Enum.BankType.Account )
+	end,
+	
+	
+	collapse = 1,
+	showSmallerCoins = "Backpack",
 }
 
 ArkInventory.Const.MoneyTypeInfo["STATIC"] = {
@@ -351,7 +373,7 @@ function ArkInventory.MoneyFrame_SetType( moneyFrame, moneyType )
 	
 	local info = ArkInventory.Const.MoneyTypeInfo[moneyType]
 	if not info then
-		ArkInventory.OutputError( "code error: invalid moneyType [", moneyType, "] assigned to frame [", moneyFrame:GetName( ), "], defaulting to PLAYER" )
+		ArkInventory.OutputError( "uncoded moneyType [", moneyType, "] assigned to frame [", moneyFrame:GetName( ), "], defaulting to PLAYER" )
 		info = ArkInventory.Const.MoneyTypeInfo["PLAYER"]
 	end
 	
@@ -523,13 +545,17 @@ function ArkInventory.MoneyFrame_Tooltip( tooltip, loc_id )
 	local c2 = ArkInventory.db.option.tooltip.money.colour.count
 	--local c2 = ArkInventory.ColourRGBtoCode( c2c.r, c2c.g, c2c.b )
 	
+	local includeAccount = ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].isMapped
+	
 	for pn, pd in ArkInventory.spairs( ArkInventory.db.player.data ) do
 		
-		if ( not ( pd.info.class == ArkInventory.Const.Class.Guild or pd.info.class == ArkInventory.Const.Class.Account ) ) and ( pd.info.name ) then
-			if ( not my_realm ) or ( ( my_realm and codex.player.data.info.realm == pd.info.realm ) or ( my_realm and include_crossrealm and ArkInventory.IsConnectedRealm( codex.player.data.info.realm, pd.info.realm ) ) ) then
+		if ( pd.info.name ) and ( not ( pd.info.class == ArkInventory.Const.Class.Guild or ( pd.info.class == ArkInventory.Const.Class.Account and not includeAccount ) ) ) then
+			if ( not my_realm ) or ( pd.info.class == ArkInventory.Const.Class.Account ) or ( ( my_realm and codex.player.data.info.realm == pd.info.realm ) or ( my_realm and include_crossrealm and ArkInventory.IsConnectedRealm( codex.player.data.info.realm, pd.info.realm ) ) ) then
 				if ( not ignore_other_account ) or ( ignore_other_account and codex.player.data.info.account_id == pd.info.account_id ) then
-					if ( not ignore_other_faction ) or ( ignore_other_faction and codex.player.data.info.faction == pd.info.faction ) then
-						if ( not just_me ) or ( just_me and codex.player.data.info.player_id == pd.info.player_id ) then
+					if ( not ignore_other_faction ) or ( pd.info.class == ArkInventory.Const.Class.Account ) or ( ignore_other_faction and codex.player.data.info.faction == pd.info.faction ) then
+						if ( not just_me ) or ( pd.info.class == ArkInventory.Const.Class.Account ) or ( just_me and codex.player.data.info.player_id == pd.info.player_id ) then
+							
+							--ArkInventory.Output( pd.info.name, " = ", pd.info.money, " - ", pd.info.class, " - ", includeAccount )
 							
 							total = total + ( pd.info.money or 0 )
 							
@@ -843,3 +869,62 @@ function ArkInventory.MoneyFrame_Update(frameName, money, forceShow)
 	end
 end
 
+function ArkInventory.MoneyGuildBankDeposit( )
+	
+	PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+	
+	StaticPopup_Hide( "GUILDBANK_WITHDRAW" )
+	
+	local alreadyShown = StaticPopup_Visible( "GUILDBANK_DEPOSIT" )
+	if alreadyShown then
+	  StaticPopup_Hide( "GUILDBANK_DEPOSIT" )
+	else
+	  StaticPopup_Show( "GUILDBANK_DEPOSIT" )
+	end
+	
+end
+
+function ArkInventory.MoneyGuildBankWithdraw( )
+	
+	PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+	
+	StaticPopup_Hide( "GUILDBANK_DEPOSIT" )
+	
+	local alreadyShown = StaticPopup_Visible( "GUILDBANK_WITHDRAW" )
+	if alreadyShown then
+	  StaticPopup_Hide( "GUILDBANK_WITHDRAW" )
+	else
+	  StaticPopup_Show( "GUILDBANK_WITHDRAW" )
+	end
+	
+end
+
+function ArkInventory.MoneyAccountBankDeposit( )
+	
+	PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+	
+	StaticPopup_Hide( "BANK_MONEY_WITHDRAW" )
+	
+	local alreadyShown = StaticPopup_Visible( "BANK_MONEY_DEPOSIT" )
+	if alreadyShown then
+	  StaticPopup_Hide( "BANK_MONEY_DEPOSIT" )
+	else
+	  StaticPopup_Show( "BANK_MONEY_DEPOSIT", nil, nil, { bankType = Enum.BankType.Account } )
+	end
+	
+end
+
+function ArkInventory.MoneyAccountBankWithdraw( )
+	
+	PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+	
+	StaticPopup_Hide( "BANK_MONEY_DEPOSIT" )
+	
+	local alreadyShown = StaticPopup_Visible( "BANK_MONEY_WITHDRAW" )
+	if alreadyShown then
+	  StaticPopup_Hide( "BANK_MONEY_WITHDRAW" )
+	else
+	  StaticPopup_Show( "BANK_MONEY_WITHDRAW", nil, nil, { bankType = Enum.BankType.Account } )
+	end
+	
+end

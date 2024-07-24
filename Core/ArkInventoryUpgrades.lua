@@ -2231,6 +2231,11 @@ function ArkInventory.DatabaseUpgradePostLoad( )
 	end
 	
 	
+	upgrade_version = 31033.07
+	if ArkInventory.acedb.global.player.version < upgrade_version then
+		ArkInventory.EraseSavedData( nil, ArkInventory.Const.Location.Currency, false )
+	end
+	
 	
 	if ArkInventory.acedb.global.vendor then
 		ArkInventory.acedb.global.vendor = nil

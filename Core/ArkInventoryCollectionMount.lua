@@ -11,6 +11,10 @@ local C_MountJournal = _G.C_MountJournal
 local loc_id = ArkInventory.Const.Location.Mount
 local PLAYER_MOUNT_LEVEL = 20
 
+local spellSkyriding = 404464
+local spellSteady = 404468
+
+
 ArkInventory.Collection.Mount = { }
 
 local collection = {
@@ -1511,6 +1515,13 @@ function ArkInventory.Collection.Mount.SetFavorite( id, value )
 	end
 end
 
+function ArkInventory.Collection.Mount.GetFlightMode( )
+	if ArkInventory.CrossClient.GetPlayerAuraBySpellID( spellSkyriding ) then
+		return ArkInventory.Const.Flying.Mode.Skyriding
+	elseif ArkInventory.CrossClient.GetPlayerAuraBySpellID( spellSteady ) then
+		return ArkInventory.Const.Flying.Mode.Steady
+	end
+end
 
 function ArkInventory.Collection.Mount.isFlyableAdvanced( )
 	
@@ -1799,27 +1810,59 @@ function ArkInventory.Collection.Mount.UpdateUsable( useDragonridingWhenAvailabl
 				end
 				
 				if usable and checkType == 1 and mta == "a" then
-					if useDragonridingWhenAvailable then
+					
+					local flightMode = ArkInventory.Collection.Mount.GetFlightMode( )
+					
+					if flightMode == ArkInventory.Const.Flying.Mode.Skyriding then
+						
 						if forceDragonridingAlternative then
-							if md.isDragonriding then
+							if not md.isSteadyFlight then
 								usable = false
 							end
 						else
-							if not md.isDragonriding then
+							if md.isSteadyFlight then
 								usable = false
 							end
 						end
+						
+					elseif flightMode == ArkInventory.Const.Flying.Mode.Steady then
+						
+						if forceDragonridingAlternative then
+							if not md.isSteadyFlight then
+								usable = false
+							end
+						else
+							if md.isSteadyFlight then
+								usable = false
+							end
+						end
+						
 					else
-						if forceDragonridingAlternative then
-							if not md.isDragonriding then
-								usable = false
+						
+						if useDragonridingWhenAvailable then
+							if forceDragonridingAlternative then
+								if md.isDragonriding then
+									usable = false
+								end
+							else
+								if not md.isDragonriding then
+									usable = false
+								end
 							end
 						else
-							if md.isDragonriding then
-								usable = false
+							if forceDragonridingAlternative then
+								if not md.isDragonriding then
+									usable = false
+								end
+							else
+								if md.isDragonriding then
+									usable = false
+								end
 							end
 						end
+						
 					end
+					
 				end
 				
 				if usable then
@@ -1931,7 +1974,7 @@ local function Scan_Threaded( thread_id )
 		numTotal = numTotal + 1
 		YieldCount = YieldCount + 1
 		
-		local name, spellID, icon, isActive, isUsable, source, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID, isDragonriding = C_MountJournal.GetMountInfoByID( index )
+		local name, spellID, icon, isActive, isUsable, source, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID, mountModeType = C_MountJournal.GetMountInfoByID( index )
 		--C_MountJournal.GetMountInfoByID( 6 )
 		local creatureDisplayInfoID, description, source2, isSelfMount, mountTypeID, uiModelSceneID = C_MountJournal.GetMountInfoExtraByID( index )
 --		local isFavorite, canSetFavorite = C_MountJournal.GetIsFavorite( i )
@@ -1977,7 +2020,12 @@ local function Scan_Threaded( thread_id )
 			c[i].isSelfMount = isSelfMount
 			c[i].mountTypeID = mountTypeID
 			c[i].uiModelSceneID = uiModelSceneID
-			c[i].isDragonriding = isDragonriding
+			
+			if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT, ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT ) then
+				c[i].isDragonriding = mountModeType
+			elseif ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WARWITHIN ) then
+				c[i].isSteadyFlight = mountModeType
+			end
 			
 			collection.cachespell[spellID] = i
 			

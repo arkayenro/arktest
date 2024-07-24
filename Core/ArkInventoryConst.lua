@@ -934,6 +934,9 @@ ArkInventory.Const = { -- constants
 		BarPopup = {
 			Name = "ARKINV_PopupBarFrame",
 		},
+		Match = {
+			Frame = "ARKINV_Frame(%d+)",
+		},
 	},
 	
 	Event = {
@@ -1318,6 +1321,8 @@ ArkInventory.Const = { -- constants
 			[402] = "a", -- flying, dragonriding
 			[424] = "a", -- flying, dragonriding (has animations)
 			[426] = "a", -- flying, dragonriding
+			[436] = "a", -- flying + underwater
+			[437] = "a", -- flying
 			
 			[230] = "l", -- land
 			[241] = "l", -- qiraji battletank
@@ -1375,7 +1380,6 @@ ArkInventory.Const = { -- constants
 			CanLearnOtherSecondary = 4,
 		},
 		StyleDefault = "Smiley Face",
-		SharedMediaType = "arkinventory-icons-transmog",
 	},
 	
 	Class = {
@@ -1488,6 +1492,10 @@ ArkInventory.Const = { -- constants
 --			[870] = true, -- Pandaria (appears to be working now)
 		},
 		Dragonriding = { }, -- list of mount spells populated via mount scan
+		Mode = {
+			Steady = 1,
+			Skyriding = 2,
+		},
 	},
 	
 	YieldAfter = 25,
@@ -1514,6 +1522,22 @@ ArkInventory.Const = { -- constants
 	
 	DragonRaceItem = 191140,
 	DragonRaceAura = 369968,
+	
+	SharedMedia = {
+		Type = {
+			EmptySlot = "arkinventory-icons-emptyslot",
+			Transmog = "arkinventory-icons-transmog",
+		},
+		Name = {
+			None = "None",
+			Solid = "Solid",
+		},
+		Default = {
+			EmptySlot = "Icon 1",
+		},
+	},
+	
+	
 	
 }
 

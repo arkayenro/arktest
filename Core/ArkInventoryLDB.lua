@@ -1085,7 +1085,7 @@ ldb.Mounts = {
 		local forceAlternative = IsModifiedClick( "CHATLINK" )
 		ArkInventory.OutputDebug( "forceAlternative = ", forceAlternative )
 		local forceDragonridingAlternative = IsModifiedClick( "DRESSUP" )
-		ArkInventory.OutputDebug( "forceDragonridingAlternative = ", forceAlternative )
+		ArkInventory.OutputDebug( "forceDragonridingAlternative = ", forceDragonridingAlternative )
 		
 		ldb.Mounts.GetUsable( forceAlternative, forceDragonridingAlternative )
 		

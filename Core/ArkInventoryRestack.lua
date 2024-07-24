@@ -56,17 +56,16 @@ local function RestackBagCheck( blizzard_id )
 	
 	local map = ArkInventory.Util.MapGetBlizzard( blizzard_id )
 	
-	if map.loc_id_storage ~= ArkInventory.Const.Location.ReagentBank and not ArkInventory.CrossClient.IsReagentBankUnlocked( ) then
+	if map.loc_id_storage == ArkInventory.Const.Location.ReagentBank and not ArkInventory.CrossClient.IsReagentBankUnlocked( ) then
 		-- reagent bank always returns its number of slots even if you havent unlocked it
 		numSlots = 0
 		freeSlots = 0
 	end
 	
-	local loc_id, bag_pos = ArkInventory.Util.getStorageIdFromBlizzardBagId( blizzard_id )
-	if ( loc_id == ArkInventory.Const.Location.Bank and not ArkInventory.Global.Mode.Bank ) or ( loc_id == ArkInventory.Const.Location.Vault and not ArkInventory.Global.Mode.Vault ) then
+	if ( map.loc_id_window == ArkInventory.Const.Location.Bank and not ArkInventory.Global.Mode.Bank ) or ( map.loc_id_window == ArkInventory.Const.Location.Vault and not ArkInventory.Global.Mode.Vault ) then
 		-- no longer at the location
 		--ArkInventory.OutputWarning( "aborting, no longer at location" )
-		abort = loc_id
+		abort = map.loc_id_window
 	end
 	
 	return abort, bagType or 0, numSlots or 0
@@ -92,8 +91,9 @@ local function FindItem( loc_id, cl, cb, bp, cs, id, ct )
 	local ct = ct or 0
 	
 	
-	for bag_pos, map in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+	for bag_pos in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 		
+		local map = ArkInventory.Util.MapGetWindow( loc_id, bag_pos )
 		local blizzard_id = map.blizzard_id
 		
 		if not me.player.data.option[loc_id].bag[bag_pos].restack.ignore then
@@ -260,8 +260,9 @@ local function FindPartialStack( loc_id, cl, cb, bp, cs, id )
 	
 	if cl == ArkInventory.Const.Location.Bag or cl == ArkInventory.Const.Location.Bank then
 		
-		for bag_pos, map in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+		for bag_pos in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 			
+			local map = ArkInventory.Util.MapGetWindow( loc_id, bag_pos )
 			local blizzard_id = map.blizzard_id
 			
 			if not me.player.data.option[loc_id].bag[bag_pos].restack.ignore then
@@ -299,7 +300,7 @@ local function FindPartialStack( loc_id, cl, cb, bp, cs, id )
 								if info.id == id then
 									
 									if itemInfo.stackCount < info.stacksize then
-										--ArkInventory.OutputDebug( "found > ", blizzard_id, ".", slot_id, " ", itemInfo.stackCount, " of ", h, " for ", cb, ".", cs )
+										ArkInventory.OutputDebug( "found > ", blizzard_id, ".", slot_id, " ", itemInfo.stackCount, " of ", h, " for ", cb, ".", cs )
 										return abort, recheck, true, blizzard_id, slot_id
 									end
 									
@@ -355,8 +356,9 @@ local function FindNormalItem( loc_id, cl, cb, bp, cs )
 	local bp = bp or -1
 	local cs = cs or -1
 	
-	for bag_pos, map in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+	for bag_pos in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 		
+		local map = ArkInventory.Util.MapGetWindow( loc_id, bag_pos )
 		local blizzard_id = map.blizzard_id
 		
 		if not me.player.data.option[loc_id].bag[bag_pos].restack.ignore then
@@ -440,8 +442,9 @@ local function FindProfessionItem( loc_id, cl, cb, bp, cs, ct )
 		restack_priority = false
 	end
 	
-	for bag_pos, map in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+	for bag_pos in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 		
+		local map = ArkInventory.Util.MapGetWindow( loc_id, bag_pos )
 		local blizzard_id = map.blizzard_id
 		
 		local ab, bt, count = RestackBagCheck( blizzard_id )
@@ -588,8 +591,9 @@ local function FindCraftingItem( loc_id, cl, cb, bp, cs )
 		restack_priority = false
 	end
 	
-	for bag_pos, map in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+	for bag_pos in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 		
+		local map = ArkInventory.Util.MapGetWindow( loc_id, bag_pos )
 		local blizzard_id = map.blizzard_id
 		
 		local ab, bt, count = RestackBagCheck( blizzard_id )
@@ -694,7 +698,7 @@ local function FindCraftingItem( loc_id, cl, cb, bp, cs )
 	
 end
 
-local function StackBags( loc_id )
+local function StackBags( loc_id_window )
 	
 	-- move items into complete stacks
 	
@@ -702,43 +706,41 @@ local function StackBags( loc_id )
 	local abort = false
 	local recheck = false
 	
-	local cl = loc_id
-	
-	for bag_pos in ArkInventory.rpairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+	for bag_id_window in ArkInventory.rpairs( ArkInventory.Util.MapGetWindow( loc_id_window ) ) do
 		
-		local map = ArkInventory.Util.MapGetStorageBags( loc_id, bag_pos )
+		local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
 		local blizzard_id = map.blizzard_id
 		
-		local ab, bt, count = RestackBagCheck( blizzard_id )
-		if ab then
-			return cl, recheck, false
+		local isAbort, bt, slot_count = RestackBagCheck( blizzard_id )
+		if isAbort then
+			return loc_id_window, recheck, false
 		end
 		
-		if not me.player.data.option[loc_id].bag[bag_pos].restack.ignore then
+		if not me.player.data.option[loc_id_window].bag[bag_id_window].restack.ignore then
 			
-			--ArkInventory.Output( "StackBags( ", loc_id, ".", blizzard_id, " )" )
+			--ArkInventory.Output( "StackBags( ", loc_id_window, ".", blizzard_id, " )" )
 			
-			if count > 0 then
+			if slot_count > 0 then
 				
-				for slot_id = count, 1, -1 do
+				for slot_id = slot_count, 1, -1 do
 					
 					if RestackBagCheck( blizzard_id ) then
-						return cl, recheck, false
+						return loc_id_window, recheck, false
 					end
 					
-					Restack_Yield( cl )
-					--ArkInventory.Output( "checking ", loc_id, ".", blizzard_id, ".", slot_id )
+					Restack_Yield( loc_id_window )
+					--ArkInventory.Output( "checking ", loc_id_window, ".", blizzard_id, ".", slot_id )
 					
 					local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 					if itemInfo.isLocked then
 						
 						-- this slot is locked, move on and check it again next time
-						--ArkInventory.Output( "locked> ", loc_id, ".", blizzard_id, ".", slot_id )
+						--ArkInventory.Output( "locked> ", loc_id_window, ".", blizzard_id, ".", slot_id )
 						recheck = true
 						
 					else
 						
-						--ArkInventory.Output( "unlocked> ", loc_id, ".", blizzard_id, ".", slot_id )
+						--ArkInventory.Output( "unlocked> ", loc_id_window, ".", blizzard_id, ".", slot_id )
 						
 						if itemInfo.hyperlink then
 							
@@ -748,33 +750,32 @@ local function StackBags( loc_id )
 								
 								--ArkInventory.Output( "partial stack of ", itemInfo.hyperlink, " x ", itemInfo.stackCount, " found at ", blizzard_id, ".", slot_id, " bt=", bt )
 								
-								local ab, rc, ok, pb, ps
+								local isAbort, isRecheck, ok, blizzard_id_partial, slot_id_partial
 								if bt == 0 then
-									ab, rc, ok, pb, ps = FindPartialStack( loc_id, loc_id, blizzard_id, bag_pos, slot_id, info.id )
+									isAbort, isRecheck, ok, blizzard_id_partial, slot_id_partial = FindPartialStack( loc_id_window, loc_id_window, blizzard_id, bag_id_window, slot_id, info.id )
 								else
 									-- non normal bag - allow it to pull from normal bags that are higher
-									ab, rc, ok, pb, ps = FindItem( loc_id, loc_id, blizzard_id, bag_pos, slot_id, info.id, bt )
+									isAbort, isRecheck, ok, blizzard_id_partial, slot_id_partial = FindItem( loc_id_window, loc_id_window, blizzard_id, bag_id_window, slot_id, info.id, bt )
 								end
 								
-								if rc then
+								if isRecheck then
 									recheck = true
 								end
 								
-								if ab then
-									abort = loc_id
-									return abort, recheck
+								if isAbort then
+									return loc_id_window, recheck
 								end
 								
 								if ok then
 									
-									--ArkInventory.OutputDebug( "merge> ", blizzard_id, ".", slot_id, " + ", pb, ".", ps )
+									--ArkInventory.OutputDebug( "merge> ", blizzard_id, ".", slot_id, " + ", blizzard_id_partial, ".", slot_id_partial )
 									
 									ClearCursor( )
-									ArkInventory.CrossClient.PickupContainerItem( pb, ps )
+									ArkInventory.CrossClient.PickupContainerItem( blizzard_id_partial, slot_id_partial )
 									ArkInventory.CrossClient.PickupContainerItem( blizzard_id, slot_id )
 									ClearCursor( )
 									
-									Restack_Yield( cl )
+									Restack_Yield( loc_id_window )
 									
 									recheck = true
 									
@@ -996,9 +997,9 @@ local function Consolidate( loc_id )
 	
 	--ArkInventory.Output( "fill up profession bags with profession items" )
 	
-	for bag_pos in ArkInventory.rpairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+	for bag_pos in ArkInventory.rpairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 		
-		local map = ArkInventory.Util.MapGetStorageBags( loc_id, bag_pos )
+		local map = ArkInventory.Util.MapGetWindow( loc_id, bag_pos )
 		local blizzard_id = map.blizzard_id
 		
 		if not me.player.data.option[loc_id].bag[bag_pos].restack.ignore then
@@ -1036,7 +1037,7 @@ local function Consolidate( loc_id )
 			
 			-- fill up reagent bank with crafting items
 			
-			for bag_id, map in ipairs( ArkInventory.Util.MapGetStorageBags( ArkInventory.Const.Location.ReagentBank ) ) do
+			for bag_id, map in ipairs( ArkInventory.Util.MapGetStorage( ArkInventory.Const.Location.ReagentBank ) ) do
 				
 				local blizzard_id = map.blizzard_id
 				local bag_pos = map.bag_id_window
@@ -1069,9 +1070,9 @@ local function Consolidate( loc_id )
 			
 			--ArkInventory.OutputDebug( "fill up normal bank slots with crafting items" )
 			
-			for bag_pos in ArkInventory.rpairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+			for bag_pos in ArkInventory.rpairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 				
-				local map = ArkInventory.Util.MapGetStorageBags( loc_id, bag_pos )
+				local map = ArkInventory.Util.MapGetWindow( loc_id, bag_pos )
 				local blizzard_id = map.blizzard_id
 				
 				if not me.player.data.option[loc_id].bag[bag_pos].restack.ignore then
@@ -1204,9 +1205,9 @@ local function Compact( loc_id )
 	
 	local cl = loc_id
 	
-	for bag_pos in ArkInventory.rpairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+	for bag_pos in ArkInventory.rpairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 		
-		local map = ArkInventory.Util.MapGetStorageBags( loc_id, bag_pos )
+		local map = ArkInventory.Util.MapGetWindow( loc_id, bag_pos )
 		local blizzard_id = map.blizzard_id
 		
 		if not me.player.data.option[loc_id].bag[bag_pos].restack.ignore then
@@ -1242,7 +1243,7 @@ end
 
 
 
-local function RestackRun_Threaded( loc_id )
+local function RestackRun_Threaded( loc_id_window )
 	
 	--ArkInventory.Output( "RestackRun_Threaded / ", time( ), " / ", GetTime( ) )
 	
@@ -1252,14 +1253,14 @@ local function RestackRun_Threaded( loc_id )
 	local ok = false
 	local abort, recheck
 	
-	if loc_id == ArkInventory.Const.Location.Bag then
+	if loc_id_window == ArkInventory.Const.Location.Bag then
 		
-		RestackMessageStart( loc_id )
+		RestackMessageStart( loc_id_window )
 		
 		if ArkInventory.db.option.restack.blizzard then
 			
 			ArkInventory.CrossClient.SortBags( )
-			Restack_Yield( loc_id )
+			Restack_Yield( loc_id_window )
 			
 		else
 			
@@ -1268,11 +1269,11 @@ local function RestackRun_Threaded( loc_id )
 				ok = true
 				
 				--ArkInventory.Output( "stackbags 1 ", time( ) )
-				abort, recheck = StackBags( loc_id )
+				abort, recheck = StackBags( loc_id_window )
 				--ArkInventory.Output( "stackbags 2 ", time( ) )
 				
 				if abort then
-					RestackMessageAbort( loc_id )
+					RestackMessageAbort( loc_id_window )
 					break
 				end
 				
@@ -1281,11 +1282,11 @@ local function RestackRun_Threaded( loc_id )
 				end
 				
 				--ArkInventory.Output( "consolidate 1 ", time( ) )
-				abort, recheck = Consolidate( loc_id )
+				abort, recheck = Consolidate( loc_id_window )
 				--ArkInventory.Output( "consolidate 2 ", time( ) )
 				
 				if abort then
-					RestackMessageAbort( loc_id )
+					RestackMessageAbort( loc_id_window )
 					break
 				end
 				
@@ -1295,10 +1296,10 @@ local function RestackRun_Threaded( loc_id )
 				
 				
 --[[
-				abort, recheck = Compact( loc_id )
+				abort, recheck = Compact( loc_id_window )
 				
 				if abort then
-					RestackMessageAbort( loc_id )
+					RestackMessageAbort( loc_id_window )
 					break
 				end
 				
@@ -1311,18 +1312,18 @@ local function RestackRun_Threaded( loc_id )
 			
 		end
 		
-		RestackMessageComplete( loc_id )
+		RestackMessageComplete( loc_id_window )
 		
 	end
 	
 	
-	if loc_id == ArkInventory.Const.Location.Bank then
+	if loc_id_window == ArkInventory.Const.Location.Bank then
 		
 		if ArkInventory.Global.Mode.Bank then
 			
 			--ArkInventory.Output( "bank / ", time( ), " / ", GetTime( ) )
 			
-			RestackMessageStart( loc_id )
+			RestackMessageStart( loc_id_window )
 			
 			if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) and ArkInventory.db.option.restack.blizzard then -- FIX ME
 				
@@ -1350,12 +1351,12 @@ local function RestackRun_Threaded( loc_id )
 						ArkInventory.Output( ArkInventory.RestackString( ), ": ", REAGENTBANK_DEPOSIT, " " , ArkInventory.Localise["DISABLED"] )
 					end
 					
-					for bag_id, map in ipairs( ArkInventory.Util.MapGetStorageBags( ArkInventory.Const.Location.ReagentBank ) ) do
+					for bag_id, map in ipairs( ArkInventory.Util.MapGetStorage( ArkInventory.Const.Location.ReagentBank ) ) do
 						
 						local blizzard_id = map.blizzard_id
 						local bag_pos = map.bag_id_window
 						
-						if not me.player.data.option[loc_id].bag[bag_pos].restack.ignore then
+						if not me.player.data.option[loc_id_window].bag[bag_pos].restack.ignore then
 							C_Timer.After(
 								0.6,
 								function( )
@@ -1378,12 +1379,12 @@ local function RestackRun_Threaded( loc_id )
 					
 					ok = true
 					
-					--ArkInventory.Output( "StackBags / ", loc_id, " / ", time( ), " / ", time( ) )
-					abort, recheck = StackBags( loc_id )
-					--ArkInventory.Output( "StackBags / ", loc_id, " / ", time( ), " / ", time( ) )
+					--ArkInventory.Output( "StackBags / ", loc_id_window, " / ", time( ), " / ", time( ) )
+					abort, recheck = StackBags( loc_id_window )
+					--ArkInventory.Output( "StackBags / ", loc_id_window, " / ", time( ), " / ", time( ) )
 					
 					if abort then
-						RestackMessageAbort( loc_id )
+						RestackMessageAbort( loc_id_window )
 						break
 					end
 					
@@ -1391,12 +1392,12 @@ local function RestackRun_Threaded( loc_id )
 						ok = false
 					end
 					
-					--ArkInventory.Output( "Consolidate / ", loc_id, " / ", time( ), " / ", time( ) )
-					abort, recheck = Consolidate( loc_id )
-					--ArkInventory.Output( "Consolidate / ", loc_id, " / ", time( ), " / ", time( ) )
+					--ArkInventory.Output( "Consolidate / ", loc_id_window, " / ", time( ), " / ", time( ) )
+					abort, recheck = Consolidate( loc_id_window )
+					--ArkInventory.Output( "Consolidate / ", loc_id_window, " / ", time( ), " / ", time( ) )
 					
 					if abort then
-						RestackMessageAbort( loc_id )
+						RestackMessageAbort( loc_id_window )
 						break
 					end
 					
@@ -1406,10 +1407,10 @@ local function RestackRun_Threaded( loc_id )
 					
 					
 --[[
-					abort, recheck = Compact( loc_id )
+					abort, recheck = Compact( loc_id_window )
 					
 					if abort then
-						RestackMessageAbort( loc_id )
+						RestackMessageAbort( loc_id_window )
 						break
 					end
 					
@@ -1422,7 +1423,7 @@ local function RestackRun_Threaded( loc_id )
 				
 			end
 			
-			RestackMessageComplete( loc_id )
+			RestackMessageComplete( loc_id_window )
 			
 			--ArkInventory.Output( "bank / ", time( ), " / ", GetTime( ) )
 			
@@ -1431,18 +1432,18 @@ local function RestackRun_Threaded( loc_id )
 	end
 	
 	
-	if loc_id == ArkInventory.Const.Location.Vault then
+	if loc_id_window == ArkInventory.Const.Location.Vault then
 		
 		if ArkInventory.Global.Mode.Vault then
 			
-			RestackMessageStart( loc_id )
+			RestackMessageStart( loc_id_window )
 			
 			repeat
 				
 				abort, recheck = StackVault( )
 				
 				if abort then
-					RestackMessageAbort( loc_id )
+					RestackMessageAbort( loc_id_window )
 					break
 				end
 				
@@ -1450,17 +1451,18 @@ local function RestackRun_Threaded( loc_id )
 				
 			until not recheck
 			
-			RestackMessageComplete( loc_id )
+			RestackMessageComplete( loc_id_window )
 			
 		end
 		
 	end
 	
+	
 	--ArkInventory.Output( "RestackRun_Threaded / ", time( ), " / ", GetTime( ) )
 	
 end
 
-local function RestackRun( loc_id )
+local function RestackRun( loc_id_window )
 	
 	
 	if UnitIsDead( "player" ) then
@@ -1483,17 +1485,17 @@ local function RestackRun( loc_id )
 	end
 	
 	local thread_func = function( )
-		RestackRun_Threaded( loc_id )
+		RestackRun_Threaded( loc_id_window )
 	end
 	
 	ArkInventory.ThreadStart( thread_id, thread_func )
 	
 end
 
-function ArkInventory.Restack( loc_id )
+function ArkInventory.Restack( loc_id_window )
 	if ArkInventory.db.option.restack.enable then
 		if ArkInventory.Global.Thread.Use then
-			RestackRun( loc_id )
+			RestackRun( loc_id_window )
 		else
 			ArkInventory.OutputWarning( "cannot restack when threads are disabled" )
 		end
@@ -1515,11 +1517,12 @@ function ArkInventory.EmptyBag( loc_id, cbag )
 	
 	--ArkInventory.Output( "empty ", cbag, " [", ct, "]" )
 	
-	for bag_pos, map in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+	for bag_pos in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 		
+		local map = ArkInventory.Util.MapGetWindow( loc_id, bag_pos )
 		local blizzard_id = map.blizzard_id
 		
-		local _, bt = ArkInventory.CrossClient.GetContainerNumFreeSlots( blizzard_id )
+		local _, bt = ArkInventory.CrossClient.GetContainerNumFreeSlots( blizzard_id ) -- fix me - pull from map?
 		
 		if blizzard_id ~= cbag and ( bt == 0 or bt == ct ) then
 			

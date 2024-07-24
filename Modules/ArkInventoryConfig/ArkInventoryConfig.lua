@@ -2524,7 +2524,7 @@ function ArkInventory.ConfigInternal( )
 							type = "select",
 							width = "double",
 							dialogControl = "LSM30_Background",
-							values = ArkInventory.Lib.SharedMedia:HashTable( ArkInventory.Const.Transmog.SharedMediaType ),
+							values = ArkInventory.Lib.SharedMedia:HashTable( ArkInventory.Const.SharedMedia.Type.Transmog ),
 --							hidden = function( info )
 --								return not ArkInventory.db.option.transmog.enable
 --							end,
@@ -2568,7 +2568,7 @@ function ArkInventory.ConfigInternal( )
 							type = "select",
 							width = "double",
 							dialogControl = "LSM30_Background",
-							values = ArkInventory.Lib.SharedMedia:HashTable( ArkInventory.Const.Transmog.SharedMediaType ),
+							values = ArkInventory.Lib.SharedMedia:HashTable( ArkInventory.Const.SharedMedia.Type.Transmog ),
 ---							hidden = function( info )
 --								return not ArkInventory.db.option.transmog.enable or not ArkInventory.db.option.transmog.secondary
 --							end,
@@ -2621,7 +2621,7 @@ function ArkInventory.ConfigInternal( )
 							type = "select",
 							width = "double",
 							dialogControl = "LSM30_Background",
-							values = ArkInventory.Lib.SharedMedia:HashTable( ArkInventory.Const.Transmog.SharedMediaType ),
+							values = ArkInventory.Lib.SharedMedia:HashTable( ArkInventory.Const.SharedMedia.Type.Transmog ),
 --							hidden = function( info )
 --								return not ArkInventory.db.option.transmog.enable
 --							end,
@@ -2665,7 +2665,7 @@ function ArkInventory.ConfigInternal( )
 							type = "select",
 							width = "double",
 							dialogControl = "LSM30_Background",
-							values = ArkInventory.Lib.SharedMedia:HashTable( ArkInventory.Const.Transmog.SharedMediaType ),
+							values = ArkInventory.Lib.SharedMedia:HashTable( ArkInventory.Const.SharedMedia.Type.Transmog ),
 --							hidden = function( info )
 --								return not ArkInventory.db.option.transmog.enable or not ArkInventory.db.option.transmog.secondary
 --							end,
@@ -6655,7 +6655,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 5 )
 				local style = ArkInventory.ConfigInternalDesignGet( id )
-				return style.slot.background.icon
+				return style.slot.background.icon ~= ArkInventory.Const.SharedMedia.Name.Solid
 			end,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 5 )
@@ -6713,7 +6713,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 					disabled = function( info )
 						local id = ConfigGetNodeArg( info, #info - 5 )
 						local style = ArkInventory.ConfigInternalDesignGet( id )
-						return style.slot.background.icon
+						return style.slot.background.icon ~= ArkInventory.Const.SharedMedia.Name.Solid
 					end,
 					get = function( info )
 						local id = ConfigGetNodeArg( info, #info - 5 )
@@ -9205,17 +9205,21 @@ function ArkInventory.ConfigInternalDesignData( path )
 									order = 100,
 									name = ArkInventory.Localise["ICON"],
 									desc = ArkInventory.Localise["CONFIG_DESIGN_ITEM_EMPTY_ICON_DESC"],
-									type = "toggle",
+									type = "select",
+									dialogControl = "LSM30_Background",
+									values = ArkInventory.Lib.SharedMedia:HashTable( ArkInventory.Const.SharedMedia.Type.EmptySlot ),
 									get = function( info )
 										local id = ConfigGetNodeArg( info, #info - 4 )
 										local style = ArkInventory.ConfigInternalDesignGet( id )
-										return style.slot.background.icon
+										return style.slot.background.icon or ArkInventory.Const.SharedMedia.Default.EmptySlot
 									end,
 									set = function( info, v )
 										local id = ConfigGetNodeArg( info, #info - 4 )
 										local style = ArkInventory.ConfigInternalDesignGet( id )
-										style.slot.background.icon = v
-										ArkInventory.Frame_Item_Empty_Paint_All( )
+										if style.slot.background.icon ~= v then
+											style.slot.background.icon = v
+											ArkInventory.Frame_Item_Empty_Paint_All( )
+										end
 									end,
 								},
 								alpha = {
@@ -9230,7 +9234,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 									disabled = function( info )
 										local id = ConfigGetNodeArg( info, #info - 4 )
 										local style = ArkInventory.ConfigInternalDesignGet( id )
-										return style.slot.background.icon
+										return style.slot.background.icon == "None"
 									end,
 									get = function( info )
 										local id = ConfigGetNodeArg( info, #info - 4 )
@@ -11784,7 +11788,7 @@ function ArkInventory.ConfigInternalProfileControl( path )
 								if loc_id == ArkInventory.Const.Location.Bag then
 									CloseAllBags( )
 								elseif loc_id == ArkInventory.Const.Location.Bank and ArkInventory.Global.Mode.Bank then
-									CloseBankFrame( )
+									ArkInventory.CrossClient.CloseBankFrame( )
 								elseif loc_id == ArkInventory.Const.Location.Vault and ArkInventory.Global.Mode.Vault then
 									CloseGuildBankFrame( )
 								end
@@ -12558,7 +12562,7 @@ function ArkInventory.ConfigInternalLDBMounts( )
 		name = function( info ) 
 			local index = ConfigGetNodeArg( info, #info - 1 )
 			local md = ArkInventory.Collection.Mount.GetMount( index )
-			return string.format( "%s (%s)", md.name, md.spellID )
+			return string.format( "%s (%s) (%s)", md.name, md.spellID, md.mountTypeID )
 		end,
 		type = "description",
 		fontSize = "large"
@@ -12568,7 +12572,7 @@ function ArkInventory.ConfigInternalLDBMounts( )
 		type = "group",
 		name = "",
 		inline = true,
-		arg = args2,  -- check what this was needed for
+		--arg = args2,  -- check what this was needed for
 		args = args3,
 	}
 	
@@ -12687,7 +12691,7 @@ function ArkInventory.ConfigInternalLDBMountsUpdate( path, args2 )
 				desc = ArkInventory.Localise["LDB_MOUNTS_FLYING_DRAGONRIDING_DESC"],
 				type = "toggle",
 				hidden = function( info )
-					return not ( mountType == "a" and ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT ) )
+					return not ( mountType == "a" and ArkInventory.Collection.Mount.GetFlightMode( ) == nil )
 				end,
 				get = function( info )
 					return config.me.player.data.ldb.mounts.dragonriding

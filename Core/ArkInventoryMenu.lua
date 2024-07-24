@@ -443,7 +443,7 @@ function ArkInventory.MenuBarOpen( frame )
 							end
 						end
 						
-						for bag_id in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+						for bag_id in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 							if codex.layout.bag[bag_id].bar == bar_id then
 								has_entries = true
 								ArkInventory.Lib.Dewdrop:AddLine(
@@ -693,7 +693,7 @@ function ArkInventory.MenuBarOpen( frame )
 					
 					ArkInventory.Lib.Dewdrop:AddLine( )
 					
-					for bag_id in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
+					for bag_id in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
 						
 						local cat_bar = codex.layout.bag[bag_id].bar
 						
@@ -2270,6 +2270,7 @@ function ArkInventory.MenuBagOpen( frame )
 	local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromWindowId( loc_id, bag_id )
 	local map = ArkInventory.Util.MapGetBlizzard( blizzard_id )
 	local codex = ArkInventory.Codex.GetLocation( loc_id )
+	
 	local player_id = codex.player.data.info.player_id
 	
 	local i = ArkInventory.Frame_Item_GetDB( frame )
@@ -2282,7 +2283,11 @@ function ArkInventory.MenuBagOpen( frame )
 		end
 	end
 	
-	local bag = codex.player.data.location[loc_id].bag[bag_id]
+	
+	local loc_id_storage = map.loc_id_storage
+	local bag_id_storage = map.bag_id_storage
+	local storage = ArkInventory.Codex.GetStorage( nil, loc_id_storage )
+	local bag = storage.data.location[loc_id_storage].bag[bag_id_storage]
 	
 	
 	ArkInventory.Lib.Dewdrop:Open( frame,
@@ -2293,56 +2298,29 @@ function ArkInventory.MenuBagOpen( frame )
 			if level == 1 then
 				
 				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", string.format( "%s: %s %i", ArkInventory.Localise["OPTIONS"], ArkInventory.Localise["SLOT"], bag_id ),
+					"text", string.format( "%s: %s %s %i", ArkInventory.Localise["OPTIONS"], ArkInventory.Global.Location[loc_id].Name, ArkInventory.Localise["SLOT"], bag_id ),
 					"icon", ArkInventory.Const.ButtonData[ArkInventory.ENUM.BUTTONID.EditMode].Texture,
 					"isTitle", true
 				)
 				
-				-- purchase
-				if bag.status == ArkInventory.Const.Bag.Status.Purchase then
+				if loc_id ~= loc_id_storage then
+					ArkInventory.Lib.Dewdrop:AddLine(
+						"text", string.format( "(%s %s %i)", ArkInventory.Global.Location[loc_id_storage].Name, ArkInventory.Localise["SLOT"], bag_id_storage ),
+						"isTitle", true
+					)
+				end
+				
+				
+				if not ArkInventory.Global.Location[loc_id].isOffline then
 					
-					if loc_id == ArkInventory.Const.Location.Bank then
-						
-						ArkInventory.Lib.Dewdrop:AddLine( )
-						
-						if map.loc_id_storage == ArkInventory.Const.Location.AccountBank then
-							
-							local cost = C_Bank.FetchNextPurchasableBankTabCost( Enum.BankType.Account )
-							
-							ArkInventory.Lib.Dewdrop:AddLine(
-								"text", BANKSLOTPURCHASE,
-								"tooltipTitle", ArkInventory.Localise["ACCOUNTBANK"],
-								"tooltipText", string.format( "%s\n\n%s %s", ACCOUNT_BANK_TAB_PURCHASE_PROMPT, COSTS_LABEL, ArkInventory.MoneyText( cost, true ) ),
-								"closeWhenClicked", true,
-								"func", function( )
-									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
-									StaticPopup_Show( "CONFIRM_BUY_BANK_TAB", nil, nil, { bankType = Enum.BankType.Account } )
-								end
-							)
-							
-						end
-						
-						if map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
-							
-							local cost = GetReagentBankCost( )
-							
-							ArkInventory.Lib.Dewdrop:AddLine(
-								"text", BANKSLOTPURCHASE,
-								"tooltipTitle", ArkInventory.Localise["REAGENTBANK"],
-								"tooltipText", string.format( "%s\n\n%s %s", REAGENTBANK_PURCHASE_TEXT, COSTS_LABEL, ArkInventory.MoneyText( cost, true ) ),
-								"closeWhenClicked", true,
-								"func", function( )
-									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
-									StaticPopup_Show( "CONFIRM_BUY_REAGENTBANK_TAB" )
-								end
-							)
-							
-						end
+					if bag.status == ArkInventory.Const.Bag.Status.Purchase then
 						
 						if map.loc_id_storage == ArkInventory.Const.Location.Bank then
 							
 							local numSlots = GetNumBankSlots( )
 							local cost = GetBankSlotCost( numSlots )
+							
+							ArkInventory.Lib.Dewdrop:AddLine( )
 							
 							ArkInventory.Lib.Dewdrop:AddLine(
 								"text", BANKSLOTPURCHASE,
@@ -2357,166 +2335,445 @@ function ArkInventory.MenuBagOpen( frame )
 							
 						end
 						
-					end
-					
-				end
-				
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", ArkInventory.Localise["DISPLAY"],
-					"tooltipTitle", ArkInventory.Localise["DISPLAY"],
-					"tooltipText", ArkInventory.Localise["MENU_BAG_SHOW_DESC"],
-					"checked", codex.player.data.option[loc_id].bag[bag_id].display,
-					"closeWhenClicked", true,
-					"func", function( )
-						codex.player.data.option[loc_id].bag[bag_id].display = not codex.player.data.option[loc_id].bag[bag_id].display
-						ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
-					end
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", ArkInventory.Localise["MENU_BAG_ISOLATE"],
-					"tooltipTitle", ArkInventory.Localise["MENU_BAG_ISOLATE"],
-					"tooltipText", ArkInventory.Localise["MENU_BAG_ISOLATE_DESC"],
-					"closeWhenClicked", true,
-					"func", function( )
-						for x in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
-							if x == bag_id then
-								codex.player.data.option[loc_id].bag[x].display = true
-							else
-								codex.player.data.option[loc_id].bag[x].display = false
-							end
-						end
-						ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
-					end
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", ArkInventory.Localise["MENU_BAG_SHOWALL"],
-					"tooltipTitle", ArkInventory.Localise["MENU_BAG_SHOWALL"],
-					"tooltipText", ArkInventory.Localise["MENU_BAG_SHOWALL_DESC"],
-					"closeWhenClicked", true,
-					"func", function( )
-						for x in ipairs( ArkInventory.Util.MapGetWindowBags( loc_id ) ) do
-							codex.player.data.option[loc_id].bag[x].display = true
-						end
-						ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
-					end
-				)
-				
-				if not isEmpty then
-					
-					ArkInventory.Lib.Dewdrop:AddLine( )
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", ArkInventory.Localise["EMPTY"],
-						"tooltipTitle", ArkInventory.Localise["EMPTY"],
-						"tooltipText", ArkInventory.Localise["MENU_BAG_EMPTY_DESC"],
-						"closeWhenClicked", true,
-						"func", function( )
-							ArkInventory.EmptyBag( loc_id, bag_id )
-						end
-					)
-					
-				end
-				
-				if loc_id == ArkInventory.Const.Location.Bank and map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
-					
-					ArkInventory.Lib.Dewdrop:AddLine( )
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", REAGENTBANK_DEPOSIT,
-						"tooltipTitle", REAGENTBANK_DEPOSIT,
-						"closeWhenClicked", true,
-						"func", function( )
-							PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
-							DepositReagentBank( )
-						end
-					)
-					
-				end
-				
-				if ArkInventory.Global.Mode.Edit and not isEmpty then
-					
-					ArkInventory.Lib.Dewdrop:AddLine( )
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", ArkInventory.Localise["DEBUG"],
-						"hasArrow", true,
-						"value", "DEBUG_INFO"
-					)
-					
-				end
-				
-				if loc_id == ArkInventory.Const.Location.Bag or loc_id == ArkInventory.Const.Location.Bank then
-					
-					if loc_id == ArkInventory.Const.Location.Bag then
-						
-						ArkInventory.Lib.Dewdrop:AddLine( )
-						
-						ArkInventory.Lib.Dewdrop:AddLine(
-							"text", ArkInventory.Localise["REVERSE_NEW_LOOT_TEXT"],
-							"tooltipTitle", ArkInventory.Localise["REVERSE_NEW_LOOT_TEXT"],
-							"tooltipText", ArkInventory.Localise["OPTION_TOOLTIP_REVERSE_NEW_LOOT"],
-							"checked", ArkInventory.CrossClient.GetInsertItemsLeftToRight( ),
-							"closeWhenClicked", true,
-							"func", function( )
-								ArkInventory.CrossClient.SetInsertItemsLeftToRight( not ArkInventory.CrossClient.GetInsertItemsLeftToRight( ) )
-								-- its a bit slow to update so close the menu?
-							end
-						)
-						
-					end
-					
-					
-					if ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.ASSIGN_TO_BAG and ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.LABELS then
-						
-						if ( bag_id > 1 ) and (( loc_id == ArkInventory.Const.Location.Bag and bag_id <= ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS_NORMAL + 1 ) or ( loc_id == ArkInventory.Const.Location.Bank and bag_id <= ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS + 1 )) then
+						if map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
+							
+							local cost = GetReagentBankCost( )
 							
 							ArkInventory.Lib.Dewdrop:AddLine( )
 							
 							ArkInventory.Lib.Dewdrop:AddLine(
-								"text", ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.ASSIGN_TO_BAG,
-								"isTitle", true
+								"text", BANKSLOTPURCHASE,
+								"tooltipTitle", ArkInventory.Localise["REAGENTBANK"],
+								"tooltipText", string.format( "%s\n\n%s %s", REAGENTBANK_PURCHASE_TEXT, COSTS_LABEL, ArkInventory.MoneyText( cost, true ) ),
+								"closeWhenClicked", true,
+								"func", function( )
+									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+									StaticPopup_Show( "CONFIRM_BUY_REAGENTBANK_TAB" )
+								end
 							)
 							
-							for i, flag in ArkInventory.CrossClient.EnumerateBagGearFilters( ) do
+						end
+						
+						if map.loc_id_storage == ArkInventory.Const.Location.AccountBank then
+							
+							local cost = C_Bank.FetchNextPurchasableBankTabCost( Enum.BankType.Account )
+							
+							ArkInventory.Lib.Dewdrop:AddLine( )
+							
+							local txt = string.format( "%s\n\n%s %s", ACCOUNT_BANK_TAB_PURCHASE_PROMPT, COSTS_LABEL, ArkInventory.MoneyText( cost, true ) )
+							if ArkInventory.CrossClient.IsWarbankInUseByAnotherCharacter( ) then
+								txt = string.format("%s\n\n%s", txt, ACCOUNT_BANK_LOCKED_PROMPT )
+							end
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", BANKSLOTPURCHASE,
+								"tooltipTitle", ArkInventory.Localise["ACCOUNTBANK"],
+								"tooltipText", txt,
+								"closeWhenClicked", true,
+								"disabled", function( )
+									return ArkInventory.CrossClient.IsWarbankInUseByAnotherCharacter( )
+								end,
+								"func", function( )
+									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+									StaticPopup_Show( "CONFIRM_BUY_BANK_TAB", nil, nil, { bankType = Enum.BankType.Account } )
+								end
+							)
+							
+						end
+						
+						if map.loc_id_storage == ArkInventory.Const.Location.Vault then
+							
+							local ok = nil
+							local amount = 0
+							local tt = ""
+							
+							if IsGuildLeader( ) then
 								
-								local checked = false
+								local numSlots = GetNumGuildBankTabs( )
+								amount = GetGuildBankTabCost( )
 								
-								if loc_id == ArkInventory.Const.Location.Bag then
+								if not amount or amount == 0 or numSlots >= MAX_BUY_GUILDBANK_TABS then
 									
-									checked = ArkInventory.CrossClient.GetBagSlotFlag( blizzard_id, flag )
+									amount = 0
+									ok = false
 									
-								elseif loc_id == ArkInventory.Const.Location.Bank then
+								else
 									
-									checked = ArkInventory.CrossClient.GetBagSlotFlag( blizzard_id, flag )
+									if GetMoney( ) >= amount then
+										ok = true
+									else
+										ok = false
+									end
 									
 								end
 								
+								if amount > 0 then
+									tt = string.format( "%s %s", COSTS_LABEL, ArkInventory.MoneyText( amount, true ) )
+								end
+								
+							end
+							
+							if ok ~= nil then
+								
+								ArkInventory.Lib.Dewdrop:AddLine( )
+								
 								ArkInventory.Lib.Dewdrop:AddLine(
-									"text", ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.LABELS[flag],
-									"tooltipTitle", ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.ASSIGN_TO_BAG,
-									"tooltipText", ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.LABELS[flag],
-									"checked", checked,
+									"text", BANKSLOTPURCHASE,
+									"tooltipTitle", BANKSLOTPURCHASE,
+									"tooltipText", tt,
+									"closeWhenClicked", true,
+									"disabled", not ok,
+									"func", function( )
+										PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+										StaticPopup_Show( "CONFIRM_BUY_GUILDBANK_TAB" )
+									end
+								)
+								
+							end
+							
+						end
+						
+					else
+						
+						-- reagent bank bag options
+						if map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
+							
+							ArkInventory.Lib.Dewdrop:AddLine( )
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", REAGENTBANK_DEPOSIT,
+								"tooltipTitle", REAGENTBANK_DEPOSIT,
+								"closeWhenClicked", true,
+								"func", function( )
+									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+									DepositReagentBank( )
+								end
+							)
+							
+						end
+						
+						-- account bank bag options
+						if map.loc_id_storage == ArkInventory.Const.Location.AccountBank then
+							
+							ArkInventory.Lib.Dewdrop:AddLine( )
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", "change name or icon",
+								"closeWhenClicked", true,
+								"func", function( )
+									ArkInventory.Icon_Selector_Show( loc_id, bag_id )
+								end
+							)
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL,
+								"tooltipTitle", ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL,
+								"closeWhenClicked", true,
+								"func", function( )
+									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
+									AccountBankPanel.selectedTabID = map.blizzard_id
+									C_Bank.AutoDepositItemsIntoBank( Enum.BankType.Account )
+								end
+							)
+							
+						end
+						
+						-- vault tab options
+						if map.loc_id_storage == ArkInventory.Const.Location.Vault then
+							
+							local mode = ArkInventory.Global.Location[loc_id].view_mode
+							
+							if IsGuildLeader( ) then
+								
+								ArkInventory.Lib.Dewdrop:AddLine( )
+								
+								ArkInventory.Lib.Dewdrop:AddLine(
+									"text", "change name or icon",
 									"closeWhenClicked", true,
 									"func", function( )
+										ArkInventory.Icon_Selector_Show( loc_id, bag_id )
+									end
+								)
+								
+							end
+							
+							ArkInventory.Lib.Dewdrop:AddLine( )
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", string.format( "%s: %s", DISPLAY, ArkInventory.Localise["VAULT"] ),
+								"closeWhenClicked", true,
+								"checked", mode == "bank",
+								"func", function( )
+									--ArkInventory.Output( "bank" )
+									ArkInventory.Global.Location[loc_id].view_mode = "bank"
+									ArkInventory.VaultTabClick( bag_id, ArkInventory.Global.Location[loc_id].view_mode )
+								end
+							)
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", string.format( "%s: %s", DISPLAY, GUILD_BANK_LOG ),
+								"closeWhenClicked", true,
+								"checked", mode == "log",
+								"func", function( )
+									--ArkInventory.Output( "log" )
+									ArkInventory.Global.Location[loc_id].view_mode = "log"
+									ArkInventory.VaultTabClick( bag_id, ArkInventory.Global.Location[loc_id].view_mode )
+								end
+							)
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", string.format( "%s: %s", DISPLAY, GUILD_BANK_MONEY_LOG ),
+								"closeWhenClicked", true,
+								"checked", mode == "moneylog",
+								"func", function( )
+									--ArkInventory.Output( "moneylog" )
+									ArkInventory.Global.Location[loc_id].view_mode = "moneylog"
+									ArkInventory.VaultTabClick( bag_id, ArkInventory.Global.Location[loc_id].view_mode )
+								end
+							)
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", string.format( "%s: %s", DISPLAY, GUILD_BANK_TAB_INFO ),
+								"closeWhenClicked", true,
+								"checked", GuildBankFrame.mode == "tabinfo",
+								"func", function( )
+									--ArkInventory.Output( "info" )
+									ArkInventory.Global.Location[loc_id].view_mode = "tabinfo"
+									ArkInventory.VaultTabClick( bag_id, ArkInventory.Global.Location[loc_id].view_mode )
+								end
+							)
+							
+							ArkInventory.Lib.Dewdrop:AddLine( )
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", "rescan data",
+								"closeWhenClicked", true,
+								"func", function( )
+									QueryGuildBankTab( GetCurrentGuildBankTab( ) or 1 )
+								end
+							)
+
+							
+						end
+						
+						
+						
+						if loc_id == ArkInventory.Const.Location.Bag or loc_id == ArkInventory.Const.Location.Bank then
+						
+							ArkInventory.Lib.Dewdrop:AddLine( )
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", ArkInventory.Localise["DISPLAY"],
+								"tooltipTitle", ArkInventory.Localise["DISPLAY"],
+								"tooltipText", ArkInventory.Localise["MENU_BAG_SHOW_DESC"],
+								"checked", codex.player.data.option[loc_id].bag[bag_id].display,
+								"closeWhenClicked", true,
+								"disabled", bag.status == ArkInventory.Const.Bag.Status.Purchase,
+								"func", function( )
+									codex.player.data.option[loc_id].bag[bag_id].display = not codex.player.data.option[loc_id].bag[bag_id].display
+									ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
+								end
+							)
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", ArkInventory.Localise["MENU_BAG_ISOLATE"],
+								"tooltipTitle", ArkInventory.Localise["MENU_BAG_ISOLATE"],
+								"tooltipText", ArkInventory.Localise["MENU_BAG_ISOLATE_DESC"],
+								"closeWhenClicked", true,
+								"disabled", bag.status == ArkInventory.Const.Bag.Status.Purchase,
+								"func", function( )
+									for x in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
+										if x == bag_id then
+											codex.player.data.option[loc_id].bag[x].display = true
+										else
+											codex.player.data.option[loc_id].bag[x].display = false
+										end
+									end
+									ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
+								end
+							)
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", ArkInventory.Localise["MENU_BAG_SHOWALL"],
+								"tooltipTitle", ArkInventory.Localise["MENU_BAG_SHOWALL"],
+								"tooltipText", ArkInventory.Localise["MENU_BAG_SHOWALL_DESC"],
+								"closeWhenClicked", true,
+								"func", function( )
+									for x in ipairs( ArkInventory.Util.MapGetWindow( loc_id ) ) do
+										codex.player.data.option[loc_id].bag[x].display = true
+									end
+									ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
+								end
+							)
+							
+							if not isEmpty then
+								
+								ArkInventory.Lib.Dewdrop:AddLine( )
+								
+								ArkInventory.Lib.Dewdrop:AddLine(
+									"text", ArkInventory.Localise["EMPTY"],
+									"tooltipTitle", ArkInventory.Localise["EMPTY"],
+									"tooltipText", ArkInventory.Localise["MENU_BAG_EMPTY_DESC"],
+									"closeWhenClicked", true,
+									"func", function( )
+										ArkInventory.EmptyBag( loc_id, bag_id )
+									end
+								)
+								
+							end
+							
+							if ArkInventory.Global.Mode.Edit and not isEmpty then
+								
+								ArkInventory.Lib.Dewdrop:AddLine( )
+								
+								ArkInventory.Lib.Dewdrop:AddLine(
+									"text", ArkInventory.Localise["DEBUG"],
+									"hasArrow", true,
+									"value", "DEBUG_INFO"
+								)
+								
+							end
+							
+							
+							
+							if loc_id == ArkInventory.Const.Location.Bag then
+								
+								ArkInventory.Lib.Dewdrop:AddLine( )
+								
+								ArkInventory.Lib.Dewdrop:AddLine(
+									"text", ArkInventory.Localise["REVERSE_NEW_LOOT_TEXT"],
+									"tooltipTitle", ArkInventory.Localise["REVERSE_NEW_LOOT_TEXT"],
+									"tooltipText", ArkInventory.Localise["OPTION_TOOLTIP_REVERSE_NEW_LOOT"],
+									"checked", ArkInventory.CrossClient.GetInsertItemsLeftToRight( ),
+									"closeWhenClicked", true,
+									"func", function( )
+										ArkInventory.CrossClient.SetInsertItemsLeftToRight( not ArkInventory.CrossClient.GetInsertItemsLeftToRight( ) )
+										-- its a bit slow to update so close the menu?
+									end
+								)
+								
+							end
+							
+							
+							if ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.ASSIGN_TO_BAG and ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.LABELS then
+								
+								if ( bag_id > 1 ) and (( loc_id == ArkInventory.Const.Location.Bag and bag_id <= ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS_NORMAL + 1 ) or ( loc_id == ArkInventory.Const.Location.Bank and bag_id <= ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS + 1 )) then
+									
+									ArkInventory.Lib.Dewdrop:AddLine( )
+									
+									ArkInventory.Lib.Dewdrop:AddLine(
+										"text", ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.ASSIGN_TO_BAG,
+										"isTitle", true
+									)
+									
+									for i, flag in ArkInventory.CrossClient.EnumerateBagGearFilters( ) do
+										
+										local checked = false
 										
 										if loc_id == ArkInventory.Const.Location.Bag then
 											
-											ArkInventory.CrossClient.SetBagSlotFlag( blizzard_id, flag, not checked )
+											checked = ArkInventory.CrossClient.GetBagSlotFlag( blizzard_id, flag )
+											
+										elseif loc_id == ArkInventory.Const.Location.Bank then
+											
+											checked = ArkInventory.CrossClient.GetBagSlotFlag( blizzard_id, flag )
+											
+										end
+										
+										ArkInventory.Lib.Dewdrop:AddLine(
+											"text", ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.LABELS[flag],
+											"tooltipTitle", ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.ASSIGN_TO_BAG,
+											"tooltipText", ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.LABELS[flag],
+											"checked", checked,
+											"closeWhenClicked", true,
+											"func", function( )
+												
+												if loc_id == ArkInventory.Const.Location.Bag then
+													
+													ArkInventory.CrossClient.SetBagSlotFlag( blizzard_id, flag, not checked )
+													
+												elseif loc_id == ArkInventory.Const.Location.Bank then
+													
+													if bag_id == 1 then
+														ArkInventory.CrossClient.SetBankBagSlotFlag( blizzard_id - ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS, flag, not checked )
+													else
+														ArkInventory.CrossClient.SetBagSlotFlag( blizzard_id, flag, not checked )
+													end
+													
+												end
+												
+											end
+										)
+										
+									end
+									
+								end
+								
+							end
+							
+							
+							ArkInventory.Lib.Dewdrop:AddLine( )
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"icon", ArkInventory.Const.ButtonData[ArkInventory.ENUM.BUTTONID.Restack].Texture,
+								"text", ArkInventory.Const.ButtonData[ArkInventory.ENUM.BUTTONID.Restack].Name( ),
+								"isTitle", true
+							)
+							
+							
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", BAG_FILTER_IGNORE,
+								"tooltipTitle", ArkInventory.Const.ButtonData[ArkInventory.ENUM.BUTTONID.Restack].Name( ),
+								"tooltipText", BAG_FILTER_IGNORE,
+								"checked", codex.player.data.option[loc_id].bag[bag_id].restack.ignore,
+								"closeWhenClicked", true,
+								"func", function( )
+									
+									local checked = not codex.player.data.option[loc_id].bag[bag_id].restack.ignore
+									codex.player.data.option[loc_id].bag[bag_id].restack.ignore = checked
+									
+									if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.LEGION ) then
+										
+										if loc_id == ArkInventory.Const.Location.Bag then
+											
+											if bag_id == 1 then
+												ArkInventory.CrossClient.SetBackpackAutosortDisabled( checked )
+											else
+												ArkInventory.CrossClient.SetBagSlotFlag( blizzard_id, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.IGNORECLEANUP, checked )
+											end
 											
 										elseif loc_id == ArkInventory.Const.Location.Bank then
 											
 											if bag_id == 1 then
-												ArkInventory.CrossClient.SetBankBagSlotFlag( blizzard_id - ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS, flag, not checked )
+												ArkInventory.CrossClient.SetBankAutosortDisabled( checked )
+											elseif map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
+												-- already set
 											else
-												ArkInventory.CrossClient.SetBagSlotFlag( blizzard_id, flag, not checked )
+												ArkInventory.CrossClient.SetBankBagSlotFlag( blizzard_id - ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.IGNORECLEANUP, checked )
 											end
 											
 										end
 										
+									end
+									
+								end
+							)
+							
+							
+							if loc_id == ArkInventory.Const.Location.Bag then
+								
+								local disabled, text = ArkInventory.CrossClient.OptionNotAvailableExpansion( ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.PANDARIA ), OPTION_TOOLTIP_REVERSE_CLEAN_UP_BAGS )
+								ArkInventory.Lib.Dewdrop:AddLine(
+									"text", REVERSE_CLEAN_UP_BAGS_TEXT,
+									"tooltipTitle", REVERSE_CLEAN_UP_BAGS_TEXT,
+									"tooltipText", text,
+									"disabled", disabled,
+									"checked", ArkInventory.db.option.restack.reverse,
+									"closeWhenClicked", true,
+									"disabled", not ArkInventory.db.option.restack.blizzard,
+									"func", function( )
+										ArkInventory.db.option.restack.reverse = not ArkInventory.db.option.restack.reverse
+										ArkInventory.CrossClient.SetSortBagsRightToLeft( ArkInventory.db.option.restack.reverse )
 									end
 								)
 								
@@ -2526,75 +2783,9 @@ function ArkInventory.MenuBagOpen( frame )
 						
 					end
 					
-					
-					ArkInventory.Lib.Dewdrop:AddLine( )
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"icon", ArkInventory.Const.ButtonData[ArkInventory.ENUM.BUTTONID.Restack].Texture,
-						"text", ArkInventory.Const.ButtonData[ArkInventory.ENUM.BUTTONID.Restack].Name( ),
-						"isTitle", true
-					)
-					
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", BAG_FILTER_IGNORE,
-						"tooltipTitle", ArkInventory.Const.ButtonData[ArkInventory.ENUM.BUTTONID.Restack].Name( ),
-						"tooltipText", BAG_FILTER_IGNORE,
-						"checked", codex.player.data.option[loc_id].bag[bag_id].restack.ignore,
-						"closeWhenClicked", true,
-						"func", function( )
-							
-							local checked = not codex.player.data.option[loc_id].bag[bag_id].restack.ignore
-							codex.player.data.option[loc_id].bag[bag_id].restack.ignore = checked
-							
-							if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.LEGION ) then
-								
-								if loc_id == ArkInventory.Const.Location.Bag then
-									
-									if bag_id == 1 then
-										ArkInventory.CrossClient.SetBackpackAutosortDisabled( checked )
-									else
-										ArkInventory.CrossClient.SetBagSlotFlag( blizzard_id, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.IGNORECLEANUP, checked )
-									end
-									
-								elseif loc_id == ArkInventory.Const.Location.Bank then
-									
-									if bag_id == 1 then
-										ArkInventory.CrossClient.SetBankAutosortDisabled( checked )
-									elseif map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
-										-- already set
-									else
-										ArkInventory.CrossClient.SetBankBagSlotFlag( blizzard_id - ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.FILTER.IGNORECLEANUP, checked )
-									end
-									
-								end
-								
-							end
-							
-						end
-					)
-					
-					
-					if loc_id == ArkInventory.Const.Location.Bag then
-						
-						local disabled, text = ArkInventory.CrossClient.OptionNotAvailableExpansion( ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.PANDARIA ), OPTION_TOOLTIP_REVERSE_CLEAN_UP_BAGS )
-						ArkInventory.Lib.Dewdrop:AddLine(
-							"text", REVERSE_CLEAN_UP_BAGS_TEXT,
-							"tooltipTitle", REVERSE_CLEAN_UP_BAGS_TEXT,
-							"tooltipText", text,
-							"disabled", disabled,
-							"checked", ArkInventory.db.option.restack.reverse,
-							"closeWhenClicked", true,
-							"disabled", not ArkInventory.db.option.restack.blizzard,
-							"func", function( )
-								ArkInventory.db.option.restack.reverse = not ArkInventory.db.option.restack.reverse
-								ArkInventory.CrossClient.SetSortBagsRightToLeft( ArkInventory.db.option.restack.reverse )
-							end
-						)
-						
-					end
-					
 				end
+				
+				
 				
 			end
 			
@@ -2647,381 +2838,14 @@ function ArkInventory.MenuBagOpen( frame )
 				
 			end
 			
-		end
-		
-	)
-	
-end
-
-function ArkInventory.MenuChangerVaultTabOpen( frame )
-	
-	ArkInventory.Util.Assert( frame, "frame is nil" )
-	
-	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
-		ArkInventory.Lib.Dewdrop:Close( )
-		return
-	end
-	
-	
-	local loc_id = frame.ARK_Data.loc_id
-	local bag_id = frame.ARK_Data.bag_id
-	local codex = ArkInventory.Codex.GetLocation( loc_id )
-	local bag = codex.player.data.location[loc_id].bag[bag_id]
-	local button = _G[string.format( "%s%s%sWindowBag%s", ArkInventory.Const.Frame.Main.Name, loc_id, ArkInventory.Const.Frame.Changer.Name, bag_id )]
-	
-	
-	ArkInventory.Lib.Dewdrop:Open( frame,
-		"point", helper_DewdropMenuPosition( frame ),
-		"relativePoint", helper_DewdropMenuPosition( frame, true ),
-		"children", function( level, value )
 			
-			if level == 1 then
+			ArkInventory.Lib.Dewdrop:AddLine( )
 			
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", string.format( "%s: %s", ArkInventory.Localise["VAULT"], string.format( GUILDBANK_TAB_NUMBER, bag_id ) ),
-					"icon", bag.texture,
-					"isTitle", true
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", bag.name,
-					"isTitle", true
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				
-				if not ArkInventory.Global.Location[loc_id].isOffline then
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", "request tab data",
-						"closeWhenClicked", true,
-						"func", function( )
-							QueryGuildBankTab( GetCurrentGuildBankTab( ) or 1 )
-						end
-					)
-					
-					ArkInventory.Lib.Dewdrop:AddLine( )
-					
-				end
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", string.format( "mode: %s", ArkInventory.Localise["VAULT"] ),
-					"closeWhenClicked", true,
-					"disabled", GuildBankFrame.mode == "bank",
-					"func", function( )
-						--ArkInventory.Frame_Changer_Vault_Tab_OnClick( button, "LeftButton", "bank" )
-						GuildBankFrameTab_OnClick( bag_id, 1 )
-						ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
-					end
-				)
-				
-				if not ArkInventory.Global.Location[loc_id].isOffline then
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", string.format( "mode: %s", GUILD_BANK_LOG ),
-						"closeWhenClicked", true,
-						"disabled", GuildBankFrame.mode == "log",
-						"func", function( )
-							ArkInventory.Frame_Main_DrawStatus( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
-							--ArkInventory.Frame_Changer_Vault_Tab_OnClick( button, "LeftButton", "log" )
-							GuildBankFrameTab_OnClick( bag_id, 2 )
-						end
-					)
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", string.format( "mode: %s", GUILD_BANK_MONEY_LOG ),
-						"closeWhenClicked", true,
-						"disabled", GuildBankFrame.mode == "moneylog",
-						"func", function( )
-							ArkInventory.Frame_Main_DrawStatus( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
-							--ArkInventory.Frame_Changer_Vault_Tab_OnClick( button, "LeftButton", "moneylog" )
-							GuildBankFrameTab_OnClick( bag_id, 3 )
-						end
-					)
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", string.format( "mode: %s", GUILD_BANK_TAB_INFO ),
-						"closeWhenClicked", true,
-						"disabled", GuildBankFrame.mode == "tabinfo",
-						"func", function( )
-							ArkInventory.Frame_Main_DrawStatus( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
-							--GuildBankFrameTab_OnClick( bag_id, 4 )
-							--ArkInventory.Frame_Changer_Vault_Tab_OnClick( button, "LeftButton", "tabinfo" )
-							GuildBankFrameTab_OnClick( bag_id, 4 )
-							ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Recalculate )
-						end
-					)
-					
-					if IsGuildLeader( ) then
-					
-						ArkInventory.Lib.Dewdrop:AddLine( )
-						
-						ArkInventory.Lib.Dewdrop:AddLine(
-							"text", "change name or icon",
-							"closeWhenClicked", true,
-							"func", function( )
-								SetCurrentGuildBankTab( bag_id )
-								GuildBankPopupFrame:Show( )
-								GuildBankPopupFrame_Update( bag_id )
-							end
-						)
-						
-					end
-					
-				end
-				
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", ArkInventory.Localise["CLOSE_MENU"],
-					"closeWhenClicked", true
-				)
-				
-			end
-		
-		end
-		
-	)
-	
-end
-
-function ArkInventory.MenuChangerVaultActionOpen( frame )
-	
-	ArkInventory.Util.Assert( frame, "frame is nil" )
-	
-	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
-		ArkInventory.Lib.Dewdrop:Close( )
-		return
-	end
-	
-	
-	local loc_id = ArkInventory.Const.Location.Vault
-	local codex = ArkInventory.Codex.GetLocation( loc_id )
-	local bag_id = ArkInventory.Global.Location[loc_id].view_tab
-	local mode = ArkInventory.Global.Location[loc_id].view_mode
-	local bag = codex.player.data.location[loc_id].bag[bag_id]
-	
-	
-	ArkInventory.Lib.Dewdrop:Open( frame,
-		"point", helper_DewdropMenuPosition( frame ),
-		"relativePoint", helper_DewdropMenuPosition( frame, true ),
-		"children", function( level, value )
+			ArkInventory.Lib.Dewdrop:AddLine(
+				"text", ArkInventory.Localise["CLOSE_MENU"],
+				"closeWhenClicked", true
+			)
 			
-			local ok = false
-			local amount = 0
-			local tt = ""
-			
-			if level == 1 then
-			
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", ArkInventory.Localise["VAULT"],
-					"icon", ArkInventory.Global.Location[loc_id].Texture,
-					"isTitle", true
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", DEPOSIT,
-					"closeWhenClicked", true,
-					"func", function( )
-						PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
-						StaticPopup_Hide( "GUILDBANK_WITHDRAW" )
-						if StaticPopup_Visible( "GUILDBANK_DEPOSIT") then
-							StaticPopup_Hide( "GUILDBANK_DEPOSIT" )
-						else
-							StaticPopup_Show( "GUILDBANK_DEPOSIT" )
-						end
-					end
-				)
-				
-				
-				ok = false
-				amount = 0
-				tt = ""
-				
-				amount = GetGuildBankWithdrawMoney( )
-				if amount >= 0 then
-					
-					if ( ( not CanGuildBankRepair( ) and not CanWithdrawGuildBankMoney( ) ) or ( CanGuildBankRepair( ) and not CanWithdrawGuildBankMoney( ) ) ) then
-						amount = 0
-					else
-						amount = min( amount, GetGuildBankMoney( ) )
-					end
-					
-					if amount > 0 then
-						ok = true
-					end
-					
-				else
-					
-					amount = 0
-					
-				end
-				
-				if amount > 0 then
-					tt = string.format( "%s %s", GUILDBANK_AVAILABLE_MONEY, ArkInventory.MoneyText( amount, true ) )
-				end
-				
-				if ok and ( not CanWithdrawGuildBankMoney( ) ) then
-					tt = string.format( "%s%s (%s)", tt, REPAIR_ITEMS )
-				end
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", WITHDRAW,
-					"tooltipTitle", WITHDRAW,
-					"tooltipText", tt,
-					"closeWhenClicked", true,
-					"disabled", not ok,
-					"func", function( )
-						PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
-						StaticPopup_Hide( "GUILDBANK_DEPOSIT" )
-						if StaticPopup_Visible( "GUILDBANK_WITHDRAW" ) then
-							StaticPopup_Hide( "GUILDBANK_WITHDRAW" )
-						else
-							StaticPopup_Show( "GUILDBANK_WITHDRAW" )
-						end
-					end
-				)
-				
-				
-				ok = nil
-				amount = 0
-				tt = ""
-				
-				if IsGuildLeader( ) then
-					
-					local numSlots = GetNumGuildBankTabs( )
-					amount = GetGuildBankTabCost( )
-					
-					if not amount or amount == 0 or numSlots >= MAX_BUY_GUILDBANK_TABS then
-						
-						amount = 0
-						ok = false
-						
-					else
-						
-						if GetMoney( ) >= amount then
-							ok = true
-						else
-							ok = false
-						end
-						
-					end
-					
-					if amount > 0 then
-						tt = string.format( "%s %s", COSTS_LABEL, ArkInventory.MoneyText( amount, true ) )
-					end
-					
-				end
-				
-				if ok ~= nil then
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", BANKSLOTPURCHASE,
-						"tooltipTitle", BANKSLOTPURCHASE,
-						"tooltipText", tt,
-						"closeWhenClicked", true,
-						"disabled", not ok,
-						"func", function( )
-							PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
-							StaticPopup_Show( "CONFIRM_BUY_GUILDBANK_TAB" )
-						end
-					)
-				end
-				
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", string.format( "%s: %s", string.format( GUILDBANK_TAB_NUMBER, bag_id ), bag.name or "" ),
-					"icon", bag.texture,
-					"isTitle", true
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", string.format( "%s: %s", DISPLAY, ArkInventory.Localise["VAULT"] ),
-					"closeWhenClicked", true,
-					"disabled", mode == "bank",
-					"func", function( )
-						--ArkInventory.Output( "bank" )
-						ArkInventory.Global.Location[loc_id].view_mode = "bank"
-						ArkInventory.VaultTabClick( bag_id, ArkInventory.Global.Location[loc_id].view_mode )
-					end
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", string.format( "%s: %s", DISPLAY, GUILD_BANK_LOG ),
-					"closeWhenClicked", true,
-					"disabled", mode == "log",
-					"func", function( )
-						--ArkInventory.Output( "log" )
-						ArkInventory.Global.Location[loc_id].view_mode = "log"
-						ArkInventory.VaultTabClick( bag_id, ArkInventory.Global.Location[loc_id].view_mode )
-					end
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", string.format( "%s: %s", DISPLAY, GUILD_BANK_MONEY_LOG ),
-					"closeWhenClicked", true,
-					"disabled", mode == "moneylog",
-					"func", function( )
-						--ArkInventory.Output( "moneylog" )
-						ArkInventory.Global.Location[loc_id].view_mode = "moneylog"
-						ArkInventory.VaultTabClick( bag_id, ArkInventory.Global.Location[loc_id].view_mode )
-					end
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", string.format( "%s: %s", DISPLAY, GUILD_BANK_TAB_INFO ),
-					"closeWhenClicked", true,
-					"disabled", GuildBankFrame.mode == "tabinfo",
-					"func", function( )
-						--ArkInventory.Output( "info" )
-						ArkInventory.Global.Location[loc_id].view_mode = "tabinfo"
-						ArkInventory.VaultTabClick( bag_id, ArkInventory.Global.Location[loc_id].view_mode )
-					end
-				)
-				
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				
-				if IsGuildLeader( ) then
-					
-					ArkInventory.Lib.Dewdrop:AddLine(
-						"text", "change name or icon",
-						"closeWhenClicked", true,
-						"func", function( )
-							SetCurrentGuildBankTab( bag_id )
-							GuildBankPopupFrame:Show( )
-							GuildBankPopupFrame_Update( bag_id )
-						end
-					)
-					
-					ArkInventory.Lib.Dewdrop:AddLine( )
-					
-				end
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", "rescan data",
-					"closeWhenClicked", true,
-					"func", function( )
-						QueryGuildBankTab( GetCurrentGuildBankTab( ) or 1 )
-					end
-				)
-					
-				ArkInventory.Lib.Dewdrop:AddLine( )
-				
-				ArkInventory.Lib.Dewdrop:AddLine(
-					"text", ArkInventory.Localise["CLOSE_MENU"],
-					"closeWhenClicked", true
-				)
-				
-			end
-		
 		end
 		
 	)
@@ -3314,18 +3138,12 @@ function ArkInventory.MenuSwitchCharacter( offset, level, value, frame )
 			
 			for n, tp in ArkInventory.spairs( ArkInventory.db.player.data, function( a, b ) return ( a < b ) end ) do
 				
-				if tp.info.account_id ~= codex.player.data.info.account_id and not ArkInventory.Global.Location[loc_id].isAccount then
-					
-				elseif tp.info.class ~= ArkInventory.Const.Class.Guild and loc_id == ArkInventory.Const.Location.Vault then
-					
-				elseif tp.info.class ~= ArkInventory.Const.Class.Account and ArkInventory.Global.Location[loc_id].isAccount then
-					
+				if realms[tp.info.realm] then
+				elseif ( tp.info.class ~= ArkInventory.Const.Class.Guild and loc_id == ArkInventory.Const.Location.Vault ) or ( tp.info.class == ArkInventory.Const.Class.Guild and loc_id ~= ArkInventory.Const.Location.Vault ) then
+				elseif ( tp.info.class ~= ArkInventory.Const.Class.Account and ArkInventory.Global.Location[loc_id].isAccount ) or ( tp.info.class == ArkInventory.Const.Class.Account and not ArkInventory.Global.Location[loc_id].isAccount ) then
 				elseif tp.location[loc_id].slot_count == 0 then
-					
 				elseif tp.info.realm ~= codex.player.data.info.realm then
-					if not ArkInventory.Global.Location[loc_id].isAccount then
-						realms[tp.info.realm] = true
-					end
+					realms[tp.info.realm] = true
 				end
 				
 			end
@@ -3398,10 +3216,10 @@ function ArkInventory.MenuSwitchCharacter( offset, level, value, frame )
 		local player_id = string.match( value, "^SWITCH_CHARACTER_ERASE_(.+)" )
 		if player_id then
 			
-			local tp = ArkInventory.GetPlayerInfo( player_id )
+			local tp_info = ArkInventory.PlayerInfoGet( player_id )
 			
 			ArkInventory.Lib.Dewdrop:AddLine(
-				"text", ArkInventory.DisplayName4( tp.data.info, codex.player.data.info.faction ),
+				"text", ArkInventory.DisplayName4( tp_info, codex.player.data.info.faction ),
 				"isTitle", true
 			)
 			
@@ -3411,11 +3229,11 @@ function ArkInventory.MenuSwitchCharacter( offset, level, value, frame )
 				ArkInventory.Lib.Dewdrop:AddLine(
 					"text", string.format( ArkInventory.Localise["MENU_CHARACTER_SWITCH_ERASE"], ArkInventory.Global.Location[loc_id].Name ),
 					"tooltipTitle", string.format( ArkInventory.Localise["MENU_CHARACTER_SWITCH_ERASE"], ArkInventory.Global.Location[loc_id].Name ),
-					"tooltipText", string.format( "%s%s", RED_FONT_COLOR_CODE, string.format( ArkInventory.Localise["MENU_CHARACTER_SWITCH_ERASE_DESC"], ArkInventory.Global.Location[loc_id].Name, ArkInventory.DisplayName1( tp.data.info ) ) ),
+					"tooltipText", string.format( "%s%s", RED_FONT_COLOR_CODE, string.format( ArkInventory.Localise["MENU_CHARACTER_SWITCH_ERASE_DESC"], ArkInventory.Global.Location[loc_id].Name, ArkInventory.DisplayName1( tp_info ) ) ),
 					"closeWhenClicked", true,
 					"func", function( )
 						ArkInventory.Frame_Main_Hide( loc_id )
-						ArkInventory.EraseSavedData( tp.data.info.player_id, loc_id )
+						ArkInventory.EraseSavedData( tp_info.player_id, loc_id )
 					end
 				)
 			end
@@ -3423,18 +3241,18 @@ function ArkInventory.MenuSwitchCharacter( offset, level, value, frame )
 			ArkInventory.Lib.Dewdrop:AddLine(
 				"text", string.format( ArkInventory.Localise["MENU_CHARACTER_SWITCH_ERASE"], ArkInventory.Localise["ALL"] ),
 				"tooltipTitle", string.format( ArkInventory.Localise["MENU_CHARACTER_SWITCH_ERASE"], ArkInventory.Localise["ALL"] ),
-				"tooltipText", string.format( "%s%s", RED_FONT_COLOR_CODE, string.format( ArkInventory.Localise["MENU_CHARACTER_SWITCH_ERASE_DESC"], ArkInventory.Localise["ALL"], ArkInventory.DisplayName1( tp.data.info ) ) ),
+				"tooltipText", string.format( "%s%s", RED_FONT_COLOR_CODE, string.format( ArkInventory.Localise["MENU_CHARACTER_SWITCH_ERASE_DESC"], ArkInventory.Localise["ALL"], ArkInventory.DisplayName1( tp_info ) ) ),
 				"closeWhenClicked", true,
 				"func", function( )
 					ArkInventory.Frame_Main_Hide( )
-					ArkInventory.EraseSavedData( tp.data.info.player_id )
+					ArkInventory.EraseSavedData( tp_info.player_id )
 				end
 			)
 		
 		end
 		
 	end
-
+	
 end
 
 function ArkInventory.MenuSwitchCharacterOpen( frame )
@@ -5644,6 +5462,141 @@ function ArkInventory.MenuRefreshOpen( frame )
 				
 			end
 			
+		end
+		
+	)
+	
+end
+
+function ArkInventory.MenuStatusActionOpen( frame )
+	
+	ArkInventory.Util.Assert( frame, "frame is nil" )
+	
+	if ArkInventory.Lib.Dewdrop:IsOpen( frame ) then
+		ArkInventory.Lib.Dewdrop:Close( )
+		return
+	end
+	
+	
+	local loc_id = string.match( frame:GetName( ), ArkInventory.Const.Frame.Match.Frame )
+	
+	loc_id = tonumber( loc_id )
+	
+	
+	ArkInventory.Lib.Dewdrop:Open( frame,
+		"point", helper_DewdropMenuPosition( frame ),
+		"relativePoint", helper_DewdropMenuPosition( frame, true ),
+		"children", function( level, value )
+			
+			if level == 1 then
+				
+				if loc_id == ArkInventory.Const.Location.Bank then
+					
+					ArkInventory.Lib.Dewdrop:AddLine(
+						"text", ArkInventory.Localise["ACCOUNTBANK"],
+						"icon", ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].Texture,
+						"isTitle", true
+					)
+					
+					ArkInventory.Lib.Dewdrop:AddLine( )
+					
+					ArkInventory.Lib.Dewdrop:AddLine(
+						"text", DEPOSIT,
+						"closeWhenClicked", true,
+						"disabled", not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].ClientCheck ),
+						"func", function( )
+							ArkInventory.MoneyAccountBankDeposit( )
+						end
+					)
+					
+					ArkInventory.Lib.Dewdrop:AddLine(
+						"text", WITHDRAW,
+						"tooltipTitle", WITHDRAW,
+						"tooltipText", tt,
+						"closeWhenClicked", true,
+						"disabled", not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].ClientCheck ),
+						"func", function( )
+							ArkInventory.MoneyAccountBankWithdraw( )
+						end
+					)
+					
+				end
+				
+				if loc_id == ArkInventory.Const.Location.Vault then
+					
+					ArkInventory.Lib.Dewdrop:AddLine(
+						"text", ArkInventory.Localise["VAULT"],
+						"icon", ArkInventory.Global.Location[loc_id].Texture,
+						"isTitle", true
+					)
+					
+					ArkInventory.Lib.Dewdrop:AddLine( )
+					
+					ArkInventory.Lib.Dewdrop:AddLine(
+						"text", DEPOSIT,
+						"closeWhenClicked", true,
+						"func", function( )
+							ArkInventory.MoneyGuildBankDeposit( )
+						end
+					)
+					
+					if true then
+						
+						local ok = false
+						local amount = 0
+						local tt = ""
+						
+						amount = GetGuildBankWithdrawMoney( )
+						if amount >= 0 then
+							
+							if ( ( not CanGuildBankRepair( ) and not CanWithdrawGuildBankMoney( ) ) or ( CanGuildBankRepair( ) and not CanWithdrawGuildBankMoney( ) ) ) then
+								amount = 0
+							else
+								amount = min( amount, GetGuildBankMoney( ) )
+							end
+							
+							if amount > 0 then
+								ok = true
+							end
+							
+						else
+							
+							amount = 0
+							
+						end
+						
+						if amount > 0 then
+							tt = string.format( "%s %s", GUILDBANK_AVAILABLE_MONEY, ArkInventory.MoneyText( amount, true ) )
+						end
+						
+						if ok and ( not CanWithdrawGuildBankMoney( ) ) then
+							tt = string.format( "%s%s (%s)", tt, REPAIR_ITEMS )
+						end
+						
+						ArkInventory.Lib.Dewdrop:AddLine(
+							"text", WITHDRAW,
+							"tooltipTitle", WITHDRAW,
+							"tooltipText", tt,
+							"closeWhenClicked", true,
+							"disabled", not ok,
+							"func", function( )
+								ArkInventory.MoneyGuildBankWithdraw( )
+							end
+						)
+						
+					end
+						
+				end
+				
+				ArkInventory.Lib.Dewdrop:AddLine( )
+				
+				ArkInventory.Lib.Dewdrop:AddLine(
+					"text", ArkInventory.Localise["CLOSE_MENU"],
+					"closeWhenClicked", true
+				)
+				
+			end
+		
 		end
 		
 	)

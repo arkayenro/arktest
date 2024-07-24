@@ -19,6 +19,7 @@ function ArkInventory.Util.Assert( test, ... )
 	end
 end
 
+
 function ArkInventory.Util.MapAddBag( info )
 	
 	-- blizzard_id = blizzard bag id
@@ -34,20 +35,24 @@ function ArkInventory.Util.MapAddBag( info )
 --[[
 	ArkInventory.Global.Map = {
 		Blizzard = {
-			[blizzard_id] = <map>,
+			[blizzard_id] = <info>,
 		},
-		Location = {
-			[loc_id] = {
-				WindowBags = {
-					[bag_id_window] = <map>,
-				},
-				StorageBags = {
-					[bag_id_storage] = <map>,
-				},
-				Child = {
-					[loc_id_storage] = true,
+		Storage = {
+			[storage_loc_id] = {
+				Bag = {
+					[bag_id_storage] = <info>,
 				},
 				Parent = [loc_id_window],
+			},
+		},
+		Window = {
+			[loc_id_window] = {
+				Bag = {
+					[bag_id_window] = <info>,
+				},
+				Children = {
+					[loc_id_storage] = Storage[loc_id_storage],
+				},
 			},
 		},
 	},
@@ -93,31 +98,51 @@ function ArkInventory.Util.MapAddBag( info )
 		
 		-- mark the location as active
 		ArkInventory.Global.Location[loc_id_storage].isMapped = true
+		--ArkInventory.Global.Location[loc_id_storage].bagCount = 0
+		ArkInventory.Global.Location[loc_id_storage].maxSlot = ArkInventory.Global.Location[loc_id_storage].maxSlot or { }
+		ArkInventory.Global.Location[loc_id_storage].maxBar = 0
+		ArkInventory.Global.Location[loc_id_storage].drawState = ArkInventory.Const.Window.Draw.Init
 		
-		-- initialize the map location table
-		Map.Location[loc_id_storage] = Map.Location[loc_id_storage] or { WindowBags = { }, StorageBags = { }, Parent = nil, Children = { } }
+		
 		
 		-- add bag to blizzard table
 		Map.Blizzard[blizzard_id] = info
 		
+		
+		
+		-- init storage table
+		Map.Storage[loc_id_storage] = Map.Storage[loc_id_storage] or { Bag = { }, Parent = nil }
+		
 		-- add bag to storage table
-		local bag_id_storage = #Map.Location[loc_id_storage].StorageBags + 1
+		local bag_id_storage = #Map.Storage[loc_id_storage].Bag + 1
 		info.bag_id_storage = bag_id_storage
-		Map.Location[loc_id_storage].StorageBags[bag_id_storage] = info
+		Map.Storage[loc_id_storage].Bag[bag_id_storage] = info
 		
-		-- which location owns this window
-		Map.Location[loc_id_storage].Parent = loc_id_window
+		-- set parent window
+		Map.Storage[loc_id_storage].Parent = loc_id_window
 		
-		-- which locations belong to this window
-		Map.Location[loc_id_window].Children[loc_id_storage] = true
+		
+		
+		-- init window table
+		Map.Window[loc_id_window] = Map.Window[loc_id_window] or { Bag = { }, Children = { } }
+		
+		-- link child storage location
+		Map.Window[loc_id_window].Children[loc_id_storage] = true --Map.Storage[loc_id_storage]
+		
 		
 		
 		if not info.hidden then
 			
 			-- add bag to window table
-			local bag_id_window = #Map.Location[loc_id_window].WindowBags + 1
+			local bag_id_window = #Map.Window[loc_id_window].Bag + 1
 			info.bag_id_window = bag_id_window
-			Map.Location[loc_id_window].WindowBags[bag_id_window] = info
+			Map.Window[loc_id_window].Bag[bag_id_window] = info
+			
+			ArkInventory.OutputDebug( "added bag map for blizzard [", blizzard_id, "], ", ArkInventory.Global.Location[loc_id_window].Name, " window [", loc_id_window, ".", bag_id_window, "], ", ArkInventory.Global.Location[loc_id_storage].Name, " storage [", loc_id_storage, ".", bag_id_storage, "]" )
+			
+		else
+			
+			ArkInventory.OutputDebug( "added bag map for blizzard [", blizzard_id, "], ", ArkInventory.Global.Location[loc_id_window].Name, " window [", loc_id_window, "], ", ArkInventory.Global.Location[loc_id_storage].Name, " storage [", loc_id_storage, ".", bag_id_storage, "]" )
 			
 		end
 		
@@ -125,25 +150,14 @@ function ArkInventory.Util.MapAddBag( info )
 	
 end
 
-function ArkInventory.Util.MapGetParent( loc_id_storage )
-	
-	local Map = ArkInventory.Global.Map
-	
-	ArkInventory.Util.Assert( type( loc_id_storage ) == "number", "loc_id_storage is [", type( loc_id_storage ), "], should be [number]" )
-	ArkInventory.Util.Assert( Map.Location[loc_id_storage], "Map.Location[", loc_id_storage, "] is not mapped" )
-	
-	return Map.Location[loc_id_storage].Parent
-	
-end
 
-function ArkInventory.Util.MapGetChildren( loc_id_window )
+function ArkInventory.Util.MapCheckBlizzard( blizzard_id )
 	
 	local Map = ArkInventory.Global.Map
 	
-	ArkInventory.Util.Assert( type( loc_id_window ) == "number", "loc_id_window is [", type( loc_id_window ), "], should be [number]" )
-	ArkInventory.Util.Assert( Map.Location[loc_id_window], "Map [", loc_id_window, "] is not mapped" )
-	
-	return Map.Location[loc_id_window].Children
+	if type( blizzard_id ) == "number" and Map.Blizzard[blizzard_id] then
+		return true
+	end
 	
 end
 
@@ -151,52 +165,16 @@ function ArkInventory.Util.MapGetBlizzard( blizzard_id )
 	
 	local Map = ArkInventory.Global.Map
 	
-	ArkInventory.Util.Assert( type( blizzard_id ) == "number", "blizzard_id is [", type( blizzard_id ), "], should be [number]" )
-	ArkInventory.Util.Assert( Map.Blizzard[blizzard_id], "Map.Blizzard[", blizzard_id, "] is not mapped" )
-	
-	return Map.Blizzard[blizzard_id]
-	
-end
-
-function ArkInventory.Util.MapGetWindowBags( loc_id_window, bag_id_window )
-	
-	local Map = ArkInventory.Global.Map
-	
-	ArkInventory.Util.Assert( type( loc_id_window ) == "number", "loc_id_window is [", type( loc_id_window ), "], should be [number]" )
-	ArkInventory.Util.Assert( Map.Location[loc_id_window], "Map.Location[", loc_id_window, "] is not mapped" )
-	
-	if not bag_id_window then
+	if blizzard_id == nil then
 		
-		return Map.Location[loc_id_window].WindowBags
+		return Map.Blizzard
 		
 	else
 		
-		ArkInventory.Util.Assert( type( bag_id_window ) == "number", "bag_id_window is [", type( bag_id_window ), "], should be [number]" )
-		ArkInventory.Util.Assert( Map.Location[loc_id_window].WindowBags[bag_id_window], "Map.Location[", loc_id_window, "].WindowBags[", bag_id_window, "] is not mapped" )
+		ArkInventory.Util.Assert( type( blizzard_id ) == "number", "blizzard_id is [", type( blizzard_id ), "], should be [number]" )
+		ArkInventory.Util.Assert( Map.Blizzard[blizzard_id], "Map.Blizzard[", blizzard_id, "] is not mapped" )
 		
-		return Map.Location[loc_id_window].WindowBags[bag_id_window]
-		
-	end
-	
-end
-
-function ArkInventory.Util.MapGetStorageBags( loc_id_storage, bag_id_storage )
-	
-	local Map = ArkInventory.Global.Map
-	
-	ArkInventory.Util.Assert( type( loc_id_storage ) == "number", "loc_id_storage is [", type( loc_id_storage ), "], should be [number]" )
-	ArkInventory.Util.Assert( Map.Location[loc_id_storage], "Map.Location[", loc_id_storage, "] is not mapped" )
-	
-	if not bag_id_storage then
-		
-		return Map.Location[loc_id_storage].StorageBags
-		
-	else
-		
-		ArkInventory.Util.Assert( type( bag_id_storage ) == "number", "bag_id_storage is [", type( bag_id_storage ), "], should be [number]" )
-		ArkInventory.Util.Assert( Map.Location[loc_id_storage].StorageBags[bag_id_storage], "Map.Location[", loc_id_storage, "].StorageBags[", bag_id_storage, "] is not mapped" )
-		
-		return Map.Location[loc_id_storage].StorageBags[bag_id_storage]
+		return Map.Blizzard[blizzard_id]
 		
 	end
 	
@@ -212,36 +190,140 @@ function ArkInventory.Util.getStorageIdFromBlizzardBagId( blizzard_id )
 	return map.loc_id_storage, map.bag_id_storage
 end
 
-function ArkInventory.Util.getBlizzardBagIdFromStorageId( loc_id_storage, bag_id_storage )
-	local map = ArkInventory.Util.MapGetStorageBags( loc_id_storage, bag_id_storage )
-	return map.blizzard_id
-end
 
-function ArkInventory.Util.getBlizzardBagIdFromWindowId( loc_id_window, bag_id_window )
-	local map = ArkInventory.Util.MapGetWindowBags( loc_id_window, bag_id_window )
-	return map.blizzard_id
-end
-
-function ArkInventory.Util.CheckZeroSizeBag( count, blizzard_id )
+function ArkInventory.Util.MapCheckWindow( loc_id_window, bag_id_window )
 	
-	if count == 0 then
+	local Map = ArkInventory.Global.Map
+	
+	if type( loc_id_window ) == "number" and Map.Window[loc_id_window] then
 		
-		if ArkInventory.db.option.bugfix.zerosizebag.alert then
-			local loc_id, bag_id = ArkInventory.Util.getStorageIdFromBlizzardBagId( blizzard_id )
-			ArkInventory.OutputWarning( "Aborted scan of blizzard bag [", blizzard_id, "], location [", loc_id, " / ", ArkInventory.Global.Location[loc_data.loc_id].Name, "], bag [", bag_id, "], size returned was ", count, ", rescan has been scheduled for 5 seconds.  This warning can be disabled in the config menu" )
+		if ArkInventory.Global.Location[loc_id_window].canView then
+			
+			if bag_id_window == nil then
+				
+				return true
+				
+			else
+				
+				if type( bag_id_window ) == "number" and Map.Window[loc_id_window].Bag[bag_id_window] then
+					return true
+				end
+				
+			end
+			
 		end
-		
-		ArkInventory:SendMessage( "EVENT_ARKINV_BAG_RESCAN_BUCKET", blizzard_id )
-		
-		return true
 		
 	end
 	
 end
 
+function ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+	
+	local Map = ArkInventory.Global.Map
+	
+	if loc_id_window == nil and bag_id_window == nil then
+		
+		return Map.Window
+		
+	else
+		
+		ArkInventory.Util.Assert( type( loc_id_window ) == "number", "loc_id_window is [", type( loc_id_window ), "], should be [number]" )
+		ArkInventory.Util.Assert( Map.Window[loc_id_window], "Map.Window[", loc_id_window, "] is not mapped" )
+		
+		if bag_id_window == nil then
+			
+			return Map.Window[loc_id_window].Bag
+			
+		else
+			
+			ArkInventory.Util.Assert( type( bag_id_window ) == "number", "bag_id_window is [", type( bag_id_window ), "], should be [number]" )
+			ArkInventory.Util.Assert( Map.Window[loc_id_window].Bag[bag_id_window], "Map.Window[", loc_id_window, "].Bag[", bag_id_window, "] is not mapped" )
+			
+			return Map.Window[loc_id_window].Bag[bag_id_window]
+			
+		end
+		
+	end
+	
+end
+
+function ArkInventory.Util.getBlizzardBagIdFromWindowId( loc_id_window, bag_id_window )
+	local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+	return map.blizzard_id
+end
+
+function ArkInventory.Util.getInventoryIDFromWindow( loc_id_window, bag_id_window, slot_id )
+	
+	local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+	
+	local loc_id_storage = map.loc_id_storage
+	local bag_id_storage = map.bag_id_storage
+	
+	return ArkInventory.Util.getInventoryIDFromStorage( loc_id_storage, bag_id_storage, slot_id )
+	
+end
+
+
+function ArkInventory.Util.MapCheckStorage( loc_id_storage, bag_id_storage )
+	
+	local Map = ArkInventory.Global.Map
+	
+	if type( loc_id_storage ) == "number" and Map.Storage[loc_id_storage] then
+		
+		if bag_id_storage == nil then
+			
+			return true
+			
+		else
+			
+			if type( bag_id_storage ) == "number" and Map.Storage[loc_id_storage].Bag[bag_id_storage] then
+				return true
+			end
+			
+		end
+		
+	end
+	
+end
+
+function ArkInventory.Util.MapGetStorage( loc_id_storage, bag_id_storage )
+	
+	local Map = ArkInventory.Global.Map
+	
+	if loc_id_storage == nil and bag_id_storage == nil then
+		
+		return Map.Storage
+		
+	else
+		
+		ArkInventory.Util.Assert( type( loc_id_storage ) == "number", "loc_id_storage is [", type( loc_id_storage ), "], should be [number]" )
+		ArkInventory.Util.Assert( Map.Storage[loc_id_storage], "Map.Storage[", loc_id_storage, "] is not mapped" )
+		
+		if bag_id_storage == nil then
+			
+			return Map.Storage[loc_id_storage].Bag
+			
+		else
+			
+			ArkInventory.Util.Assert( type( bag_id_storage ) == "number", "bag_id_storage is [", type( bag_id_storage ), "], should be [number]" )
+			ArkInventory.Util.Assert( Map.Storage[loc_id_storage].Bag[bag_id_storage], "Map.Storage[", loc_id_storage, "].Bag[", bag_id_storage, "] is not mapped" )
+			
+			return Map.Storage[loc_id_storage].Bag[bag_id_storage]
+			
+		end
+		
+	end
+	
+end
+
+function ArkInventory.Util.getBlizzardBagIdFromStorageId( loc_id_storage, bag_id_storage )
+	local map = ArkInventory.Util.MapGetStorage( loc_id_storage, bag_id_storage )
+	return map.blizzard_id
+end
+
 function ArkInventory.Util.getInventoryIDFromStorage( loc_id_storage, bag_id_storage, slot_id )
 	
-	local map = ArkInventory.Util.MapGetStorageBags( loc_id_storage, bag_id_storage )
+	local map = ArkInventory.Util.MapGetStorage( loc_id_storage, bag_id_storage )
 	
 	local blizzard_id = map.blizzard_id
 	
@@ -270,13 +352,46 @@ function ArkInventory.Util.getInventoryIDFromStorage( loc_id_storage, bag_id_sto
 	
 end
 
-function ArkInventory.Util.getInventoryIDFromWindow( loc_id_window, bag_id_window, slot_id )
+
+function ArkInventory.Util.MapGetParent( loc_id_storage )
 	
-	local map = ArkInventory.Util.MapGetWindowBags( loc_id_window, bag_id_window )
+	local Map = ArkInventory.Global.Map
 	
-	local loc_id_storage = map.loc_id_storage
-	local bag_id_storage = map.bag_id_storage
+	ArkInventory.Util.Assert( type( loc_id_storage ) == "number", "loc_id_storage is [", type( loc_id_storage ), "], should be [number]" )
+	ArkInventory.Util.Assert( Map.Storage[loc_id_storage], "Map.Storage[", loc_id_storage, "] is not mapped" )
 	
-	return ArkInventory.Util.getInventoryIDFromStorage( loc_id_storage, bag_id_storage, slot_id )
+	return Map.Storage[loc_id_storage].Parent
 	
+end
+
+function ArkInventory.Util.MapGetChildren( loc_id_window )
+	
+	local Map = ArkInventory.Global.Map
+	
+	ArkInventory.Util.Assert( type( loc_id_window ) == "number", "loc_id_window is [", type( loc_id_window ), "], should be [number]" )
+	ArkInventory.Util.Assert( Map.Window[loc_id_window], "Map.Window[", loc_id_window, "] is not mapped" )
+	
+	return Map.Window[loc_id_window].Children
+	
+end
+
+function ArkInventory.Util.CheckZeroSizeBag( count, blizzard_id )
+	
+	if count == 0 then
+		
+		if ArkInventory.db.option.bugfix.zerosizebag.alert then
+			local loc_id, bag_id = ArkInventory.Util.getStorageIdFromBlizzardBagId( blizzard_id )
+			ArkInventory.OutputWarning( "Aborted scan of blizzard bag [", blizzard_id, "], location [", loc_id, " / ", ArkInventory.Global.Location[loc_data.loc_id].Name, "], bag [", bag_id, "], size returned was ", count, ", rescan has been scheduled for 5 seconds.  This warning can be disabled in the config menu" )
+		end
+		
+		ArkInventory:SendMessage( "EVENT_ARKINV_BAG_RESCAN_BUCKET", blizzard_id )
+		
+		return true
+		
+	end
+	
+end
+
+function ArkInventory.Util.isAccountBankUnlocked( )
+	return ArkInventory.Util.MapCheckStorage( ArkInventory.Const.Location.AccountBank )
 end

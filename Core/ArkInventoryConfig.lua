@@ -1595,17 +1595,19 @@ function ArkInventory.ConfigInternalProfileImport( src )
 			local tmp = ArkInventory.Table.Copy( data.ia )
 			ArkInventory.Table.Clean( data.ia )
 			for item_id, v1 in pairs( tmp ) do
-				local cat_id = v1.assign
-				local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_id )
-				local cat_new = cat_used[cat_id]
-				if cat_new then
-					data.ia[item_id].assign = cat_new
-					--ArkInventory.Output( "assign - mapped category: ", item_id, " = ", cat_id, " > ", cat_new )
-				elseif cat_type == ArkInventory.Const.Category.Type.System then
-					data.ia[item_id].assign = cat_id
-					--ArkInventory.Output( "assign - unmapped system category: ", item_id, " = ", cat_id )
-				else
-					--ArkInventory.Output( "assign - ignored: ", item_id, " = ", cat_id )
+				if v1.assign then
+					local cat_id = v1.assign
+					local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_id )
+					local cat_new = cat_used[cat_id]
+					if cat_new then
+						data.ia[item_id].assign = cat_new
+						--ArkInventory.Output( "assign - mapped category: ", item_id, " = ", cat_id, " > ", cat_new )
+					elseif cat_type == ArkInventory.Const.Category.Type.System then
+						data.ia[item_id].assign = cat_id
+						--ArkInventory.Output( "assign - unmapped system category: ", item_id, " = ", cat_id )
+					else
+						--ArkInventory.Output( "assign - ignored: ", item_id, " = ", cat_id )
+					end
 				end
 			end
 			

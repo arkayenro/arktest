@@ -198,44 +198,47 @@ end
 
 function ArkInventory.Action.Vendor.Iterate( manual )
 	
-	local loc_id = ArkInventory.Const.Location.Bag
-	local codex = ArkInventory.Codex.GetLocation( loc_id )
+	local loc_id_window = ArkInventory.Const.Location.Bag
+	local loc_data = ArkInventory.Global.Location[loc_id_window]
 	
-	local bag_id = 1
+	local codex = ArkInventory.Codex.GetPlayer( loc_id_window )
+	
+	local bags = ArkInventory.Util.MapGetWindow( loc_id_window )
+	local bag_id_window = 1
 	local slot_id = 0
 	
-	local bags = ArkInventory.Util.MapGetWindowBags( loc_id )
-	local blizzard_id = bags[bag_id].blizzard_id
-	local numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
-	
-	local isMatch, isLocked, itemCount, itemLink, vendorPrice
+	local isMatch, blizzard_id, isLocked, itemCount, itemLink, vendorPrice
 	
 	
 	return function( )
 		
 		isMatch = false
+		blizzard_id = nil
 		itemLink = nil
 		itemCount = 0
 		vendorPrice = -1
 		
 		while not isMatch do
 			
-			if slot_id < numslots then
+			if slot_id < ( loc_data.maxSlot[bag_id_window] or 0 ) then
+				
 				slot_id = slot_id + 1
-			elseif bag_id < #bags then
-				bag_id = bag_id + 1
-				blizzard_id = bags[bag_id].blizzard_id
-				numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
+				
+			elseif bag_id_window < #bags then
+				
+				bag_id_window = bag_id_window + 1
 				slot_id = 1
+				
 			else
-				isMatch = false
-				blizzard_id = nil
-				slot_id = nil
-				itemCount = nil
-				itemLink = nil
-				vendorPrice = -1
-				break
+				
+				return
+				
 			end
+			
+			--ArkInventory.Output( "vendor check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "]" )
+			
+			local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+			blizzard_id = map.blizzard_id
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 			itemCount = itemInfo.stackCount
@@ -254,7 +257,6 @@ function ArkInventory.Action.Vendor.Iterate( manual )
 			
 		end
 		
-		--ArkInventory.Output( itemLink, " / ", itemCount, " / ", vendorPrice )
 		return blizzard_id, slot_id, itemLink, itemCount, vendorPrice
 		
 	end
@@ -275,7 +277,7 @@ function ArkInventory.Action.Vendor.Thread( thread_id, manual )
 	
 	-- build the queue
 	local queue = { }
-	for blizzard_id, slot_id, itemLink, itemCount, vendorPrice in ArkInventory.Action.Vendor.Iterate( manual, false ) do
+	for blizzard_id, slot_id, itemLink, itemCount, vendorPrice in ArkInventory.Action.Vendor.Iterate( manual ) do
 		table.insert( queue, { blizzard_id, slot_id, itemLink, itemCount, vendorPrice } )
 	end
 	
@@ -351,7 +353,7 @@ function ArkInventory.Action.Vendor.Thread( thread_id, manual )
 		end
 	end
 	
-	if qsize > limit then
+	if manual and limit > 0 and qsize > limit then
 		ArkInventory.Output( LIGHTYELLOW_FONT_COLOR_CODE, string.format( ArkInventory.Localise["CONFIG_ACTION_VENDOR_MORE"], qsize - 1 ) )
 	end
 	
@@ -441,42 +443,46 @@ end
 
 function ArkInventory.Action.Delete.Iterate( )
 	
-	local loc_id = ArkInventory.Const.Location.Bag
-	local codex = ArkInventory.Codex.GetLocation( loc_id )
+	local loc_id_window = ArkInventory.Const.Location.Bag
+	local loc_data = ArkInventory.Global.Location[loc_id_window]
 	
-	local bag_id = 1
+	local codex = ArkInventory.Codex.GetPlayer( loc_id_window )
+	
+	local bags = ArkInventory.Util.MapGetWindow( loc_id_window )
+	local bag_id_window = 1
 	local slot_id = 0
 	
-	local bags = ArkInventory.Util.MapGetWindowBags( loc_id )
-	local blizzard_id = bags[bag_id].blizzard_id
-	local numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
-	
-	local isMatch, isLocked, itemCount, itemLink
+	local isMatch, blizzard_id, isLocked, itemCount, itemLink
 	
 	
 	return function( )
 		
 		isMatch = false
+		blizzard_id = nil
 		itemLink = nil
 		itemCount = 0
 		
 		while not isMatch do
 			
-			if slot_id < numslots then
+			if slot_id < ( loc_data.maxSlot[bag_id_window] or 0 ) then
+				
 				slot_id = slot_id + 1
-			elseif bag_id < #bags then
-				bag_id = bag_id + 1
-				blizzard_id = bags[bag_id].blizzard_id
-				numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
+				
+			elseif bag_id_window < #bags then
+				
+				bag_id_window = bag_id_window + 1
 				slot_id = 1
+				
 			else
-				isMatch = false
-				blizzard_id = nil
-				slot_id = nil
-				itemCount = nil
-				itemLink = nil
-				break
+				
+				return
+				
 			end
+			
+			--ArkInventory.Output( "delete check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "]" )
+			
+			local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+			local blizzard_id = map.blizzard_id
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 			itemCount = itemInfo.stackCount
@@ -584,7 +590,7 @@ function ArkInventory.Action.Delete.Thread( manual )
 		end
 	end
 	
-	if manual and qsize > limit then
+	if manual and limit > 0 and qsize > limit then
 		ArkInventory.Output( LIGHTYELLOW_FONT_COLOR_CODE, string.format( ArkInventory.Localise["CONFIG_ACTION_DELETE_MORE"], qsize - limit ) )
 	end
 	
@@ -598,6 +604,7 @@ function ArkInventory.Action.Delete.Run( manual )
 	ArkInventory.Action.Delete.Thread( manual )
 	
 end
+
 
 ArkInventory.Action.Mail = { data = actiondata.mail }
 
@@ -645,46 +652,46 @@ end
 
 function ArkInventory.Action.Mail.Iterate( manual )
 	
-	local loc_id = ArkInventory.Const.Location.Bag
-	local codex = ArkInventory.Codex.GetLocation( loc_id )
+	local loc_id_window = ArkInventory.Const.Location.Bag
+	local loc_data = ArkInventory.Global.Location[loc_id_window]
 	
-	local bag_id = 1
+	local codex = ArkInventory.Codex.GetPlayer( loc_id_window )
+	
+	local bags = ArkInventory.Util.MapGetWindow( loc_id_window )
+	local bag_id_window = 1
 	local slot_id = 0
 	
-	local player = ArkInventory.Codex.GetStorage( nil, loc_id )
-	local i
-	
-	local bags = ArkInventory.Util.MapGetWindowBags( loc_id )
-	local blizzard_id = bags[bag_id].blizzard_id
-	local numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
-	
-	local recipient, isLocked, itemCount, itemLink
+	local recipient, blizzard_id, isLocked, itemCount, itemLink
 	
 	
 	return function( )
 		
 		recipient = nil
+		blizzard_id = nil
 		itemLink = nil
 		itemCount = 0
 		
 		while not recipient do
 			
-			if slot_id < numslots then
+			if slot_id < ( loc_data.maxSlot[bag_id_window] or 0 ) then
+				
 				slot_id = slot_id + 1
-			elseif bag_id < #bags then
-				bag_id = bag_id + 1
-				blizzard_id = bags[bag_id].blizzard_id
-				numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
+				
+			elseif bag_id_window < #bags then
+				
+				bag_id_window = bag_id_window + 1
 				slot_id = 1
+				
 			else
-				recipient = nil
-				blizzard_id = nil
-				slot_id = nil
-				itemCount = nil
-				itemLink = nil
-				vendorPrice = -1
-				break
+				
+				return
+				
 			end
+			
+			--ArkInventory.Output( "mail check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "]" )
+			
+			local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+			local blizzard_id = map.blizzard_id
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 			itemCount = itemInfo.stackCount
@@ -692,7 +699,10 @@ function ArkInventory.Action.Mail.Iterate( manual )
 			itemLink = itemInfo.hyperlink
 			
 			if itemCount and not isLocked and itemLink then
-				i = player.data.location[loc_id].bag[bag_id].slot[slot_id]
+				local loc_id_storage = map.loc_id_storage
+				local bag_id_storage = map.bag_id_storage
+				local storage = ArkInventory.Codex.GetStorage( nil, loc_id_storage )
+				i = storage.data.location[loc_id_storage].bag[bag_id_storage].slot[slot_id]
 				recipient = ArkInventory.Action.Mail.Check( i, codex, manual )
 			end
 			
@@ -938,39 +948,45 @@ end
 
 function ArkInventory.Action.Use.Iterate( manual )
 	
-	local loc_id = ArkInventory.Const.Location.Bag
+	local loc_id_window = ArkInventory.Const.Location.Bag
+	local loc_data = ArkInventory.Global.Location[loc_id_window]
 	
-	local bag_id = 1
+	local codex = ArkInventory.Codex.GetPlayer( loc_id_window )
+	
+	local bags = ArkInventory.Util.MapGetWindow( loc_id_window )
+	local bag_id_window = 1
 	local slot_id = 0
 	
-	local bags = ArkInventory.Util.MapGetWindowBags( loc_id )
-	local blizzard_id = bags[bag_id].blizzard_id
-	local numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
-	
-	local isMatch, isLocked, itemID, itemLink
+	local isMatch, blizzard_id, isLocked, itemID, itemLink
 	
 	
 	return function( )
 		
 		isMatch = false
+		blizzard_id = nil
 		itemLink = nil
 		
 		while not isMatch do
 			
-			if slot_id < numslots then
+			if slot_id < ( loc_data.maxSlot[bag_id_window] or 0 ) then
+				
 				slot_id = slot_id + 1
-			elseif bag_id < #bags then
-				bag_id = bag_id + 1
-				blizzard_id = bags[bag_id].blizzard_id
-				numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
+				
+			elseif bag_id_window < #bags then
+				
+				bag_id_window = bag_id_window + 1
 				slot_id = 1
+				
 			else
-				isMatch = false
-				blizzard_id = nil
-				slot_id = nil
-				itemLink = nil
-				break
+				
+				return
+				
 			end
+			
+			--ArkInventory.Output( "use check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "]" )
+			
+			local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+			local blizzard_id = map.blizzard_id
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 			isLocked = itemInfo.isLocked
@@ -1170,44 +1186,45 @@ end
 
 function ArkInventory.Action.Scrap.Iterate( manual )
 	
-	local loc_id = ArkInventory.Const.Location.Bag
-	local codex = ArkInventory.Codex.GetLocation( loc_id )
+	local loc_id_window = ArkInventory.Const.Location.Bag
+	local loc_data = ArkInventory.Global.Location[loc_id_window]
 	
-	local bag_id = 1
+	local codex = ArkInventory.Codex.GetPlayer( loc_id_window )
+	
+	local bags = ArkInventory.Util.MapGetWindow( loc_id_window )
+	local bag_id_window = 1
 	local slot_id = 0
 	
-	local player = ArkInventory.Codex.GetStorage( nil, loc_id )
-	local i
-	
-	local bags = ArkInventory.Util.MapGetWindowBags( loc_id )
-	local blizzard_id = bags[bag_id].blizzard_id
-	local numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
-	
-	local recipient, isLocked, itemLink
+	local recipient, blizzard_id, isLocked, itemLink
 	
 	
 	return function( )
 		
 		isMatch = false
+		blizzard_id = nil
 		itemLink = nil
 		
 		while not isMatch do
 			
-			if slot_id < numslots then
+			if slot_id < ( loc_data.maxSlot[bag_id_window] or 0 ) then
+				
 				slot_id = slot_id + 1
-			elseif bag_id < #bags then
-				bag_id = bag_id + 1
-				blizzard_id = bags[bag_id].blizzard_id
-				numslots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
+				
+			elseif bag_id_window < #bags then
+				
+				bag_id_window = bag_id_window + 1
 				slot_id = 1
+				
 			else
-				isMatch = false
-				blizzard_id = nil
-				slot_id = nil
-				itemLink = nil
-				vendorPrice = -1
-				break
+				
+				return
+				
 			end
+			
+			--ArkInventory.Output( "scrap check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "]" )
+			
+			local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+			local blizzard_id = map.blizzard_id
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 			itemCount = itemInfo.stackCount
@@ -1215,7 +1232,10 @@ function ArkInventory.Action.Scrap.Iterate( manual )
 			itemLink = itemInfo.hyperlink
 			
 			if itemCount and not isLocked and itemLink then
-				i = player.data.location[loc_id].bag[bag_id].slot[slot_id]
+				local loc_id_storage = map.loc_id_storage
+				local bag_id_storage = map.bag_id_storage
+				local storage = ArkInventory.Codex.GetStorage( nil, loc_id_storage )
+				i = storage.data.location[loc_id_storage].bag[bag_id_storage].slot[slot_id]
 				isMatch = ArkInventory.Action.Scrap.Check( i, codex, manual )
 			end
 			
@@ -1316,7 +1336,7 @@ function ArkInventory.Action.Scrap.Thread( thread_id, manual )
 		end
 	end
 	
-	if manual and qsize > limit then
+	if manual and limit > 0 and qsize > limit then
 		ArkInventory.Output( LIGHTYELLOW_FONT_COLOR_CODE, string.format( ArkInventory.Localise["CONFIG_ACTION_SCRAP_MORE"], qsize - limit ) )
 	end
 	
