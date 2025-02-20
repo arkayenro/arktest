@@ -1,8 +1,5 @@
-﻿# 3.11.04 (20-FEB-2025)
- - updated - toc (retail) updated to 11.0.7
- - updated - toc (cataclysm) updated to 4.4.2
- - updated - toc (classic) updated to 1.15.6
- - updated - mount and pet data
+﻿# 3.11.04 Alpha 1 (xx-FEB-2025)
+ - ???
  
 
 # known issues

@@ -4,7 +4,7 @@
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
 ## Version: 30110
-## X-ReleaseType: 
+## X-ReleaseType: Alpha
 ## DefaultState: Disabled
 ## LoadOnDemand: 0
 

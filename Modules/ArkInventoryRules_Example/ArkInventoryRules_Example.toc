@@ -6,7 +6,7 @@
 ## Notes: Example rule for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Version: @project-version@
-## X-ReleaseType: 
+## X-ReleaseType: Alpha
 ## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
 
 ## DefaultState: Disabled
