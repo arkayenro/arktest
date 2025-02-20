@@ -1,4 +1,4 @@
-ArkInventory.Util = { }
+﻿ArkInventory.Util = { }
 
 --[[
 
@@ -8,14 +8,18 @@ could not be found = was not found
 
 ]]--
 
-function ArkInventory.Util.Error( ... )
+local function ErrorDepth( level, ... )
 	local msg = ArkInventory.OutputError( ... )
-	error( msg )
+	error( msg, level )
+end
+
+function ArkInventory.Util.Error( ... )
+	ErrorDepth( 2, ... )
 end
 
 function ArkInventory.Util.Assert( test, ... )
 	if not test then
-		ArkInventory.Util.Error( ... )
+		ErrorDepth( 3, ... )
 	end
 end
 
@@ -83,25 +87,28 @@ function ArkInventory.Util.MapAddBag( info )
 	
 	
 	
-	info.bag_type = info.bag_type or ArkInventory.Const.Slot.Type.Unknown
-	
 	if info.fixed then
 		info.texture = info.texture or ArkInventory.Global.Location[loc_id_storage].Texture or ArkInventory.Global.Location[loc_id_window].Texture
 	end
 	
 	info.inv_id = ArkInventory.CrossClient.ContainerIDToInventoryID( blizzard_id )
 	
-	
+	if not info.panel_id then
+		info.panel_id = 1
+	end
 	
 	
 	if ArkInventory.ClientCheck( ArkInventory.Global.Location[loc_id_storage].ClientCheck ) then
 		
+		--ArkInventory.Output( "added bag for storage [", blizzard_id, " ", ArkInventory.Global.Location[loc_id_storage].Name, "]" )
+		
 		-- mark the location as active
 		ArkInventory.Global.Location[loc_id_storage].isMapped = true
-		--ArkInventory.Global.Location[loc_id_storage].bagCount = 0
-		ArkInventory.Global.Location[loc_id_storage].maxSlot = ArkInventory.Global.Location[loc_id_storage].maxSlot or { }
-		ArkInventory.Global.Location[loc_id_storage].maxBar = 0
-		ArkInventory.Global.Location[loc_id_storage].drawState = ArkInventory.Const.Window.Draw.Init
+		
+		--ArkInventory.Global.Location[loc_id_window].bagCount = ArkInventory.Global.Location[loc_id_window].bagCount or 0
+		ArkInventory.Global.Location[loc_id_window].maxSlot = ArkInventory.Global.Location[loc_id_window].maxSlot or { }
+		ArkInventory.Global.Location[loc_id_window].maxBar = ArkInventory.Global.Location[loc_id_window].maxBar or 0
+		ArkInventory.Global.Location[loc_id_window].drawState = ArkInventory.Global.Location[loc_id_window].drawState or ArkInventory.Const.Window.Draw.Init
 		
 		
 		
@@ -117,6 +124,8 @@ function ArkInventory.Util.MapAddBag( info )
 		local bag_id_storage = #Map.Storage[loc_id_storage].Bag + 1
 		info.bag_id_storage = bag_id_storage
 		Map.Storage[loc_id_storage].Bag[bag_id_storage] = info
+		
+		
 		
 		-- set parent window
 		Map.Storage[loc_id_storage].Parent = loc_id_window
@@ -138,11 +147,11 @@ function ArkInventory.Util.MapAddBag( info )
 			info.bag_id_window = bag_id_window
 			Map.Window[loc_id_window].Bag[bag_id_window] = info
 			
-			ArkInventory.OutputDebug( "added bag map for blizzard [", blizzard_id, "], ", ArkInventory.Global.Location[loc_id_window].Name, " window [", loc_id_window, ".", bag_id_window, "], ", ArkInventory.Global.Location[loc_id_storage].Name, " storage [", loc_id_storage, ".", bag_id_storage, "]" )
+			--ArkInventory.OutputDebug( "added bag map for blizzard [", blizzard_id, "], ", ArkInventory.Global.Location[loc_id_window].Name, " window [", loc_id_window, ".", bag_id_window, "], ", ArkInventory.Global.Location[loc_id_storage].Name, " storage [", loc_id_storage, ".", bag_id_storage, "]" )
 			
 		else
 			
-			ArkInventory.OutputDebug( "added bag map for blizzard [", blizzard_id, "], ", ArkInventory.Global.Location[loc_id_window].Name, " window [", loc_id_window, "], ", ArkInventory.Global.Location[loc_id_storage].Name, " storage [", loc_id_storage, ".", bag_id_storage, "]" )
+			--ArkInventory.OutputDebug( "added bag map for blizzard [", blizzard_id, "], ", ArkInventory.Global.Location[loc_id_window].Name, " window [", loc_id_window, "], ", ArkInventory.Global.Location[loc_id_storage].Name, " storage [", loc_id_storage, ".", bag_id_storage, "]" )
 			
 		end
 		
@@ -394,4 +403,212 @@ end
 
 function ArkInventory.Util.isAccountBankUnlocked( )
 	return ArkInventory.Util.MapCheckStorage( ArkInventory.Const.Location.AccountBank )
+end
+
+
+function ArkInventory.Util.WindowPanelBagToggle( codex, loc_id_window, bag_id_window )
+	codex.player.data.option[loc_id_window].bag[bag_id_window].display = not codex.player.data.option[loc_id_window].bag[bag_id_window].display
+end
+
+function ArkInventory.Util.WindowPanelBagShowAll( codex, loc_id_window, panel_id )
+	for x, map in ipairs( ArkInventory.Util.MapGetWindow( loc_id_window ) ) do
+		if panel_id == map.panel_id then
+			codex.player.data.option[loc_id_window].bag[x].display = true
+		end
+	end
+end
+
+function ArkInventory.Util.WindowPanelBagIsolate( codex, loc_id_window, bag_id_window, panel_id )
+	for x, map in ipairs( ArkInventory.Util.MapGetWindow( loc_id_window ) ) do
+		if panel_id == map.panel_id then
+			if bag_id_window == map.bag_id_window then
+				codex.player.data.option[loc_id_window].bag[x].display = true
+			else
+				codex.player.data.option[loc_id_window].bag[x].display = false
+			end
+		end
+	end
+end
+
+
+function ArkInventory.Util.getWindowActiveMap( loc_id_window )
+	
+	ArkInventory.Util.Assert( type( loc_id_window ) == "number", "loc_id_window is [", type( loc_id_window ), "], should be [number]" )
+	
+	if not ArkInventory.Global.Location[loc_id_window].active_map then
+		ArkInventory.Util.setWindowActiveMap( loc_id_window )
+	end
+	
+	return ArkInventory.Global.Location[loc_id_window].active_map
+	
+end
+
+function ArkInventory.Util.setWindowActiveMap( loc_id_window, map )
+	
+	ArkInventory.Util.Assert( type( loc_id_window ) == "number", "loc_id_window is [", type( loc_id_window ), "], should be [number]" )
+	
+	ArkInventory.Global.Location[loc_id_window].active_map = map or ArkInventory.Util.MapGetWindow( loc_id_window, 1 )
+	
+end
+
+
+function ArkInventory.Util.setBankPanelLayoutDefault( )
+	
+	local panel_id = 2
+	
+	local loc_id_storage = ArkInventory.Const.Location.ReagentBank
+	if ArkInventory.Util.MapCheckStorage( loc_id_storage ) then
+		for bag_id_storage, map in ipairs( ArkInventory.Util.MapGetStorage( loc_id_storage ) ) do
+			map.panel_id = panel_id
+		end
+	end
+	
+	local loc_id_storage = ArkInventory.Const.Location.AccountBank
+	if ArkInventory.Util.MapCheckStorage( loc_id_storage ) then
+		for bag_id_storage, map in ipairs( ArkInventory.Util.MapGetStorage( loc_id_storage ) ) do
+			panel_id = panel_id + 1
+			map.panel_id = panel_id
+		end
+	end
+	
+end
+
+function ArkInventory.Util.setBankPanelLayoutCombineReagent( )
+	
+	local loc_id_storage = ArkInventory.Const.Location.ReagentBank
+	if ArkInventory.Util.MapCheckStorage( loc_id_storage ) then
+		for bag_id_storage, map in ipairs( ArkInventory.Util.MapGetStorage( loc_id_storage ) ) do
+			map.panel_id = 1
+		end
+	end
+	
+end
+
+function ArkInventory.Util.setBankPanelLayoutCombineAccount( )
+	
+	local panel_id
+	
+	local loc_id_storage = ArkInventory.Const.Location.AccountBank
+	if ArkInventory.Util.MapCheckStorage( loc_id_storage ) then
+		for bag_id_storage, map in ipairs( ArkInventory.Util.MapGetStorage( loc_id_storage ) ) do
+			if bag_id_storage == 1 then
+				panel_id = map.panel_id
+			else
+				map.panel_id = panel_id
+			end
+		end
+	end
+	
+end
+
+function ArkInventory.Util.setBankPanelLayoutCombineAll( )
+	
+	local loc_id_storage = ArkInventory.Const.Location.ReagentBank
+	if ArkInventory.Util.MapCheckStorage( loc_id_storage ) then
+		for bag_id_storage, map in ipairs( ArkInventory.Util.MapGetStorage( loc_id_storage ) ) do
+			map.panel_id = 1
+		end
+	end
+	
+	local loc_id_storage = ArkInventory.Const.Location.AccountBank
+	if ArkInventory.Util.MapCheckStorage( loc_id_storage ) then
+		for bag_id_storage, map in ipairs( ArkInventory.Util.MapGetStorage( loc_id_storage ) ) do
+			map.panel_id = 1
+		end
+	end
+	
+end
+
+function ArkInventory.Util.setBankPanelLayout( )
+	
+	local codex = ArkInventory.Codex.GetLocation( ArkInventory.Const.Location.Bank )
+	
+	ArkInventory.Util.setBankPanelLayoutDefault( )
+	
+	if codex.player.data.panel.bank.combine.all then
+		
+		ArkInventory.Util.setBankPanelLayoutCombineAll( )
+		
+	else
+		
+		if codex.player.data.panel.bank.combine.reagent then
+			ArkInventory.Util.setBankPanelLayoutCombineReagent( )
+		end
+		
+		if codex.player.data.panel.bank.combine.account then
+			ArkInventory.Util.setBankPanelLayoutCombineAccount( )
+		end
+		
+	end
+	
+	local loc_id_window = ArkInventory.Const.Location.Bank
+	ArkInventory.Frame_Main_Generate( loc_id_window, ArkInventory.Const.Window.Draw.Recalculate )
+	
+end
+
+function ArkInventory.Util.syncBlizzardBankUI( active_map, loc_id_storage, blizzard_id )
+	
+	--ArkInventory.Output( "syncBlizzardBankUI" )
+	
+	-- sync the default bank frame up to the current ai frame
+	
+	local loc_id_window = ArkInventory.Const.Location.Bank
+		
+	if ArkInventory.Global.Location[loc_id_window].isOffline then
+		--ArkInventory.Output( "offline" )
+		return
+	end
+	
+	
+	local active_map = active_map or ArkInventory.Util.getWindowActiveMap( loc_id_window )
+	local loc_id_storage = loc_id_storage or active_map.loc_id_storage
+	local blizzard_id = blizzard_id or active_map.blizzard_id
+	
+	--ArkInventory.Output( "sync blizard bank frame [", loc_id_storage, "] [", blizzard_id, "]" )
+	
+	if loc_id_storage == ArkInventory.Const.Location.Bank then
+		--ArkInventory.Output( "bank")
+		BankFrame_ShowPanel( BANK_PANELS[1].name, nil, "arkinv" )
+	end
+	
+	if loc_id_storage == ArkInventory.Const.Location.ReagentBank then
+		--ArkInventory.Output( "reagentbank")
+		BankFrame_ShowPanel( BANK_PANELS[2].name, nil, "arkinv" )
+	end
+	
+	if loc_id_storage == ArkInventory.Const.Location.AccountBank then
+		--ArkInventory.Output( "warbank")
+		--if loc_id_storage ~= active_map.loc_id_storage then
+			BankFrame_ShowPanel( BANK_PANELS[3].name, nil, "arkinv" )
+		--end
+		AccountBankPanel:TriggerEvent( BankPanelMixin.Event.BankTabClicked, blizzard_id )
+	end
+	
+end
+
+local function initMovedItemBlock( blizzard_id, slot_id )
+	
+	if not ArkInventory.Global.MovedItemBlock then
+		ArkInventory.Global.MovedItemBlock = { }
+	end
+	
+	if not ArkInventory.Global.MovedItemBlock[blizzard_id] then
+		ArkInventory.Global.MovedItemBlock[blizzard_id] = { }
+	end
+	
+end
+
+function ArkInventory.Util.clearMovedItemBlock( blizzard_id, slot_id )
+	initMovedItemBlock( blizzard_id, slot_id )
+	ArkInventory.Global.MovedItemBlock[blizzard_id][slot_id] = nil
+end
+
+function ArkInventory.Util.setMovedItemBlock( blizzard_id, slot_id )
+	initMovedItemBlock( blizzard_id, slot_id )
+	ArkInventory.Global.MovedItemBlock[blizzard_id][slot_id] = true
+end
+
+function ArkInventory.Util.getMovedItemBlock( blizzard_id, slot_id )
+	initMovedItemBlock( blizzard_id, slot_id )
+	return ArkInventory.Global.MovedItemBlock[blizzard_id][slot_id]
 end

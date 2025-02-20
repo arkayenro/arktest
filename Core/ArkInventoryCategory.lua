@@ -71,7 +71,7 @@ ArkInventory.Const.Category = {
 			},
 			[416] = {
 				id = "SYSTEM_EQUIPMENT_SOULBOUND",
-				text = string.format( "%s (%s)", ArkInventory.Localise["EQUIPMENT"], ArkInventory.Localise["ITEM_BIND3"] ),
+				text = string.format( "%s (%s)", ArkInventory.Localise["EQUIPMENT"], ArkInventory.Localise["ITEM_BINDING3"] ),
 			},
 			[456] = {
 				id = "SYSTEM_EQUIPMENT_COSMETIC",
@@ -79,15 +79,19 @@ ArkInventory.Const.Category = {
 			},
 			[444] = {
 				id = "SYSTEM_EQUIPMENT_ACCOUNTBOUND",
-				text = string.format( "%s (%s)", ArkInventory.Localise["EQUIPMENT"], ArkInventory.Localise["ITEM_BIND4"] ),
+				text = string.format( "%s (%s)", ArkInventory.Localise["EQUIPMENT"], ArkInventory.Localise["ITEM_BINDING4"] ),
+			},
+			[469] = {
+				id = "SYSTEM_EQUIPMENT_ACCOUNTBOUND_UNTIL_EQUIPPED",
+				text = string.format( "%s (%s)", ArkInventory.Localise["EQUIPMENT"], ArkInventory.Localise["ITEM_BINDING5"] ),
 			},
 			[457] = {
-				id = "SYSTEM_ITEM_BIND_PARTYLOOT",
-				text = string.format( "%s (%s)", ArkInventory.Localise["EQUIPMENT"], ArkInventory.Localise["ITEM_BIND_PARTYLOOT"] ),
+				id = "SYSTEM_ITEM_BINDING_PARTYLOOT",
+				text = string.format( "%s (%s)", ArkInventory.Localise["EQUIPMENT"], ArkInventory.Localise["ITEM_BINDING_PARTYLOOT"] ),
 			},
 			[458] = {
-				id = "SYSTEM_ITEM_BIND_REFUNDABLE",
-				text = string.format( "%s (%s)", ArkInventory.Localise["EQUIPMENT"], ArkInventory.Localise["ITEM_BIND_REFUNDABLE"] ),
+				id = "SYSTEM_ITEM_BINDING_REFUNDABLE",
+				text = string.format( "%s (%s)", ArkInventory.Localise["EQUIPMENT"], ArkInventory.Localise["ITEM_BINDING_REFUNDABLE"] ),
 			},
 			[415] = {
 				id = "SYSTEM_MOUNT_BOUND",
@@ -739,7 +743,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	
 	
 	-- setup tooltip for scanning.  it will be ready as we've already checked
-	ArkInventory.TooltipSet( ArkInventory.Global.Tooltip.Scan, i.loc_id, i.bag_id, i.slot_id, i.h, i )
+	ArkInventory.TooltipSetFromWindowItem( ArkInventory.Global.Tooltip.Scan, i.loc_id, i.bag_id, i.slot_id, i.h, i )
 	
 	-- if enabled - already known soulbound items are junk (tooltip)
 	if ArkInventory.db.option.action.vendor.soulbound.known then --and not ArkInventory.Global.Location[i.loc_id].isOffline
@@ -928,16 +932,20 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	if info.equiploc ~= "" or info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.WEAPON.PARENT or info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT or ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Armor Token" ) then
 		if ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_ITEM_COSMETIC"], false, true, false, ArkInventory.Const.Tooltip.Search.Short ) then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_COSMETIC" )
-		elseif i.sb == ArkInventory.ENUM.BIND.ACCOUNT then
+		elseif i.sb == ArkInventory.ENUM.ITEM.BINDING.ACCOUNTEQUIP then
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_ACCOUNTBOUND_UNTIL_EQUIPPED" )
+		elseif i.sb == ArkInventory.ENUM.ITEM.BINDING.ACCOUNT then
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_ACCOUNTBOUND" )
-		elseif i.sb == ArkInventory.ENUM.BIND.PICKUP then
+		elseif i.sb == ArkInventory.ENUM.ITEM.BINDING.PICKUP then
 			if ArkInventory.db.option.action.vendor.soulbound.equipment then
-				if not ArkInventory.TooltipCanUse( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.db.option.action.vendor.soulbound.known, ArkInventory.db.option.action.vendor.soulbound.itemlevel ) then
+				if not ArkInventory.TooltipCanUse( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.db.option.action.vendor.soulbound.known, ArkInventory.db.option.action.vendor.soulbound.ignorelevel ) then
 					--ArkInventory.Output( i.h, " is junk" )
 					return ArkInventory.CategoryGetSystemID( "SYSTEM_JUNK" )
 				end
 			end
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_SOULBOUND" )
+		elseif i.sb == -1 then
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_UNKNOWN" )
 		else
 			return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT" )
 		end
@@ -1422,11 +1430,9 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	
 end
 
-function ArkInventory.ItemCategoryGetDefaultEmpty( loc_id_storage, bag_id_storage )
+function ArkInventory.ItemCategoryGetDefaultEmpty( loc_id_window, bag_id_window )
 	
-	local map = ArkInventory.Util.MapGetStorage( loc_id_storage, bag_id_storage )
-	
-	local loc_id_window = map.loc_id_window
+	local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
 	
 	local codex = ArkInventory.Codex.GetLocation( loc_id_window )
 	local clump = codex.style.slot.empty.clump
@@ -1434,7 +1440,7 @@ function ArkInventory.ItemCategoryGetDefaultEmpty( loc_id_storage, bag_id_storag
 	local blizzard_id = map.blizzard_id
 	local bt = ArkInventory.BagType( blizzard_id )
 	
-	--ArkInventory.Output( "loc[", loc_id_storage, "] bag[", bag_id_storage, " / ", blizzard_id, "] type[", bt, "]" )
+	--ArkInventory.Output( "loc[", loc_id_window, "] bag[", bag_id_window, " / ", blizzard_id, "] type[", bt, "]" )
 	
 	if bt == ArkInventory.Const.Slot.Type.Bag then
 		if clump then
@@ -1581,7 +1587,7 @@ function ArkInventory.ItemCategoryGetDefault( i )
 	
 end
 
-function ArkInventory.ItemCategoryGetPrimary( i )
+function ArkInventory.ItemCategoryGetPrimary( i, isRule )
 	
 	if i.h then -- only items can have a category, empty slots can only be used by rules
 		
@@ -1603,34 +1609,38 @@ function ArkInventory.ItemCategoryGetPrimary( i )
 		
 	end
 	
-	if ArkInventory.Global.Rules.Enabled then
+	if ArkInventory.Global.Rules.Enabled and not isRule then
 		
-		-- items rule cache id
+		-- dont allow a rule function to pass through here or youll get an infinite loop
+		
+		-- get the items rule cache id
 		local cid = ArkInventory.ObjectIDRule( i )
 		
 		-- if the value has already been cached then use it
-		if ArkInventory.db.cache.rule[cid] == nil then
-			-- check for any rule that applies to the item, cache the result, use false for no match (default), true for match, nil to try again later
-			ArkInventory.db.cache.rule[cid] = ArkInventoryRules.AppliesToItem( i )
-			--ArkInventory.Output( cid, " = ", ArkInventory.db.cache.rule[cid] )
+		if ArkInventory.db.cache.rule[cid] ~= nil then
+			return ArkInventory.db.cache.rule[cid]
 		end
+		
+		-- check for any rule that applies to the item, cache the result, use false for no match (default), true for match, nil to try again later
+		ArkInventory.db.cache.rule[cid] = ArkInventoryRules.AppliesToItem( i )
 		
 		return ArkInventory.db.cache.rule[cid]
 		
 	end
 	
+	
 	return false
 	
 end
 
-function ArkInventory.ItemCategoryGet( i )
+function ArkInventory.ItemCategoryGet( i, isRule )
 	
 	local unknown = ArkInventory.CategoryGetSystemID( "SYSTEM_UNKNOWN" )
 	
 	local default = ArkInventory.CategoryGetSystemID( "SYSTEM_DEFAULT" )
 	default = ( i and ArkInventory.ItemCategoryGetDefault( i ) ) or default
 	
-	local cat = ArkInventory.ItemCategoryGetPrimary( i )
+	local cat = ArkInventory.ItemCategoryGetPrimary( i, isRule )
 	
 	return cat or default or unknown, cat, default or unknown
 	

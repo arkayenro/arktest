@@ -10,7 +10,8 @@ local table = _G.table
 -- stuff to look at later? maybe
 -- BattlePetTooltipTemplate_AddTextLine
 
-local DragonFlightTooltips = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT )
+local canUseSurfaceArgs = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT, 110001 )
+local canUseTooltipInfo = ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT )
 
 local MissingFunctions = { }
 
@@ -136,7 +137,7 @@ end
 
 function ArkInventory.GameTooltipSetHyperlink( frame, h )
 	ArkInventory.GameTooltipSetPosition( frame )
-	return ArkInventory.TooltipSet( GameTooltip, nil, nil, nil, h )
+	return ArkInventory.TooltipSetFromHyperlink( GameTooltip, h )
 end
 
 
@@ -200,7 +201,7 @@ function ArkInventory.TooltipScanInit( name )
 end
 
 function ArkInventory.TooltipInfoUse( tooltip )
-	if DragonFlightTooltips then
+	if canUseTooltipInfo then
 		if tooltip.ARKTTD.scan then
 			return true
 		end
@@ -414,7 +415,7 @@ local function helper_TooltipSetVoidItem( tooltip, bag_id, slot_id )
 	
 end
 
-function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_id, h, i, msg_id, att_id )
+function ArkInventory.TooltipSetFromStorageItem( tooltip, loc_id_storage, bag_id_storage, slot_id, h, i, msg_id, att_id )
 	
 	-- this is the only tooltip function that should be used
 	-- where possible this will generate an online tooltip, but if that is not possible then a hyperlink based tooltip will be generated instead
@@ -426,7 +427,7 @@ function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_
 	local tooltipInfo = nil
 	local tooltipSource = tooltip
 	
-	if h and not DragonFlightTooltips then
+	if h and not canUseTooltipInfo then
 		-- handle caged battlepets in old clients
 		-- its an item (pet cage) but blizzard will generate a battlepet hyperlink for it instead
 		local osd = ArkInventory.ObjectStringDecode( h )
@@ -437,6 +438,7 @@ function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_
 			helper_GetTooltipBattlePetValues( osd, tooltip.ARKTTD.info, 2 )
 			
 			return
+			
 --		elseif osd[1] == "item" and osd[2] == ArkInventory.Const.BLIZZARD.GLOBAL.PET.CAGE_ITEMID then
 			--ArkInventory.Output( "scan caged = ", h )
 			-- old game version, functions will handle rebuilding to battlepet hyperlink
@@ -559,7 +561,7 @@ function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_
 	
 	if tooltipInfo then
 		
-		if DragonFlightTooltips then
+		if canUseSurfaceArgs then
 			
 			TooltipUtil.SurfaceArgs( tooltipInfo )
 			tooltipInfo.args = nil
@@ -585,6 +587,19 @@ function ArkInventory.TooltipSet( tooltip, loc_id_storage, bag_id_storage, slot_
 	
 end
 
+function ArkInventory.TooltipSetFromWindowItem( tooltip, loc_id_window, bag_id_window, slot_id, h, i, msg_id, att_id )
+	
+	local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+	local loc_id_storage = map.loc_id_storage
+	local bag_id_storage = map.bag_id_storage
+	
+	return ArkInventory.TooltipSetFromStorageItem( tooltip, loc_id_storage, bag_id_storage, slot_id, h, i, msg_id, att_id )
+	
+end
+
+function ArkInventory.TooltipSetFromHyperlink( tooltip, h )
+	return ArkInventory.TooltipSetFromStorageItem( tooltip, nil, nil, nil, h )
+end
 
 function ArkInventory.TooltipSetCustomReputation( tooltip, h )
 	
@@ -643,7 +658,7 @@ function ArkInventory.TooltipAddCustomReputationToCharacterFrame( frame )
 	
 	ArkInventory.OutputDebug( "onenter ", frame )
 	ArkInventory.OutputDebug( "friend=", frame.friendshipID )
-	ArkInventory.OutputDebug( "hasrep=", frame.hasRep )
+	ArkInventory.OutputDebug( "isHeaderWithRep=", frame.isHeaderWithRep )
 	ArkInventory.OutputDebug( "collapsed=", frame.isCollapsed )
 	]]--
 	
@@ -1395,6 +1410,9 @@ function ArkInventory.TooltipCanUse( tooltip, start, ignore_known, ignore_level 
 	local newscan = not start -- only allow one jump per pass
 	local start = start or 2
 	local restart
+	
+	-- SPELL_FAILED_CUSTOM_ERROR_1042 - you already have this curio
+	
 	
 	--ArkInventory.OutputDebug( "start=[", start, "] lines=[", n, "]" )
 	for i = start, n do
@@ -2285,7 +2303,7 @@ function ArkInventory.HookTooltipOnUpdate( tooltip, elapsed )
 	
 	if fn == "SetHyperlink" then
 		-- attempting to set the same hyperlink will close the tooltip
-		if DragonFlightTooltips then
+		if canUseTooltipInfo then
 			-- if we clear its info table it will look like an empty tooltip and wont close when we reload it
 			tooltip.info = nil
 		else
@@ -2417,7 +2435,7 @@ function ArkInventory.HookTooltipSetText( tooltip )
 		local _, _, h = ArkInventory.TooltipGetLine( tooltip, 1 )
 		h = string.match( h, ArkInventory.Const.Tooltip.customHyperlinkMatch )
 		if h then
-			return ArkInventory.TooltipSet( tooltip, nil, nil, nil, h )
+			return ArkInventory.TooltipSetFromHyperlink( tooltip, h )
 		end
 		
 	end
@@ -2529,7 +2547,6 @@ function ArkInventory.TooltipAddItemAge( tooltip, h, blizzard_id, slot_id )
 	
 	if type( blizzard_id ) == "number" and type( slot_id ) == "number" then
 		ArkInventory.TooltipAddEmptyLine( tooltip )
-		local bag_id = ArkInventory.Util.getStorageIdFromBlizzardBagId( blizzard_id )
 		tooltip:AddLine( tt, 1, 1, 1, 0 )
 	end
 
@@ -2706,7 +2723,8 @@ function ArkInventory.TooltipObjectCountGet( search_id, thread_id )
 			data.class[class].player_id[pid].count = rcd.total
 			
 			local name = ArkInventory.DisplayName3( pd.data.info, paint, codex.player.data.info )
-			local location_entries = { }
+			local location_entries_comma = { }
+			local location_entries_newline = { }
 			
 			for loc_id, ld in pairs( rcd.location ) do
 				
@@ -2718,39 +2736,39 @@ function ArkInventory.TooltipObjectCountGet( search_id, thread_id )
 					
 					if ( rcd.class == ArkInventory.Const.Class.Guild and loc_id == ArkInventory.Const.Location.Vault and ld.e ) or ( rcd.class == ArkInventory.Const.Class.Account and loc_id == ArkInventory.Const.Location.AccountBank and ld.e ) then
 						
---						if loc_id == ArkInventory.Const.Location.Vault and ld.e then
+						local txt = ""
+						
+						if ArkInventory.db.option.tooltip.itemcount.tabs then
 							
-							local txt = ""
+							local numtabs = ArkInventory.Table.Elements( ld.e )
 							
-							if ArkInventory.db.option.tooltip.itemcount.tabs then
-								
-								local numtabs = ArkInventory.Table.Elements( ld.e )
-								
-								for tab, count in ArkInventory.spairs( ld.e ) do
-									
-									if numtabs > 1 then
-										txt = string.format( "%s, %s%s %s: %s%s", txt, c1, ArkInventory.Localise["TOOLTIP_VAULT_TABS"], tab, c2, FormatLargeNumber( count ) )
-									else
-										txt = string.format( "%s%s %s", c1, ArkInventory.Localise["TOOLTIP_VAULT_TABS"], tab )
-									end
-									
-								end
+							for tab, count in ArkInventory.spairs( ld.e ) do
 								
 								if numtabs > 1 then
-									txt = string.sub( txt, 3, string.len( txt ) )
+									txt = string.format( "%s, %s%s %s: %s%s", txt, c1, ArkInventory.Localise["TOOLTIP_VAULT_TABS"], tab, c2, FormatLargeNumber( count ) )
+								else
+									txt = string.format( "%s%s%s %s", txt, c1, ArkInventory.Localise["TOOLTIP_VAULT_TABS"], tab )
 								end
 								
-							else
-								txt = string.format( "%s%s", c1, ArkInventory.Global.Location[loc_id].Name )
 							end
 							
-							table.insert( location_entries, txt )
+							if numtabs > 1 then
+								txt = string.sub( txt, 3, string.len( txt ) )
+							end
 							
---						end
+							txt = string.format( "%s%s %s", c1, ArkInventory.Global.Location[loc_id].Name, txt )
+							
+						else
+							
+							txt = string.format( "%s%s", c1, ArkInventory.Global.Location[loc_id].Name )
+							
+						end
+						
+						table.insert( location_entries_comma, txt )
 						
 					else
 						
-						if loc_id == ArkInventory.Const.Location.Reputation then
+						if loc_id == ArkInventory.Const.Location.Reputation or loc_id == ArkInventory.Const.Location.AccountReputation then
 							
 							if ArkInventory.db.option.tooltip.itemcount.reputation and ld.e then
 								
@@ -2766,7 +2784,7 @@ function ArkInventory.TooltipObjectCountGet( search_id, thread_id )
 									
 									local osd = ArkInventory.ObjectStringDecode( ld.e )
 									local txt = ArkInventory.Collection.Reputation.LevelText( osd.id, style, osd.st, osd.bv, osd.bn, osd.bm, osd.ic, osd.pv, osd.pr, osd.rv, osd.rm )
-									table.insert( location_entries, string.format( "%s%s", c1, txt ) )
+									table.insert( location_entries_newline, string.format( "%s%s", c1, txt ) )
 								end
 								
 							end
@@ -2775,16 +2793,16 @@ function ArkInventory.TooltipObjectCountGet( search_id, thread_id )
 							
 							if ArkInventory.db.option.tooltip.itemcount.tradeskill and ( not ignore_tradeskill ) and ld.e then
 								
-								table.insert( location_entries, string.format( "%s%s", c1, ld.e ) )
+								table.insert( location_entries_comma, string.format( "%s%s", c1, ld.e ) )
 								
 							end
 							
 						elseif ld.c > 0 then
 							
 							if rcd.entries > 1 then
-								table.insert( location_entries, string.format( "%s%s %s%s", c1, ArkInventory.Global.Location[loc_id].Name, c2, FormatLargeNumber( ld.c ) ) )
+								table.insert( location_entries_comma, string.format( "%s%s %s%s", c1, ArkInventory.Global.Location[loc_id].Name, c2, FormatLargeNumber( ld.c ) ) )
 							else
-								table.insert( location_entries, string.format( "%s%s", c1, ArkInventory.Global.Location[loc_id].Name ) )
+								table.insert( location_entries_comma, string.format( "%s%s", c1, ArkInventory.Global.Location[loc_id].Name ) )
 							end
 							
 						end
@@ -2796,9 +2814,11 @@ function ArkInventory.TooltipObjectCountGet( search_id, thread_id )
 			end
 			
 			--if data.class[class].player_id[pid].count > 0 then
-			if #location_entries > 0 then
+			if #location_entries_comma > 0 or #location_entries_newline > 0 then
 				
+				local multiline = ""
 				data.empty = false
+				
 				
 				local hl = ""
 				if not ArkInventory.db.option.tooltip.itemcount.me and pd.data.info.player_id == player_id then
@@ -2807,14 +2827,32 @@ function ArkInventory.TooltipObjectCountGet( search_id, thread_id )
 				
 				data.class[class].entries = data.class[class].entries + 1
 				
+				
+				-- right hand text
+				local txt1 = table.concat( location_entries_comma, ", " )
+				local txt2 = table.concat( location_entries_newline, "\n" )
+				
+				if #location_entries_comma > 0 and #location_entries_newline > 0 then
+					txt1 = string.format( "%s\n%s", txt1, txt2 )
+					multiline = "\n"
+				elseif #location_entries_newline > 0 then
+					txt1 = txt2
+				end
+				
+				data.class[class].player_id[pid].t2 = txt1
+				
+				
+				-- left hand text
 				local count = data.class[class].player_id[pid].count
 				if count > 0 then
-					data.class[class].player_id[pid].t1 = string.format( "%s%s%s: %s%s", hl, c1, name, c2, FormatLargeNumber( count ) )
+					txt1 = string.format( "%s%s%s: %s%s%s  ", hl, c1, name, c2, FormatLargeNumber( count ), multiline )
 				else
 					-- count should have been reset to zero for reputation and tradeskill back in getraw
-					data.class[class].player_id[pid].t1 = string.format( "%s%s%s", hl, c1, name )
+					txt1 = string.format( "%s%s%s%s  ", hl, c1, name, multiline )
 				end
-				data.class[class].player_id[pid].t2 = string.format( "%s", table.concat( location_entries, ", " ) )
+				
+				data.class[class].player_id[pid].t1 = txt1
+				
 				
 				data.class[class].count = data.class[class].count + data.class[class].player_id[pid].count
 				data.count = data.count + data.class[class].count
@@ -2822,8 +2860,13 @@ function ArkInventory.TooltipObjectCountGet( search_id, thread_id )
 			end
 			
 			if data.count > 0 then
-				data.class[class].total = string.format( "%s%s: %s%s", c1, ArkInventory.Localise["TOTAL"], c2, FormatLargeNumber( data.class[class].count ) )
+				
+				if data.class[class].count > 0 then
+					data.class[class].total = string.format( "%s%s: %s%s", c1, ArkInventory.Localise["TOTAL"], c2, FormatLargeNumber( data.class[class].count ) )
+				end
+				
 				data.total = string.format( "%s%s: %s%s", c1, ArkInventory.Localise["TOTAL"], c2, FormatLargeNumber( data.count ) )
+				
 			end
 			
 		end
@@ -2895,9 +2938,11 @@ function ArkInventory.TooltipDataDump( tooltipInfo )
 	
 	if tooltipInfo then
 		
-		TooltipUtil.SurfaceArgs( tooltipInfo )
-		for k, line in ipairs( tooltipInfo.lines ) do
-			TooltipUtil.SurfaceArgs( line )
+		if canUseSurfaceArgs then
+			TooltipUtil.SurfaceArgs( tooltipInfo )
+			for k, line in ipairs( tooltipInfo.lines ) do
+				TooltipUtil.SurfaceArgs( line )
+			end
 		end
 		
 		--tooltipInfo.type
@@ -3030,7 +3075,7 @@ end
 
 function ArkInventory.TooltipExtractValueArtifactPower( h )
 	
-	local tooltipInfo = ArkInventory.TooltipSet( ArkInventory.Global.Tooltip.Scan, nil, nil, nil, h )
+	local tooltipInfo = ArkInventory.TooltipSetFromHyperlink( ArkInventory.Global.Tooltip.Scan, h )
 	local amount, suffix = ArkInventory.TooltipMatch( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_ARTIFACT_POWER_AMOUNT"], false, true, true, 0, ArkInventory.Const.Tooltip.Search.Short )
 	
 	if not amount then
@@ -3065,7 +3110,7 @@ end
 
 function ArkInventory.TooltipExtractValueAncientMana( h )
 	
-	local tooltipInfo = ArkInventory.TooltipSet( ArkInventory.Global.Tooltip.Scan, nil, nil, nil, h )
+	local tooltipInfo = ArkInventory.TooltipSetFromHyperlink( ArkInventory.Global.Tooltip.Scan, h )
 	local amount, suffix = ArkInventory.TooltipMatch( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_ARTIFACT_POWER_AMOUNT"], false, true, true, 0, ArkInventory.Const.Tooltip.Search.Short )
 	
 	if not amount then
@@ -3160,7 +3205,7 @@ function ArkInventory.TooltipProcessorSetItem( ... )
 	
 	if checkAbortShow( tooltip ) then return true end
 	
-	if DragonFlightTooltips then
+	if canUseSurfaceArgs then
 		TooltipUtil.SurfaceArgs( tooltipInfo )
 		--tooltipInfo.args = nil
 		--tooltipInfo.lines = nil
@@ -3234,9 +3279,13 @@ function ArkInventory.TooltipProcessorSetMount( ... )
 	local tooltip, tooltipInfo = ...
 	if checkAbortShow( tooltip ) then return true end
 	
-	local name, spellID = C_MountJournal.GetMountInfoByID( tooltipInfo.id )
-	local hyperlink = ArkInventory.CrossClient.GetSpellLink( spellID )
-	ArkInventory.TooltipAddItemCount( tooltip, hyperlink )
+	if tooltipInfo.id then
+		local name, spellID = C_MountJournal.GetMountInfoByID( tooltipInfo.id )
+		if spellID then
+			local hyperlink = ArkInventory.CrossClient.GetSpellLink( spellID )
+			ArkInventory.TooltipAddItemCount( tooltip, hyperlink )
+		end
+	end
 	
 end
 
@@ -3247,8 +3296,10 @@ function ArkInventory.TooltipProcessorSetToy( ... )
 	local tooltip, tooltipInfo = ...
 	if checkAbortShow( tooltip ) then return true end
 	
-	local hyperlink = C_ToyBox.GetToyLink( tooltipInfo.id )
-	ArkInventory.TooltipAddItemCount( tooltip, hyperlink )
+	if tooltipInfo.id then
+		local hyperlink = C_ToyBox.GetToyLink( tooltipInfo.id )
+		ArkInventory.TooltipAddItemCount( tooltip, hyperlink )
+	end
 	
 end
 
@@ -3257,8 +3308,10 @@ function ArkInventory.TooltipProcessorSetCurrency( ... )
 	local tooltip, tooltipInfo = ...
 	if checkAbortShow( tooltip ) then return true end
 	
-	local hyperlink = helper_CurrencyRepuationCheck( tooltipInfo.id )
-	ArkInventory.TooltipAddItemCount( tooltip, hyperlink )
+	if tooltipInfo.id then
+		local hyperlink = helper_CurrencyRepuationCheck( tooltipInfo.id )
+		ArkInventory.TooltipAddItemCount( tooltip, hyperlink )
+	end
 	
 end
 
@@ -3267,8 +3320,10 @@ function ArkInventory.TooltipProcessorSetSpell( ... )
 	local tooltip, tooltipInfo = ...
 	if checkAbortShow( tooltip ) then return true end
 	
-	local hyperlink = ArkInventory.CrossClient.GetSpellLink( tooltipInfo.id )
-	ArkInventory.TooltipAddItemCount( tooltip, hyperlink )
+	if tooltipInfo.id then
+		local hyperlink = ArkInventory.CrossClient.GetSpellLink( tooltipInfo.id )
+		ArkInventory.TooltipAddItemCount( tooltip, hyperlink )
+	end
 	
 end
 

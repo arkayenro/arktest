@@ -1197,7 +1197,7 @@ local ImportCrossRefTable = {
 {192343,{201838,-377361}}, -- Snowclaw Cub
 {192350,{202085,-377392}}, -- Bugbiter Tortoise
 {192363,{-377401}}, -- Diamond Crab
-{192365,{-377407}}, -- Sapphire Crab
+{192365,{224579,-377407}}, -- Sapphire Crab
 {192366,{-377410}}, -- Truesilver Crab
 {192368,{-377417}}, -- Striped Snakebiter
 {192369,{199916,-377423}}, -- Roseate Hopper
@@ -1244,7 +1244,7 @@ local ImportCrossRefTable = {
 {204266,{205023,-408032}}, -- Savage Lobstrok
 {204268,{205024,-408036}}, -- Cheddar
 {204269,{205026,-408039}}, -- Devourer Lobstrok
-{204271,{205032,-408048}}, -- Bestial Lurker
+{204271,{205032,-408048}}, -- Abyssal Lurker / Bestial Lurker
 {204275,{205035,-408062}}, -- Snapjaw Lurker
 {204276,{205037,-408063}}, -- Void Lurker
 {204286,{205050,-408081}}, -- Paulie
@@ -1261,12 +1261,12 @@ local ImportCrossRefTable = {
 {204325,{205122,-408163}}, -- Roseshell
 {204326,{205123,-408165}}, -- Brulee
 {204339,{205147,-408251}}, -- Ridged Shalewing
-{204340,{205148,-408252}}, -- Dread Shalewing
+{204340,{205148,-408252}}, -- Soot-Stained Shalewing
 {204341,{205149,-408253}}, -- Ravenous Shalewing
 {204342,{205150,-408254}}, -- Shalewing Devourer
 {204343,{205151,-408257}}, -- Salverun
 {204345,{205152,-408264}}, -- Skaarn
-{204354,{205153,-408265}}, -- Mikah
+{204354,{205153,-408265}}, -- Jade Cragviper / Mikah
 {204359,{205154,-408308}}, -- Aquapo
 {204360,{205156,-408311}}, -- Heartseeker Moth
 {204361,{205157,-408314}}, -- Undermoth
@@ -1335,18 +1335,115 @@ local ImportCrossRefTable = {
 {216930,{213133,-433791}}, -- Reese
 {216933,{213134,-433802}}, -- Hap'he
 {217530,{213556,-434792}}, -- Hoplet
-{218646,{-437600}}, -- Bubbles
-{218647,{-437601}}, -- Glamrok
-{218977,{-438543}}, -- Happy
+{218646,{233251,-437600}}, -- Bubbles
+{218647,{233248,-437601}}, -- Glamrok
+{218977,{233252,-438543}}, -- Happy
 {219134,{217043,-438775}}, -- Pokee
 {218060,{-439994}}, -- Fathom / Summon Fathom
+{220420,{218086,-441643}}, -- Remembered Riverpaw
+{220675,{218245,-442327}}, -- Remembered Construct
+{220680,{218246,-442337}}, -- Remembered Spawn
+{222069,{221195,-445488}}, -- Illskitter
+{222081,{221492,-445493}}, -- Moss Skipper
+{222203,{220782,-445822}}, -- Thunder
+{222200,{221848,-445823}}, -- Tiberius
+{222202,{221850,-445824}}, -- Bean / Freshly Webbed Kebab
+{222201,{221849,-445826}}, -- Vanilla
+{222204,{221851,-445828}}, -- Argos
+{222298,{220771,-446004}}, -- Hallowed Glowfly
+{222318,{223155,-446024}}, -- Bop
+{222319,{224439,-446027}}, -- Oop'lajax
+{222326,{221819,-446031}}, -- Shadowbog Hopper
+{222339,{222966,-446046}}, -- Spinner
+{222340,{222969,-446047}}, -- Anub'Rekyute
+{222342,{222967,-446048}}, -- Webbers
+{222341,{222968,-446049}}, -- Itchbite
+{222348,{-446055}}, -- Caustic Oozeling
+{222351,{-446057}}, -- Shadowy Oozeling
+{222359,{223487,-446059}}, -- Writhing Transmutagen
+{222420,{221762,-446119}}, -- Frenzied Bloodtick
+{222532,{222971,-446434}}, -- Bouncer
+{222574,{222970,-446435}}, -- Fuzzy
+{222575,{222972,-446438}}, -- Jump Jump
+{222576,{222973,-446440}}, -- Fringe
+{222080,{221493,-446452}}, -- Redthroat Skipling / Admiral
+{222079,{221494,-446463}}, -- Skippy
+{222078,{221496,-446464}}, -- Wriggle
+{222077,{221495,-446465}}, -- Waddles
+{222585,{-446491}}, -- Kaheti Bull Worm
+{222583,{225934,-446493}}, -- Lil' Bonechewer
+{222590,{225337,-446498}}, -- Violet Sporbit
+{222607,{221761,-446512}}, -- Venomwing
+{222609,{221759,-446513}}, -- Sceaduthax
+{222606,{221760,-446514}}, -- Pillarnest Bonedrinker
+{222615,{228096,-446585}}, -- Vibrant Glowfly / Vibrant Firefly
+{222711,{221821,-446734}}, -- Waxwick
+{222714,{221764,-446750}}, -- Burntram
+{222717,{222964,-446755}}, -- Fathom Incher
+{222739,{228098,-446768}}, -- Troglofrog
+{222764,{221811,-446791}}, -- Starkstripe Hopper
+{222782,{224450,-446798}}, -- Lil' Moss Rosy
+{222779,{222965,-446801}}, -- Loamy
+{222046,{221486,-446820}}, -- Rak-Ush Threadling
+{222880,{221546,-447009}}, -- Nightfarm Growthling
+{222879,{221548,-447012}}, -- Blightbud
+{222883,{221820,-447016}}, -- Chester
+{223138,{222980,-447900}}, -- Slim
+{223135,{222974,-447902}}, -- Sir Shady Mrrgglton Junior
+{223136,{-447903}}, -- Umbral Amalgam
+{223088,{222978,-447934}}, -- Sandstone Ramolith
 {223316,{223145,-448355}}, -- Marrlok
 {223600,{223339,-449046}}, -- Trishi
 {223645,{223474,-449173}}, -- Worgli the Apprehensive
+{223691,{223498,-449280}}, -- Charismatic Courier
 {223695,{223499,-449286}}, -- Lil' Manny
+{223706,{228097,-449369}}, -- Pinkskin Burrower
+{223718,{223624,-449475}}, -- Sneef
+{223717,{223623,-449477}}, -- Guacamole
+{223351,{223625,-449511}}, -- Cinderwold Sizzlestinger
+{223698,{223626,-449513}}, -- Cinderhoney Emberstinger / Embersting
 {223785,{221817,-449550}}, -- Muskpaw Calf
 {223810,{221818,-449626}}, -- Astral Emperor's Serpentling
+{223859,{223802,-449807}}, -- Ruby-Eyed Stagshell
+{223861,{223803,225935,-449808}}, -- Rak-Ush Battleshell / Blue Stagshell
+{224090,{224101,-451193}}, -- Brown Leafbug
+{224717,{224261,-452221}}, -- Gale
+{224716,{224259,-452222}}, -- Flash
+{224718,{224260,-452223}}, -- Thundo
+{224915,{224406,-452706}}, -- Misty
+{224916,{224410,-452711}}, -- Craggles
+{225238,{224549,-453076}}, -- Dalaran Sewer Turtle / Sewer Turtle Whistle
 {225354,{224576,-453266}}, -- Lil' Flameo
+{225537,{224766,-453741}}, -- Faithful Dog
+{225632,{224760,-453913}}, -- Wobbles
+{225554,{224646,-453923}}, -- Coppers / Coppers the Kobold
+{226125,{225544,-455184}}, -- Mind Slurp
+{227414,{226104,-457689}}, -- Claudius
+{229779,{228740,-462942}}, -- Gizmo the Pure
+{229846,{228758,-463079}}, -- Parrlok
+{229860,{228765,-463148}}, -- Gummi
+{229890,{228790,-463242}}, -- Thrillbot 9000
+{229901,{228793,-463251}}, -- Chillbot 9000
+{198987,{229366,-464798}}, -- Brrrgl
+{231713,{229993,-466179}}, -- Bluedoo
+{231840,{228781,-466575}}, -- Lil'Doomy / Lil'Doomy's Hilt
+{231841,{230011,-466576}}, -- Lil'Kaz / Lil'Kaz's Hilt
+{232502,{231294,-468186}}, -- Reven
+{232533,{231310,-468228}}, -- Timbered Sky Snakelet
+{232579,{231356,-468317}}, -- Specter
+{232585,{231365,-468338}}, -- Karazhan Syphoner
+{233481,{232519,-470914}}, -- Razeshi B.
+{233564,{232531,-471121}}, -- Grunch
+{233797,{233247,-471479}}, -- Sparklesnap
+{233965,{232653,-471751}}, -- Portentous Present
+{233967,{235989,-471798}}, -- Parley
+{234131,{232923,-472439}}, -- Living Rose
+{234365,{233056,-472536}}, -- Marmaduke
+{234366,{233057,-473127}}, -- Rock Hound Mica
+{234439,{233190,-473300}}, -- Wanderer Liu
+{234663,{233361,-473942}}, -- Wind-Up Wuffi
+{234664,{233366,-473945}}, -- Wind-Up Woofer
+{234908,{-474730}}, -- Titan Orb
 -- end of live
 
 }
@@ -1775,7 +1872,7 @@ local PET_WEAK = { 8, 4, 2, 8, 1, 10, 5, 3, 6, 7 }
 local function ScanAbility( abilityID )
 	
 	if ( not abilityID ) or ( type( abilityID ) ~= "number" ) or ( abilityID <= 0 ) then
-		error( "invalid abilityID" )
+		ArkInventory.Util.Error( "invalid abilityID" )
 		return
 	end
 	

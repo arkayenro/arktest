@@ -1221,55 +1221,6 @@
   </Button>
   
   
-  <ItemButton virtual="true" name="ARKINV_TemplateChangerVaultTab1" inherits="ARKINV_TemplateChangerPlayerMain1">
-  
-    <Scripts>
-  
-      <OnLoad>
-        ArkInventory.Frame_Changer_Vault_Tab_OnLoad( self )
-      </OnLoad>
-      
-      <OnClick>
-        ArkInventory.Frame_Changer_Vault_Tab_OnClick( self, button )
-      </OnClick>
-      
-      <OnReceiveDrag>
-          ArkInventory.Frame_Changer_Vault_Tab_OnClick( self )
-      </OnReceiveDrag>
-      
-      <OnEnter>
-        ArkInventory.Frame_Changer_Vault_Tab_OnEnter( self )
-      </OnEnter>
-      
-    </Scripts>
-      
-  </ItemButton>
-  
-  <Button virtual="true" name="ARKINV_TemplateChangerVaultTab2" inherits="ARKINV_TemplateChangerPlayerMain2">
-    
-    <Scripts>
-      
-      <OnLoad>
-        ArkInventory.Frame_Changer_Vault_Tab_OnLoad( self )
-      </OnLoad>
-      
-      <OnClick>
-        ArkInventory.Frame_Changer_Vault_Tab_OnClick( self, button )
-      </OnClick>
-      
-      <OnReceiveDrag>
-          ArkInventory.Frame_Changer_Vault_Tab_OnClick( self )
-      </OnReceiveDrag>
-      
-      <OnEnter>
-        ArkInventory.Frame_Changer_Vault_Tab_OnEnter( self )
-      </OnEnter>
-      
-    </Scripts>
-    
-  </Button>
-  
-  
   <Button virtual="true" name="ARKINV_TemplateButtonStatusAction" inherits="ARKINV_TemplateButton" hidden="true">
     <Size x="20" y="20" />
     <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
@@ -1516,7 +1467,7 @@
           </OnShow>
           
           <OnCursorChanged>
-            ArkInventory.Frame_Main_Search( self:GetParent( ):GetParent( ) )
+            ArkInventory.Frame_Main_SearchFilterUpdate( self:GetParent( ):GetParent( ) )
           </OnCursorChanged>
           
           <OnEnterPressed>
@@ -1564,9 +1515,9 @@
       
       <Slider name="$parentVerticalScroll" inherits="MinimalHybridScrollBarTemplate" hidden="true" >
         <Anchors>
-          <Anchor point="TOP" y="-30" />
+          <Anchor point="TOP" y="-15" />
           <Anchor point="LEFT" relativePoint="RIGHT" />
-          <Anchor point="BOTTOM" y="30" />
+          <Anchor point="BOTTOM" y="15" />
         </Anchors>
         <Scripts>
           <OnValueChanged>
@@ -2176,7 +2127,7 @@
   
   <Frame name="ARKINV_Debug" inherits="ARKINV_TemplateFrameStandard" parent="UIParent" toplevel="true" movable="true" enableMouse="true" hidden="true">
     
-    <Size x="800" y="400" />
+    <Size x="800" y="800" />
     
     <Anchors>
       <Anchor point="TOPLEFT" x="50" y="-50" />
@@ -2221,7 +2172,7 @@
       
       <ScrollingMessageFrame parentKey="List" name="$parentList" enableMouse="true">
         <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="-10" />
+          <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT" x="0" y="10" />
           <Anchor point="BOTTOM" y="10" />
           <Anchor point="RIGHT" relativeTo="$parentTitle" x="-30" />
         </Anchors>
@@ -2443,5 +2394,7 @@
       </OnUpdate>
     </Scripts>
   </Frame>
+  
+  <Frame name="ARKINV_Hidden" hidden="true" />
   
 </Ui>

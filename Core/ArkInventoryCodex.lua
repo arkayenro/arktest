@@ -190,6 +190,21 @@ function ArkInventory.Codex.SetWindow( loc_id_window, player_id )
 	
 end
 
+function ArkInventory.Codex.GetPlayerStorage( loc_id )
+	
+	-- gets the storage for the logged on character / guild / account at the specified location
+	
+	local loc_id = loc_id or ArkInventory.Const.Location.Bag
+	
+	local player_id = ArkInventory.PlayerIDSelf( )
+	
+	local storage = ArkInventory.Codex.GetStorage( player_id, loc_id )
+	
+	
+	return storage
+	
+end
+
 function ArkInventory.Codex.GetPlayer( loc_id, rebuild )
 	
 	-- gets the codex for the logged on character / guild / account at the specified location

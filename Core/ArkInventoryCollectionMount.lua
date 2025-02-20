@@ -14,7 +14,6 @@ local PLAYER_MOUNT_LEVEL = 20
 local spellSkyriding = 404464
 local spellSteady = 404468
 
-
 ArkInventory.Collection.Mount = { }
 
 local collection = {
@@ -52,8 +51,6 @@ local ZoneRestrictions = {
 	[26056] = ArkInventory.Const.Mount.Zone.AhnQiraj, -- Green Qiraji Battle Tank
 	
 	[75207] = ArkInventory.Const.Mount.Zone.Vashjir, -- Vashj'ir Seahorse
-	
---	[000000] = ArkInventory.Const.Mount.Zone.DragonIsles, -- is now calculated
 	
 --	[294143] = { [85]=1 }, -- X-995 Mechanocat, testing in org
 	
@@ -723,7 +720,7 @@ local ImportCrossRefTable = {
 {254473,{}}, -- Divine Steed
 {254474,{}}, -- Divine Steed
 {254811,{163586}}, -- Squawks
-{254812,{}}, -- Royal Seafeather
+{254812,{233242}}, -- Royal Seafeather
 {254813,{159842}}, -- Summon Sharkbait / Sharkbait's Favorite Crackers
 {255695,{153539}}, -- Seabraid Stallion
 {255696,{153540}}, -- Gilded Ravasaur
@@ -853,7 +850,7 @@ local ImportCrossRefTable = {
 {300151,{169203}}, -- Inkscale Deepseeker
 {300152,{}}, -- Tidestallion
 {300153,{169202}}, -- Crimson Tidestallion
-{300154,{}}, -- Silver Tidestallion
+{300154,{233243}}, -- Silver Tidestallion
 {301841,{}}, -- Kua'fon
 {302143,{174862}}, -- Uncorrupted Voidwing
 {302361,{207964}}, -- Alabaster Stormtalon
@@ -1074,6 +1071,7 @@ local ImportCrossRefTable = {
 {359377,{187671}}, -- Unsuccessful Prototype Fleetpod
 {359378,{187672}}, -- Scarlet Helicid
 {359379,{187675}}, -- Shimmering Aurelid
+{359380,{187674}}, -- Depthstalker
 {359381,{187673}}, -- Cryptic Aurelid
 {359401,{187677}}, -- Genesis Crawler
 {359402,{187678}}, -- Tarachnid Creeper
@@ -1172,11 +1170,12 @@ local ImportCrossRefTable = {
 {394738,{201788}}, -- Vicious Sabertooth
 {395095,{}}, -- Whelpling
 {395644,{}}, -- Divine Kiss of Ohn'ahra
-{397406,{206167}}, -- Wonderous Wavewhisker / Way of the Wonderous Wavewhisker
+{397406,{206167}}, -- Wondrous Wavewhisker / Way of the Wondrous Wavewhisker
 {399708,{203226}}, -- Stormfused Salamanther
 {400733,{204091}}, -- Rocket Shredder 9001
 {400976,{203727}}, -- Gleaming Moonbeast / Gleaming Moonbeast's Reins
 {404018,{210140}}, -- [PH] Black-Furred Bakar
+{405623,{}}, -- Armadillo Roller
 {406637,{204798}}, -- Inferno Armoredon
 {407555,{206162}}, -- Tarecgosa's Visage / Lingering Echo of Tarecgosa
 {408313,{205155}}, -- Big Slick in the City
@@ -1186,7 +1185,7 @@ local ImportCrossRefTable = {
 {408649,{205205}}, -- Shadowflame Shalewing
 {408651,{205204}}, -- Cataloged Shalewing / Flaming Shalewing Subject 01
 {408653,{205209}}, -- Boulder Hauler / Boulder Hauler Reins
-{408654,{}}, -- Sandy Shalewing
+{408654,{205208}}, -- Sandy Shalewing
 {408655,{205207}}, -- Morsel Sniffer / Morsel Sniffer Reins
 {408977,{205233}}, -- Obsidian Gladiator's Slitherdrake
 {409032,{205245}}, -- Vicious War Snail
@@ -1251,11 +1250,11 @@ local ImportCrossRefTable = {
 {427724,{210969}}, -- Salatrancer
 {427777,{210973}}, -- Heartseeker Mana Ray
 {428005,{211074}}, -- Jeweled Copper Scarab / Copper Resonating Crystal
-{428013,{211075}}, -- Deathbringer's Shadowcycle
+{428013,{229348}}, -- Incognitro, the Indecipherable Felcycle / Keys to Incognitro, the Indecipherable Felcycle
 {428060,{211084}}, -- Golden Regal Scarab / Gold Resonating Crystal
 {428062,{211085}}, -- Jeweled Sapphire Scarab / Sapphire Resonating Crystal
 {428065,{211086}}, -- Jeweled Jade Scarab / Jade Resonating Crystal
-{428067,{211087}}, -- Hateforged Blazecycle / Shadowflame Hellbike
+{428067,{211087}}, -- Hateforged Blazecycle
 {428068,{211089}}, -- Felreaver Deathcycle
 {430225,{211873}}, -- Gilnean Prowler / Reins of the Gilnean Prowler
 {430747,{}}, -- Soar
@@ -1300,25 +1299,125 @@ local ImportCrossRefTable = {
 {435153,{213626}}, -- Purple Shado-Pan Riding Tiger / Reins of the Purple Shado-Pan Riding Tiger
 {435160,{213628}}, -- Riverwalker Mushan / Reins of the Riverwalker Mushan
 {435161,{213627}}, -- Palehide Mushan Beast / Reins of the Palehide Mushan Beast
-{437162,{}}, -- Polly Roger
+{437162,{233240}}, -- Polly Roger
 {439138,{217340}}, -- Voyaging Wilderling / Voyaging Wilderling's Harness
 {440444,{217612}}, -- Zovaal's Soul Eater / Zovaal's Shadebeast Collar
+{441313,{}}, -- Soar
+{441324,{217985}}, -- Remembered Golden Gryphon
+{441325,{217987}}, -- Remembered Wind Rider
 {441794,{218111}}, -- Amber Pterrordax / Reins of the Amber Pterrordax
+{442358,{221765}}, -- Stonevault Mechsuit
+{443660,{219450}}, -- Charming Courier
 {446017,{220766}}, -- August Phoenix / Reins of the August Phoenix
 {446022,{220768}}, -- Astral Emperor's Serpent / Reins of the Astral Emperor's Serpent
+{446052,{219391}}, -- Delver's Dirigible
 {446352,{221270}}, -- [PH] Goblin Surfboard
+{447057,{221753}}, -- Smoldering Cinderbee
+{447149,{223152}}, -- [PH] Firebee Mount (Grey Skin, Silver Saddle)
+{447151,{223153}}, -- Soaring Meaderbee / Reins of the Soaring Meaderbee
+{447156,{223154}}, -- [PH] Firebee Mount (White Skin, White Saddle)
+{447160,{223158}}, -- Raging Cinderbee
+{447161,{221778}}, -- [PH] Firefly2 Mount (Yellow) / [PH] Firefly2Mount (Yellow)
+{447173,{222988}}, -- [PH] Firefly2 Mount (Green) / [PH] Firefly2Mount (Green)
+{447176,{222989}}, -- Cyan Glowmite
+{447181,{222991}}, -- [PH] Firefly2 Mount (Purple) / [PH] Firefly2Mount (Purple)
+{447185,{223264}}, -- Aquamarine Swarmite
+{447189,{223265}}, -- [PH] FlyingNerubian2 Mount (Tan Body, Orange Saddle)
+{447190,{223266}}, -- Shadowed Swarmite / Reins of the Shadowed Swarmite
+{447195,{223267}}, -- Swarmite Skyhunter
+{447213,{223270}}, -- Alunira
+{447214,{223271}}, -- [PH] Gryphon_Air_Mount (White Skin, Gold Saddle)
+{447405,{221813}}, -- Vicious Skyflayer
 {447413,{221814}}, -- Pearlescent Goblin Wave Shredder
+{447466,{221852}}, -- [PH] MoleMount (Pink Skin, Blue Saddle, Teeth Rodent, Nose Large Pointed)
+{447938,{223272}}, -- [PH] CaveBorerWormMount (Blue Skin, Purple Saddle)
+{447956,{223273}}, -- [PH] CaveBorerWormMount (Forest Skin, Blue Saddle)
+{447957,{223274}}, -- Ferocious Jawcrawler
+{447958,{223275}}, -- [PH] CaveBorerWormMount (Nocturne Skin, Red Saddle)
+{448186,{221967,223268}}, -- Crowd Pummeler 2-30
+{448188,{223269}}, -- Machine Defense Unit 1-11
+{448265,{223159}}, -- [PH] Firebee Mount (Blue Variant)
+{448680,{223276}}, -- Widow's Undercrawler
+{448682,{223277}}, -- [PH] SpiderUndergroundMount (Green)
+{448685,{223278}}, -- Heritage Undercrawler
+{448689,{223279}}, -- Royal Court Undercrawler
 {448845,{223282}}, -- [PH] Blue Old God Fish Mount
 {448849,{223284}}, -- Underlight Shorestalker
-{448850,{223286}}, -- [PH] Red Old God Fish Mount
+{448850,{223286}}, -- Kah, Legend of the Deep
 {448851,{223285}}, -- Underlight Corrupted Behemoth
+{448934,{223313}}, -- Shadow of Doubt / [PH] Shadow Elemental (Black)
+{448939,{223314}}, -- Shackled Shadow
+{448941,{223315}}, -- Beledar's Spawn
+{448978,{223317}}, -- Vermillion Imperial Lynx
+{448979,{223318}}, -- Dauntless Imperial Lynx
+{448980,{223319}}, -- [PH] ArathiLynxMount (Gold Fur, Yellow Armor)
+{448981,{223320}}, -- [PH] ArathiLynxMount (White Fur, Purple Armor)
+{448984,{223321}}, -- [PH] ArathiLynxMount (Black Fur, Black Armor)
 {449126,{223449}}, -- Kor'kron Warsaber
-{449132,{223459}}, -- [PH] Nightsaber Horde Mount / [PH] Nightsaber Horde Mount Black
+{449132,{223459}}, -- Blackrock Warsaber
 {449133,{223460}}, -- [PH] Nightsaber Horde Mount / [PH] Nightsaber Horde Mount White
 {449140,{223469}}, -- Sentinel War Wolf
 {449141,{223470}}, -- [PH] Alliance Wolf Mount Red
-{449142,{223471}}, -- [PH] Alliance Wolf Mount Purple
+{449142,{223471}}, -- Kaldorei War Wolf
+{449258,{223501}}, -- Ol' Mole Rufus / Regurgitated Mole Reins
+{449260,{223500}}, -- [PH] MoleMount (Gray Skin, Purple Saddle, Teeth Tusks, Nose Base)
+{449264,{225548}}, -- Wick / Wick's Lead
+{449265,{223506}}, -- [PH] MoleMountBasic (Yellow Skin, Blue Saddle, Teeth Rodent, Nose Large Pointed)
+{449269,{223505}}, -- Crimson Mudnose
+{449271,{223503}}, -- [PH] MoleMountBasic (Blue Skin, Purple Saddle, Teeth Tusks, Nose Base)
+{449283,{223504}}, -- [PH] MoleMountBasic (Green Skin, Black Saddle, Teeth Tusks, Nose Star)
+{449325,{223511}}, -- Vicious Skyflayer
+{449415,{223572}}, -- Slatestone Ramolith / Reins of the Slatestone Ramolith
+{449416,{223570}}, -- Ebonhide Ramolith / Reins of the Ebonhide Ramolith
+{449418,{223571}}, -- Shale Ramolith
+{449419,{223574}}, -- [PH] Proto Ram Earthen (White Skin, Grand Horns, White Saddle)
+{449421,{223573}}, -- [PH] Proto Ram Earthen (Sand Skin, Grand Horns, Dark Saddle)
+{449465,{223587}}, -- [PH] Silver Armored Fel Bat Gladiator Mount
+{449466,{223586}}, -- Forged Gladiator's Fel Bat
+{451486,{224147}}, -- Sureki Skyrazor / Reins of the Sureki Skyrazor
+{451487,{224148}}, -- [PH] NerubianWarbeastMount (Cyan)
+{451488,{224149}}, -- [PH] NerubianWarbeastMount (Orange)
+{451489,{224150}}, -- Siesbarg
+{451491,{224151}}, -- Ascendant Skyrazor / Reins of the Ascendant Skyrazor
+{452643,{224398}}, -- Frayfeather Hippogryph / Reins of the Frayfeather Hippogryph
+{452645,{224399}}, -- Amani Hunting Bear / Reins of the Amani Hunting Bear
+{452768,{224413}}, -- [PH] NerubianBeetleLargeMount (Blue) / [PH] Goliathus (Blue)
+{452777,{224414}}, -- [PH] NerubianBeetleLargeMount (Green) / [PH] Goliathus (Green)
+{452779,{224415}}, -- Ivory Goliathus
+{452780,{224416}}, -- [PH] NerubianBeetleLargeMount (Purple) / [PH] Goliathus (Purple)
 {453255,{224574}}, -- Savage Ebony Battle Turtle
+{454682,{225250}}, -- Startouched Furline
+{457485,{}}, -- Grizzly Hills Packmaster
+{457650,{226040}}, -- Plunderlord's Golden Crocolisk
+{457654,{226041}}, -- Keg Leg's Radiant Crocolisk
+{457656,{226042}}, -- Plunderlord's Midnight Crocolisk
+{457659,{226044}}, -- Plunderlord's Weathered Crocolisk
+{458335,{226357}}, -- Diamond Mechsuit
+{459193,{226506}}, -- Hand of Reshkigaal
+{459784,{227362}}, -- Golden Ashes of Al'ar
+{463025,{228751}}, -- Gigantic Grrloc
+{463133,{228760}}, -- Coldflame Tempest / Reins of the Coldflame Tempest
+{464443,{229128}}, -- Harmonious Salutations Bear
+{465235,{229418}}, -- Trader's Gilded Brutosaur / Reins of the Trader's Gilded Brutosaur
+{466811,{230184}}, -- Chaos-Forged Gryphon
+{466812,{230185}}, -- Chaos-Forged Hippogryph
+{466838,{230200}}, -- Chaos-Forged Dreadwing
+{466845,{230201}}, -- Chaos-Forged Wind Rider
+{468205,{231297}}, -- Timbered Sky Snake
+{468353,{231374}}, -- Enchanted Spellweave Carpet
+{471538,{232624}}, -- Timely Buzzbee
+{471562,{232639}}, -- Thrayir, Eyes of the Siren
+{471696,{233241}}, -- Hooktalon
+{472253,{232901}}, -- Lunar Launcher
+{472479,{232926}}, -- Love Witch's Sweeper
+{472487,{233023}}, -- Silvermoon Sweeper
+{472488,{233020}}, -- Twilight Witch's Sweeper
+{472489,{233019}}, -- Sky Witch's Sweeper
+{472752,{232991}}, -- The Breaker's Song
+{473137,{233058}}, -- Soweezi's Vintage Waveshredder
+{473472,{235515}}, -- Jani's Trashpile
+{473861,{233354}}, -- Savage Alabaster Battle Turtle
+{474086,{233489}}, -- Prismatic Snapdragon
 -- end of live
 
 -- ptr
@@ -1482,10 +1581,16 @@ function ArkInventory.Collection.Mount.IterateAll( )
 end
 
 function ArkInventory.Collection.Mount.Iterate( mta )
+	
+	if not mta then
+		return ArkInventory.Collection.Mount.IterateAll( )
+	end
+	
 	local t = collection.owned
-	if mta and t[mta] then
+	if t[mta] then
 		return ArkInventory.spairs( t[mta], function( a, b ) return ( t[mta][a].name or "" ) < ( t[mta][b].name or "" ) end )
 	end
+	
 end
 
 function ArkInventory.Collection.Mount.Dismiss( )
@@ -1516,10 +1621,10 @@ function ArkInventory.Collection.Mount.SetFavorite( id, value )
 end
 
 function ArkInventory.Collection.Mount.GetFlightMode( )
-	if ArkInventory.CrossClient.GetPlayerAuraBySpellID( spellSkyriding ) then
-		return ArkInventory.Const.Flying.Mode.Skyriding
-	elseif ArkInventory.CrossClient.GetPlayerAuraBySpellID( spellSteady ) then
-		return ArkInventory.Const.Flying.Mode.Steady
+	if ArkInventory.CrossClient.GetPlayerAuraBySpellID( spellSteady ) then
+		return ArkInventory.ENUM.FLIGHT.MODE.STEADY
+	else
+		return ArkInventory.ENUM.FLIGHT.MODE.DRAGON
 	end
 end
 
@@ -1656,11 +1761,11 @@ function ArkInventory.Collection.Mount.isUsable( id )
 				if md.mta == "a" then
 					if md.isDragonriding then
 						if not ArkInventory.Collection.Mount.isFlyableAdvanced( ) then
-							mu = false
+							--mu = false
 						end
 					else
 						if not ArkInventory.Collection.Mount.isFlyableNormal( ) then
-							mu = false
+							--mu = false
 						end
 					end
 				end
@@ -1762,7 +1867,7 @@ function ArkInventory.Collection.Mount.UpdateOwned( )
 	
 end
 
-function ArkInventory.Collection.Mount.UpdateUsable( useDragonridingWhenAvailable, forceDragonridingAlternative )
+function ArkInventory.Collection.Mount.UpdateUsable( )
 	
 	for mta in pairs( ArkInventory.Const.Mount.Types ) do
 		if not collection.usable[mta] then
@@ -1779,6 +1884,9 @@ function ArkInventory.Collection.Mount.UpdateUsable( useDragonridingWhenAvailabl
 	
 	local me = ArkInventory.Codex.GetPlayer( )
 	
+	local flightMode = ArkInventory.Collection.Mount.GetFlightMode( )
+	
+	ArkInventory.OutputDebug( "Flight Mode = ", flightMode )
 	ArkInventory.OutputDebug( "Area Flyable (Normal) = ", ArkInventory.Collection.Mount.isFlyableNormal( ) )
 	ArkInventory.OutputDebug( "Area Flyable (Advanced) = ", ArkInventory.Collection.Mount.isFlyableAdvanced( ) )
 	
@@ -1809,60 +1917,16 @@ function ArkInventory.Collection.Mount.UpdateUsable( useDragonridingWhenAvailabl
 					usable = false
 				end
 				
-				if usable and checkType == 1 and mta == "a" then
-					
-					local flightMode = ArkInventory.Collection.Mount.GetFlightMode( )
-					
-					if flightMode == ArkInventory.Const.Flying.Mode.Skyriding then
-						
-						if forceDragonridingAlternative then
-							if not md.isSteadyFlight then
-								usable = false
-							end
-						else
-							if md.isSteadyFlight then
-								usable = false
-							end
+				if usable and mta == "a" then
+					if flightMode == ArkInventory.ENUM.FLIGHT.MODE.STEADY then
+						if me.player.data.ldb.mounts.type[mta].mode[md.spellID] == ArkInventory.ENUM.FLIGHT.MODE.DRAGON then
+							usable = false
 						end
-						
-					elseif flightMode == ArkInventory.Const.Flying.Mode.Steady then
-						
-						if forceDragonridingAlternative then
-							if not md.isSteadyFlight then
-								usable = false
-							end
-						else
-							if md.isSteadyFlight then
-								usable = false
-							end
-						end
-						
 					else
-						
-						if useDragonridingWhenAvailable then
-							if forceDragonridingAlternative then
-								if md.isDragonriding then
-									usable = false
-								end
-							else
-								if not md.isDragonriding then
-									usable = false
-								end
-							end
-						else
-							if forceDragonridingAlternative then
-								if not md.isDragonriding then
-									usable = false
-								end
-							else
-								if md.isDragonriding then
-									usable = false
-								end
-							end
+						if md.isSteadyFlight or me.player.data.ldb.mounts.type[mta].mode[md.spellID] == ArkInventory.ENUM.FLIGHT.MODE.STEADY then
+							usable = false
 						end
-						
 					end
-					
 				end
 				
 				if usable then
@@ -2036,8 +2100,8 @@ local function Scan_Threaded( thread_id )
 				ArkInventory.OutputDebug( "unknown mount type [", mountTypeID, "] for ", name )
 			end
 			
-			c[i].mta = mta
-			c[i].mt = ArkInventory.Const.Mount.Types[mta]
+			c[i].mta = mta -- the letter
+			c[i].mt = ArkInventory.Const.Mount.Types[mta] -- the number
 			c[i].mto = c[i].mt -- save original mount type (user corrections can override the other value)
 			
 		end

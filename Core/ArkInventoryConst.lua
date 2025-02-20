@@ -1,4 +1,4 @@
-local _G = _G
+﻿local _G = _G
 local select = _G.select
 local pairs = _G.pairs
 local ipairs = _G.ipairs
@@ -150,6 +150,32 @@ function ArkInventory.Table.Copy( src )
 	
 end
 
+function ArkInventory.Table.Append( tbl, ignore_nil )
+	
+	local result = { }
+	
+	if type( tbl ) ~= "table" then
+		return
+	end
+	
+	for k1, v1 in ipairs( tbl ) do
+		
+		if type( v1 ) ~= "table" then
+			return
+		end
+		
+		for k2, v2 in ipairs( v1 ) do
+			if not ( v2 == nil and ignore_nil ) then
+				table.insert( result, v2 )
+			end
+		end
+		
+	end
+	
+	return result
+	
+end
+
 function ArkInventory.Table.Merge( src, dst )
 	
 	if type( src ) == "table" and type( dst ) == "table" then
@@ -255,7 +281,7 @@ function ArkInventory.spairs( tbl, cf )
 	
 end
 
-function ArkInventory.rpairs( tbl )
+function ArkInventory.reverse_ipairs( tbl )
 	
 	return function( tbl, i )
 		i = i - 1
@@ -458,7 +484,7 @@ ArkInventory.ENUM = {
 			BANKBAG_5 = Enum.BagIndex.BankBag_5 or 10,
 			BANKBAG_6 = Enum.BagIndex.BankBag_6 or 11,
 			BANKBAG_7 = Enum.BagIndex.BankBag_7 or 12,
-			REAGENTBANK_1 = Enum.BagIndex.Reagentbank or -3,
+			REAGENTBANK = Enum.BagIndex.Reagentbank or -3,
 			ACCOUNTBANK = Enum.BagIndex.Accountbanktab or -5,
 			ACCOUNTBANK_1 = Enum.BagIndex.AccountBankTab_1 or 13,
 			ACCOUNTBANK_2 = Enum.BagIndex.AccountBankTab_2 or 14,
@@ -468,6 +494,8 @@ ArkInventory.ENUM = {
 			
 			CURRENCY = -4,
 			
+			-- earlier game clients will have these same enums and they will fail if you use them so they
+			-- are reset in the ArkInventoryClient.lua file to their correct values for those clients
 		},
 		OPENCLOSE = {
 			NO = 0,
@@ -475,15 +503,13 @@ ArkInventory.ENUM = {
 			ALWAYS = 2,
 		},
 	},
+	BANKTYPE = {
+		CHARACTER = ( Enum.BankType and Enum.BankType.Character ) or 0,
+		GUILD = ( Enum.BankType and Enum.BankType.Guild ) or 1,
+		ACCOUNT = ( Enum.BankType and Enum.BankType.Account ) or 2,
+	},
 	BATTLEPET = {
 		ENEMY = LE_BATTLE_PET_ENEMY or 2,
-	},
-	BIND = { -- ITEM_BINDx
-		NEVER = 0,
-		USE = 1,
-		EQUIP = 2,
-		PICKUP = 3,
-		ACCOUNT = 4,
 	},
 	BUTTONID = {
 		MainMenu = 0,
@@ -516,7 +542,22 @@ ArkInventory.ENUM = {
 		TBC = LE_EXPANSION_BURNING_CRUSADE or 1,
 		CLASSIC = LE_EXPANSION_CLASSIC or 0,
 	},
+	FLIGHT = {
+		MODE = {
+			ALL = 1,
+			STEADY = 2,
+			DRAGON = 3,
+		},
+	},
 	ITEM = {
+		BINDING = { -- dont change these values unless you erase all the saved data, and make sure the localisation for ITEM_BINDINGx is updated to match
+			NEVER = 0,
+			USE = 1,
+			EQUIP = 2,
+			PICKUP = 3,
+			ACCOUNT = 4,
+			ACCOUNTEQUIP = 5,
+		},
 		QUALITY = {
 			MISSING = -2,
 			UNKNOWN = -1,
@@ -732,6 +773,14 @@ ArkInventory.ENUM = {
 			DELETED = 2,
 		},
 	},
+	RESTACK = {
+		ORDER = { -- do not change these values unless you fix them in the upgrade code
+			NORMAL = 1,
+			PROFESSION = 2,
+			REAGENT = 3,
+			ACCOUNT = 4,
+		},
+	},
 	SORTWHEN = {
 		ALWAYS = 1,
 		ONOPEN = 2,
@@ -799,10 +848,31 @@ ArkInventory.Const = { -- constants
 			CONTAINER = {
 				SLOTSIZE = 37,
 				NUM_SLOT_MAX = MAX_CONTAINER_ITEMS or 36,
-				FILTER = {
-					IGNORECLEANUP = LE_BAG_FILTER_FLAG_IGNORE_CLEANUP or ( Enum.BagSlotFlags and Enum.BagSlotFlags.DisableAutoSort ) or 1,
-					ASSIGN_TO_BAG = BAG_FILTER_ASSIGN_TO,
-					LABELS = BAG_FILTER_LABELS,
+				CLEANUP = {
+					BAG = {
+						IGNORE = Enum.BagSlotFlags.DisableAutoSort or 1,
+						ASSIGN = BAG_FILTER_ASSIGN_TO,
+						LABELS = {
+							[Enum.BagSlotFlags.ClassEquipment or Enum.BagSlotFlags.PriorityEquipment or -1] = BAG_FILTER_EQUIPMENT,
+							[Enum.BagSlotFlags.ClassConsumables or Enum.BagSlotFlags.TradeGoods or -2] = BAG_FILTER_CONSUMABLES,
+							[Enum.BagSlotFlags.ClassProfessionGoods or -3] = BAG_FILTER_PROFESSION_GOODS,
+							[Enum.BagSlotFlags.ClassJunk or Enum.BagSlotFlags.PriorityJunk or -4] = BAG_FILTER_JUNK,
+							[Enum.BagSlotFlags.ClassQuestItems or Enum.BagSlotFlags.PriorityQuestItems or -5] = BAG_FILTER_QUEST_ITEMS,
+							[Enum.BagSlotFlags.ClassReagents or -6] = BAG_FILTER_REAGENTS,
+							--  = 8
+						},
+					},
+					ACCOUNTBANK = {
+						IGNORE = BANK_TAB_IGNORE_IN_CLEANUP_CHECKBOX,
+						ASSIGN = BANK_TAB_DEPOSIT_SETTINGS_HEADER,
+						LABELS = {
+							[Enum.BagSlotFlags.ClassEquipment or -1] = BANK_TAB_ASSIGN_EQUIPMENT_CHECKBOX,
+							[Enum.BagSlotFlags.ClassConsumables or -2] = BANK_TAB_ASSIGN_CONSUMABLES_CHECKBOX,
+							[Enum.BagSlotFlags.ClassProfessionGoods or -3] = BANK_TAB_ASSIGN_PROFESSION_GOODS_CHECKBOX,
+							[Enum.BagSlotFlags.ClassJunk or -4] = BANK_TAB_ASSIGN_JUNK_CHECKBOX,
+							[Enum.BagSlotFlags.ClassReagents or -6] = BANK_TAB_ASSIGN_REAGENTS_CHECKBOX,
+						},
+					},
 				},
 				NUM_BAGS_NORMAL = NUM_BAG_SLOTS or NUM_BAG_FRAMES or 4,
 				NUM_BAGS_REAGENT = NUM_REAGENTBAG_FRAMES or 0,
@@ -813,21 +883,29 @@ ArkInventory.Const = { -- constants
 				NUM_SLOTS = NUM_BANKGENERIC_SLOTS or 7 * 4,
 			},
 			REAGENTBANK = {
+				WIDTH = 14,
+				HEIGHT = 7,
+				NUM_BAGS = 1,
 				NUM_SLOTS = 7 * 7 * 2,
 			},
 			ACCOUNTBANK = {
+				WIDTH = 14,
+				HEIGHT = 7,
+				NUM_BAGS = 5,
 				NUM_SLOTS = 7 * 7 * 2,
 			},
 			GUILDBANK = {
-				NUM_TABS = MAX_GUILDBANK_TABS,
 				WIDTH = NUM_GUILDBANK_COLUMNS or 14,
 				HEIGHT = NUM_SLOTS_PER_GUILDBANK_GROUP or 7,
-				SLOTS_PER_TAB = MAX_GUILDBANK_SLOTS_PER_TAB or 14 * 7,
+				NUM_BAGS = MAX_GUILDBANK_TABS,
+				NUM_SLOTS = MAX_GUILDBANK_SLOTS_PER_TAB or 14 * 7,
 				LOG_TIME_PREPEND = GUILD_BANK_LOG_TIME_PREPEND or "|cff009999  ",
 			},
 			VOIDSTORAGE = {
-				SLOTS_PER_TAB = VOID_STORAGE_MAX or 80,
-				NUM_PAGES = VOID_STORAGE_PAGES or 2,
+				WIDTH = 10,
+				HEIGHT = 8,
+				NUM_BAGS = VOID_STORAGE_PAGES or 2,
+				NUM_SLOTS = VOID_STORAGE_MAX or 80,
 			},
 			PET = {
 				FILTER = {
@@ -973,6 +1051,7 @@ ArkInventory.Const = { -- constants
 		AccountBank = 20,
 		ReagentBag = 21,
 		AccountReputation = 22,
+		AccountCurrency = 23,
 	},
 	
 	Offset = { -- faux blizzard bag ids for locations that dont have bags
@@ -981,6 +1060,7 @@ ArkInventory.Const = { -- constants
 		Wearing = 3000,
 		Pet = 4000,
 		Currency = 5000,
+		AccountCurrency = 5020,
 		Mount = 6000,
 		MountEquipment = 6100,
 		Auction = 7000,
@@ -1319,10 +1399,14 @@ ArkInventory.Const = { -- constants
 			[247] = "a", -- flying, cloud
 			[248] = "a", -- flying
 			[402] = "a", -- flying, dragonriding
+			[411] = "a", -- whelpling
 			[424] = "a", -- flying, dragonriding (has animations)
 			[426] = "a", -- flying, dragonriding
 			[436] = "a", -- flying + underwater
 			[437] = "a", -- flying
+			[442] = "a", -- soar
+			[444] = "a", -- flying
+			[445] = "a", -- flying
 			
 			[230] = "l", -- land
 			[241] = "l", -- qiraji battletank
@@ -1350,7 +1434,6 @@ ArkInventory.Const = { -- constants
 			-- /dump C_Map.GetBestMapForUnit( "player" )
 			AhnQiraj = { 247,320 },
 			Vashjir = { 201,204,205 },
-			DragonIsles = { }, -- doesnt need to have anything in it as we just need to lock out all the normal flying mounts
 		},
 	},
 	
@@ -1455,7 +1538,6 @@ ArkInventory.Const = { -- constants
 				[1670] = true, -- Shadowlands / Oribos Level 1
 				[1671] = true, -- Shadowlands / Oribos Level 2
 				[1961] = true, -- Shadowlands / Korthia
-				
 				-- /dump C_Map.GetBestMapForUnit( "player" )
 			},
 		},
@@ -1482,6 +1564,7 @@ ArkInventory.Const = { -- constants
 		Spell = { },
 		Quest = {
 			[2222] = 63893, -- Shadowlands Flying
+			[2369] = 85657, -- War Within / Siren Isle (Normal, not Storm)
 		},
 		Bug735 = {
 			[0] = true, -- Eastern Kingdoms
@@ -1491,16 +1574,11 @@ ArkInventory.Const = { -- constants
 			[730] = true, -- Maelstrom (Deepholm)
 --			[870] = true, -- Pandaria (appears to be working now)
 		},
-		Dragonriding = { }, -- list of mount spells populated via mount scan
-		Mode = {
-			Steady = 1,
-			Skyriding = 2,
-		},
 	},
 	
 	YieldAfter = 25,
 	
-	ObjectDataMaxAttempts = 20,
+	ObjectInfoMaxRetry = 10,
 	
 	ClassArmor = {
 		[ArkInventory.ENUM.ITEM.TYPE.ARMOR.CLOTH] = { MAGE = 1, PRIEST = 1, WARLOCK = 1 },

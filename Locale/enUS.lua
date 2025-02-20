@@ -57,16 +57,26 @@ if not L then return end
 	L["RESTACK_FAIL_ACCESS"] = "You don't have enough authority to tab %2$s in the %1$s" -- %1$s = guild bank, %2$s = tab number
 	L["RESTACK_FAIL_CLOSED"] = "%1$s was closed" -- %1$s = location
 	L["RESTACK_TYPE"] = "Which code to use when running a restack"
-	L["RESTACK_CLEANUP_DEPOSIT"] = "Deposit all reagents as part of the Cleanup process"
+	L["RESTACK_CLEANUP_DEPOSIT_DESC"] = "Run %1$s as part of the cleanup process"
+	L["RESTACK_CLEANUP_DEPOSIT_ACCOUNT_REAGENT"] = "needs a description"
 	L["RESTACK_CLEANUP_DELAY"] = "Cleanup Delay"
 	L["RESTACK_CLEANUP_DELAY_DESC"] = "Adjust the amount of time after a cleanup is triggered before continuing with the remainder of the cleanup process.\n\nSet to a higher value if you keep getting item is locked errors during the cleanup"
-	L["RESTACK_TOPUP_FROM_BAGS"] = "Top Up"
-	L["RESTACK_TOPUP_FROM_BAGS_DESC"] = "Top up any partial stacks with items from your bags"
-	L["RESTACK_FILL_FROM_BAGS_DESC"] = "Fill any empty %1$s slots with Crafting items from your %2$s"
-	L["RESTACK_FILL_PRIORITY"] = "Fill Priority"
-	L["RESTACK_FILL_PRIORITY_DESC"] = "Click to toggle between filling up the %1$s or the %2$s first"
-	L["RESTACK_FILL_PRIORITY_PROFESSION"] = "Profession Bags"
+	L["RESTACK_BAG_PRIORITY"] = "Bag Priority"
+	L["RESTACK_BAG_PRIORITY_NORMAL"] = "Normal"
+	L["RESTACK_BAG_PRIORITY_PROFESSION"] = "Profession"
+	L["RESTACK_BAG_PRIORITY_REAGENT"] = "Reagent"
+	L["RESTACK_BAG_PRIORITY_ACCOUNT"] = "Account"
 	L["RESTACK_REFRESH_WHEN_COMPLETE"] = "Refresh window when completed"
+	L["RESTACK_STACK"] = "Stack"
+	L["RESTACK_STACK_ENABLE_DESC"] = "Top up partial stacks in the %1$s with items from lower priority bags within the same panel"
+	L["RESTACK_CHECKBAG"] = "Check %1$s"
+	L["RESTACK_CHECKBAG_DESC"] = "if no matching item is found in the lower priority bags within the same panel, check the %2$s"
+	L["RESTACK_CONSOLIDATE"] = "Consolidate"
+	L["RESTACK_CONSOLIDATE_DESC"] = "Fill empty slots in the %1$s with allowable items from lower priority bags within the same panel"
+	L["RESTACK_CONSOLIDATE_DESC_PROFESSION"] = "Fill empty profession bag slots in the %1$s with allowable items from lower priority bags within the same panel"
+	L["RESTACK_COMPACT"] = "Compact"
+	L["RESTACK_COMPACT_DESC"] = "compact bags"
+	L["RESTACK_INCLUDE_DESC"] = "Include this item when running Restack"
 	
 	
 --	vault tab tooltips
@@ -172,7 +182,7 @@ if not L then return end
 	L["MENU_ITEM_ASSIGN_DISABLED_DESC"] = "This category is currently disabled.\n\nYou need to enable it before you can assign items to it."
 	L["MENU_ITEM_CUSTOM_NEW"] = "Create a new custom category"
 	L["MENU_ITEM_ITEMCOUNT_DESC"] = "Display item counts in tooltips for this item."
-	L["MENU_ITEM_ITEMCOUNT_STATUS_DESC"] = "%s\n\nclick to %s it."
+	L["MENU_ITEM_STATUS_DESC"] = "%s\n\nclick to %s it." -- enabled/disabled status display
 	L["MENU_ITEM_DEBUG_PET_ID"] = "Pet ID"
 	L["MENU_ITEM_DEBUG_PET_SPECIES"] = "Pet Species"
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "Short ID"
@@ -183,6 +193,7 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_LVL_USE"] = "Item Level (Use)"
 	L["MENU_ITEM_DEBUG_SUBTYPE"] = "Sub Type"
 	L["MENU_ITEM_DEBUG_ID"] = "Blizzard ID"
+	L["MENU_ITEM_DEBUG_UNIQUE"] = "Unique"
 	L["MENU_ITEM_DEBUG_FAMILY"] = "Family"
 	L["MENU_ITEM_DEBUG_PT"] = "PT Sets"
 	L["MENU_ITEM_DEBUG_PT_DESC"] = "Lists which PT Sets this item is in"
@@ -246,6 +257,10 @@ if not L then return end
 	L["MENU_BAG_SHOWALL"] = "Display All"
 	L["MENU_BAG_SHOWALL_DESC"] = "display the contents of all bags for this location"
 	L["MENU_BAG_EMPTY_DESC"] = "moves the contents of this bag to your other bags"
+	L["MENU_BAG_PANEL_COMBINE"] = "Panel (Combine %s)"
+	L["MENU_BAG_PANEL_COMBINE_ALL_DESC"] = "\nenabled = combine all bank bags/tabs into a single panel\n\ndisabled = the bank, reagent bank, and each account bank tab, are shown in their own individual panels"
+	L["MENU_BAG_PANEL_COMBINE_REAGENT_DESC"] = "\nenabled = combine the bank and reagent bank into a single panel\n\n\ndisabled = the bank and reagent bank are shown in their own individual panels"
+	L["MENU_BAG_PANEL_COMBINE_ACCOUNT_DESC"] = "\nenabled = combine all account tabs into a single panel\n\n\ndisabled = each account bank tab is shown in its own individual panel"
 	
 	
 --	configuration options
@@ -632,7 +647,8 @@ if not L then return end
 	
 	L["CONFIG_ACTION_VENDOR_SOULBOUND_ALREADY_KNOWN_DESC"] = "Categorise any soulbound item (typically recipes), that you already know, as junk"
 	L["CONFIG_ACTION_VENDOR_SOULBOUND_EQUIPMENT_DESC"] = "Categorise soulbound equipable items, that you cannot use, as junk"
-	L["CONFIG_ACTION_VENDOR_SOULBOUND_ITEMLEVEL_DESC"] = "Ignore the item level requirement when categorising soulbound equipable items, that you cannot use, as junk"
+	L["CONFIG_ACTION_VENDOR_SOULBOUND_IGNORELEVEL"] = "Ignore level requirement"
+	L["CONFIG_ACTION_VENDOR_SOULBOUND_IGNORELEVEL_DESC"] = "Ignore the level requirement when categorising soulbound equipable items, that you cannot use, as junk"
 	
 	L["CONFIG_ACTION_DELETE"] = "Delete items"
 	L["CONFIG_ACTION_DELETE_DESC"] = "Delete junk items that cannot be vendored (have no sell price)\n\nnote - you can only delete items via the keybinding, and only one item at a time, or by right clicking on the item when at a vendor."
@@ -965,13 +981,13 @@ if not L then return end
 	L["EXPAND"] = "Expand"
 	L["COLLAPSE"] = "Collapse"
 	L["SET"] = "Set"
-	L["ITEM_BIND_PARTYLOOT"] = "Party Loot"
-	L["ITEM_BIND_REFUNDABLE"] = "Refundable"
+	L["ITEM_BINDING_PARTYLOOT"] = "Party Loot"
+	L["ITEM_BINDING_REFUNDABLE"] = "Refundable"
 	L["CONDUITS"] = "Conduits"
 	L["COVENANT"] = "Covenant"
 	L["ALPHA"] = "Alpha"
 	L["BAGS"] = "Bags"
-	L["OPTION_NOT_AVILABLE_EXPANSION"] = "This option is not available in this expansion"
+	L["OPTION_NOT_AVAILABLE_EXPANSION"] = "This option is not available in this expansion"
 	L["SIZE"] = "Size"
 	L["AZERITE"] = "Azerite"
 	L["COSMETIC"] = COSMETIC or ITEM_COSMETIC or "Cosmetic"
@@ -990,7 +1006,6 @@ if not L then return end
 	L["USING"] = "Using"
 	L["DATA_NOT_READY"] = "Data not ready"
 	L["DATA_NOT_FOUND"] = "Data not found"
-	L["REAGENT"] = "Reagent"
 	
 	
 -- libdatabroker
@@ -1026,6 +1041,9 @@ if not L then return end
 	L["LDB_MOUNTS_FLYING_DISMOUNT_DESC"] = "Enabled = allows you to dismount while flying.\n\nDisabled = you need to land before you can dismount\n\nnote: does not effect spell casting while flying, use the interface options to set that"
 	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = "You are currently flying, please land to select another mount"
 	L["LDB_MOUNTS_FLYING_DRAGONRIDING_DESC"] = "which mounts to use by default in dragonriding capable zones\n\nEnabled = Dragonriding mounts\n\nDisabled = Normal flying mounts\n\nholding CTRL will use the other type when using the mount macro or clicking on the mount icon"
+	L["LDB_MOUNTS_FLYING_MODE_ALL"] = "All"
+	L["LDB_MOUNTS_FLYING_MODE_STEADY"] = "Steady flight only"
+	L["LDB_MOUNTS_FLYING_MODE_DRAGON"] = "Dragonriding only"
 	L["LDB_MOUNT_SUMMON"] = "Summon Mount"
 	L["LDB_MOUNTS_NODATA"] = "Unknown / Changed"
 	L["LDB_MOUNTS_TRAVEL_FORM"] = "Use %1$s"

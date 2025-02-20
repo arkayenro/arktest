@@ -1292,7 +1292,7 @@ end
 function ArkInventory.Tradeskill.OnEnable( )
 	
 	--ArkInventory.Output( "tradeskill on enable" )
-	local loc_id = ArkInventory.Const.Location.Tradeskill
+	local loc_id_window = ArkInventory.Const.Location.Tradeskill
 	
 	collection.isReady = false
 	collection.isInit = false
@@ -1300,7 +1300,6 @@ function ArkInventory.Tradeskill.OnEnable( )
 	ArkInventory.Tradeskill.ScanHeaders( )
 	
 	ArkInventory.ObjectCacheTooltipClear( )
-	--ArkInventory.ObjectCacheCountClear( nil, nil, loc_id )
 	
 end
 

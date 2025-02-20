@@ -897,7 +897,7 @@ ldb.Mounts = {
 		
 	end,
 	
-	GetUsable = function( forceAlternative, forceDragonridingAlternative )
+	GetUsable = function( forceAlternative )
 		
 		-- builds companionTable and returns the type
 		
@@ -906,9 +906,9 @@ ldb.Mounts = {
 		wipe( ldb.Mounts.companionTable )
 		
 		local codex = ArkInventory.Codex.GetPlayer( )
-		--ArkInventory.Collection.Mount.UpdateDragonridingMounts( codex.player.data.ldb.mounts.dragonriding )
+		--ArkInventory.Collection.Mount.UpdateDragonridingMounts( )
 		
-		ArkInventory.Collection.Mount.UpdateUsable( codex.player.data.ldb.mounts.dragonriding, forceDragonridingAlternative )
+		ArkInventory.Collection.Mount.UpdateUsable( )
 		
 		if ldb.Mounts.IsSubmerged( ) then
 			
@@ -1084,10 +1084,8 @@ ldb.Mounts = {
 		
 		local forceAlternative = IsModifiedClick( "CHATLINK" )
 		ArkInventory.OutputDebug( "forceAlternative = ", forceAlternative )
-		local forceDragonridingAlternative = IsModifiedClick( "DRESSUP" )
-		ArkInventory.OutputDebug( "forceDragonridingAlternative = ", forceDragonridingAlternative )
 		
-		ldb.Mounts.GetUsable( forceAlternative, forceDragonridingAlternative )
+		ldb.Mounts.GetUsable( forceAlternative )
 		
 		ArkInventory.OutputDebug( #ldb.Mounts.companionTable, " usable mounts", ldb.Mounts.companionTable )
 		
@@ -1188,7 +1186,7 @@ ldb.Mounts = {
 				
 				local codex = ArkInventory.Codex.GetPlayer( )
 				
-				ArkInventory.Collection.Mount.UpdateUsable( codex.player.data.ldb.mounts.dragonriding )
+				ArkInventory.Collection.Mount.UpdateUsable( )
 				
 				for mta in pairs( ArkInventory.Const.Mount.Types ) do
 					

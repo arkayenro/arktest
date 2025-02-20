@@ -316,7 +316,7 @@ function ArkInventory.ConfigInternalGenericCopyFrom( data, src_id, dst_id )
 		
 		if system then
 			
-			ArkInventory.OutputError( "code failure: attempted to copy over a system object" )
+			ArkInventory.OutputError( "code failure: attempted to copy a system object" )
 			return
 			
 		else
@@ -684,7 +684,7 @@ function ArkInventory.ConfigInternalCategoryRuleValidate( id )
 		
 	else
 		
-		ArkInventoryRules.SetObject( { test_rule=true, class="item", loc_id=ArkInventory.Const.Location.Bag, bag_id=1, slot_id=1, count=1, q=1, sb=ArkInventory.ENUM.BIND.PICKUP, h=string.format("item:%s:::::::", HEARTHSTONE_ITEM_ID ) } )
+		ArkInventoryRules.SetObject( { test_rule=true, class="item", loc_id=ArkInventory.Const.Location.Bag, bag_id=1, slot_id=1, count=1, q=1, sb=ArkInventory.ENUM.ITEM.BINDING.PICKUP, h=string.format("item:%s:::::::", HEARTHSTONE_ITEM_ID ) } )
 		
 		local p, pem = loadstring( string.format( "return( %s )", data.formula ) )
 		

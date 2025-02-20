@@ -87,66 +87,73 @@ end
 
 ArkInventory.Action.Vendor = { data = actiondata.vendor }
 
-function ArkInventory.Action.Vendor.Check( blizzard_id, slot_id, codex, manual, delete )
+function ArkInventory.Action.Vendor.Check( codex, blizzard_id, slot_id, manual, delete )
+	
+	-- do not call from rules or youll get an infinite loop
+	
 	
 	local isMatch = false
 	local vendorPrice = -1
 	
-	local loc_id, bag_id = ArkInventory.Util.getStorageIdFromBlizzardBagId( blizzard_id )
+	local map = ArkInventory.Util.MapGetBlizzard( blizzard_id )
 	
-	local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
-	if itemInfo.hyperlink then
+	local loc_id_window = map.loc_id_window
+	if ( loc_id_window == ArkInventory.Const.Location.Bag or loc_id_window == ArkInventory.Const.Location.Bank ) then
 		
-		local info = ArkInventory.GetObjectInfo( itemInfo.hyperlink )
+		local bag_id_window = map.bag_id_window
 		
-		if info.ready and info.id then
+		local loc_id_storage = map.loc_id_storage
+		local bag_id_storage = map.bag_id_storage
+		
+		local player_id = codex.player.data.info.player_id
+		local storage = ArkInventory.Codex.GetStorage( player_id, loc_id_storage )
+		local bag = storage.data.location[loc_id_storage].bag[bag_id_storage]
+		local i = bag.slot[slot_id]
+		
+		if i.h then
 			
-			local tooltipInfo = ArkInventory.TooltipSet( ArkInventory.Global.Tooltip.Scan, loc_id, bag_id, slot_id )
-			local ignore = false
-			
-			if delete then
+			local info = ArkInventory.GetObjectInfo( i.h )
+			if info.ready and info.id then
 				
-				ignore = ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_BIND_REFUNDABLE"], false, true, true, 0 )
+				local ignore = false
 				
-				if not ArkInventory.db.option.action.delete.partyloot then
-					ignore = ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_BIND_PARTYLOOT"], false, true, true, 0 )
-				end
-				
-			else
-				
-				ignore = ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_BIND_REFUNDABLE"], false, true, true, 0 )
-				
-				if not ArkInventory.db.option.action.vendor.partyloot then
-					ignore = ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_BIND_PARTYLOOT"], false, true, true, 0 )
-				end
-				
-			end
-			
-			if not ignore then
-				
-				if ArkInventory.CrossClient.IsAddOnLoaded( "Scrap" ) and Scrap then
-					if Scrap:IsJunk( info.id ) then
-						isMatch = true
+				if delete then
+					
+					ignore = ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_BIND_REFUNDABLE"], false, true, true, 0 )
+					
+					if not ArkInventory.db.option.action.delete.partyloot then
+						ignore = ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_BIND_PARTYLOOT"], false, true, true, 0 )
 					end
-				elseif ArkInventory.CrossClient.IsAddOnLoaded( "SellJunk" ) and SellJunk then
-					if ( info.q == ArkInventory.ENUM.ITEM.QUALITY.POOR and not SellJunk:isException( info.h ) ) or ( info.q ~= ArkInventory.ENUM.ITEM.QUALITY.POOR and SellJunk:isException( info.h ) ) then
-						isMatch = true
-					end
-				elseif ArkInventory.CrossClient.IsAddOnLoaded( "ReagentRestocker" ) and ReagentRestocker then
-					if ReagentRestocker:isToBeSold( info.id ) then
-						isMatch = true
-					end
-				elseif ArkInventory.CrossClient.IsAddOnLoaded( "Peddler" ) and PeddlerAPI then
-					if PeddlerAPI.itemIsToBeSold( info.id ) then
-						isMatch = true
-					end
+					
 				else
 					
-					local codex = codex or ArkInventory.Codex.GetLocation( loc_id )
-					if codex then
-						
-						local player = ArkInventory.Codex.GetStorage( nil, loc_id )
-						local i = player.data.location[loc_id].bag[bag_id].slot[slot_id]
+					ignore = ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_BIND_REFUNDABLE"], false, true, true, 0 )
+					
+					if not ArkInventory.db.option.action.vendor.partyloot then
+						ignore = ArkInventory.TooltipContains( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_BIND_PARTYLOOT"], false, true, true, 0 )
+					end
+					
+				end
+				
+				if not ignore then
+					
+					if ArkInventory.CrossClient.IsAddOnLoaded( "Scrap" ) and Scrap and Scrap.IsJunk then
+						if Scrap:IsJunk( info.id ) then
+							isMatch = true
+						end
+					elseif ArkInventory.CrossClient.IsAddOnLoaded( "SellJunk" ) and SellJunk and SellJunk.isException then
+						if ( info.q == ArkInventory.ENUM.ITEM.QUALITY.POOR and not SellJunk:isException( info.h ) ) or ( info.q ~= ArkInventory.ENUM.ITEM.QUALITY.POOR and SellJunk:isException( info.h ) ) then
+							isMatch = true
+						end
+					elseif ArkInventory.CrossClient.IsAddOnLoaded( "ReagentRestocker" ) and ReagentRestocker and ReagentRestocker.isToBeSold then
+						if ReagentRestocker:isToBeSold( info.id ) then
+							isMatch = true
+						end
+					elseif ArkInventory.CrossClient.IsAddOnLoaded( "Peddler" ) and PeddlerAPI and PeddlerAPI.itemIsToBeSold then
+						if PeddlerAPI.itemIsToBeSold( info.id ) then
+							isMatch = true
+						end
+					else
 						
 						local cat_id = ArkInventory.ItemCategoryGet( i )
 						local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_id )
@@ -173,18 +180,21 @@ function ArkInventory.Action.Vendor.Check( blizzard_id, slot_id, codex, manual, 
 						end
 						
 					end
+					
 				end
 				
 			end
 			
-		end
-		
-		if isMatch then
+			--ArkInventory.Output( "vendor check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "] = ", isMatch, " [", vendorPrice, "]" )
 			
-			vendorPrice = info.vendorprice
-			
-			if vendorPrice == -1 then
-				isMatch = false
+			if isMatch then
+				
+				vendorPrice = info.vendorprice
+				
+				if vendorPrice == -1 then
+					isMatch = false
+				end
+				
 			end
 			
 		end
@@ -247,7 +257,9 @@ function ArkInventory.Action.Vendor.Iterate( manual )
 			
 			if itemCount and not isLocked and itemLink then
 				
-				isMatch, vendorPrice = ArkInventory.Action.Vendor.Check( blizzard_id, slot_id, codex, manual )
+				isMatch, vendorPrice = ArkInventory.Action.Vendor.Check( codex, blizzard_id, slot_id, manual )
+				
+				--ArkInventory.Output( "vendor result [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "] = ", isMatch, " [", vendorPrice, "]" )
 				
 				if isMatch and vendorPrice == 0 then
 					isMatch = false
@@ -292,7 +304,7 @@ function ArkInventory.Action.Vendor.Thread( thread_id, manual )
 		test = string.format( "(%s)", ArkInventory.Localise["CONFIG_ACTION_TESTING"] )
 	end
 
-	if manual or qsize > 0 and ArkInventory.db.option.action.vendor.list then
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.vendor.list ) then
 		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_VENDOR"], runtype, ArkInventory.Localise["START"] ) )
 	end
 	
@@ -341,10 +353,8 @@ function ArkInventory.Action.Vendor.Thread( thread_id, manual )
 		
 	end
 	
-	if manual or qsize > 0 then
-		if ArkInventory.db.option.action.vendor.list then
-			ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_VENDOR"], runtype, ArkInventory.Localise["COMPLETE"] ) )
-		end
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.vendor.list ) then
+		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_VENDOR"], runtype, ArkInventory.Localise["COMPLETE"] ) )
 	end
 	
 	if qsize > 0 and ArkInventory.Action.Vendor.data.sold > 0 then
@@ -428,7 +438,7 @@ ArkInventory.Action.Delete = { data = actiondata.delete }
 
 function ArkInventory.Action.Delete.Check( blizzard_id, slot_id, codex )
 	
-	local isMatch, vendorPrice = ArkInventory.Action.Vendor.Check( blizzard_id, slot_id, codex, true, true )
+	local isMatch, vendorPrice = ArkInventory.Action.Vendor.Check( codex, blizzard_id, slot_id, true, true )
 	
 	--ArkInventory.Output( "vendor check [", isMatch, "] [", vendorPrice, "]" )
 	
@@ -482,7 +492,7 @@ function ArkInventory.Action.Delete.Iterate( )
 			--ArkInventory.Output( "delete check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "]" )
 			
 			local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
-			local blizzard_id = map.blizzard_id
+			blizzard_id = map.blizzard_id
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 			itemCount = itemInfo.stackCount
@@ -539,10 +549,8 @@ function ArkInventory.Action.Delete.Thread( manual )
 		runtype = ArkInventory.Localise["MANUAL"]
 	end
 	
-	if manual or qsize > 0 then
-		if ArkInventory.db.option.action.delete.list then
-			ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_DELETE"], runtype, ArkInventory.Localise["START"] ) )
-		end
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.delete.list ) then
+		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_DELETE"], runtype, ArkInventory.Localise["START"] ) )
 	end
 	
 	local test = ""
@@ -578,10 +586,8 @@ function ArkInventory.Action.Delete.Thread( manual )
 		
 	end
 	
-	if manual or qsize > 0 then
-		if ArkInventory.db.option.action.delete.list then
-			ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_DELETE"], runtype, ArkInventory.Localise["COMPLETE"] ) )
-		end
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.delete.list ) then
+		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_DELETE"], runtype, ArkInventory.Localise["COMPLETE"] ) )
 	end
 	
 	if qsize > 0 then
@@ -613,7 +619,7 @@ function ArkInventory.Action.Mail.Check( i, codex, manual )
 	local recipient = nil
 	local info = i.info or ArkInventory.GetObjectInfo( i.h, i )
 	
-	if codex and i and i.h and i.sb ~= ArkInventory.ENUM.BIND.PICKUP and info.q <= ArkInventory.db.option.action.mail.raritycutoff then
+	if codex and i and i.h and i.sb ~= ArkInventory.ENUM.ITEM.BINDING.PICKUP and info.q <= ArkInventory.db.option.action.mail.raritycutoff then
 		
 		local info = i.info or ArkInventory.GetObjectInfo( i.h )
 		if info.ready and info.id then
@@ -691,7 +697,9 @@ function ArkInventory.Action.Mail.Iterate( manual )
 			--ArkInventory.Output( "mail check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "]" )
 			
 			local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
-			local blizzard_id = map.blizzard_id
+			blizzard_id = map.blizzard_id
+			
+			--ArkInventory.Output( "mail check [", blizzard_id, "].[", slot_id, "]" )
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 			itemCount = itemInfo.stackCount
@@ -702,7 +710,8 @@ function ArkInventory.Action.Mail.Iterate( manual )
 				local loc_id_storage = map.loc_id_storage
 				local bag_id_storage = map.bag_id_storage
 				local storage = ArkInventory.Codex.GetStorage( nil, loc_id_storage )
-				i = storage.data.location[loc_id_storage].bag[bag_id_storage].slot[slot_id]
+				local bag = storage.data.location[loc_id_storage].bag[bag_id_storage]
+				local i = bag.slot[slot_id]
 				recipient = ArkInventory.Action.Mail.Check( i, codex, manual )
 			end
 			
@@ -832,10 +841,8 @@ function ArkInventory.Action.Mail.Thread( thread_id, manual )
 		runtype = ArkInventory.Localise["MANUAL"]
 	end
 	
-	if manual or qsize > 0 then
-		if ArkInventory.db.option.action.mail.list then
-			ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_MAIL"], runtype, ArkInventory.Localise["START"] ) )
-		end
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.mail.list ) then
+		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_MAIL"], runtype, ArkInventory.Localise["START"] ) )
 	end
 	
 	local test = ""
@@ -860,6 +867,7 @@ function ArkInventory.Action.Mail.Thread( thread_id, manual )
 				if index <= limit then
 					
 					if not ArkInventory.db.option.action.mail.test then
+						--ArkInventory.Output( index, ": ", item )
 						ArkInventory.CrossClient.PickupContainerItem( item[1], item[2] )
 						ClickSendMailItemButton( )
 					end
@@ -900,10 +908,8 @@ function ArkInventory.Action.Mail.Thread( thread_id, manual )
 		end
 	end
 	
-	if manual or qsize > 0 then
-		if ArkInventory.db.option.action.mail.list then
-			ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_MAIL"], runtype, ArkInventory.Localise["COMPLETE"] ) )
-		end
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.mail.list ) then
+		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_MAIL"], runtype, ArkInventory.Localise["COMPLETE"] ) )
 	end
 	
 	if qsize > 0 then
@@ -986,7 +992,7 @@ function ArkInventory.Action.Use.Iterate( manual )
 			--ArkInventory.Output( "use check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "]" )
 			
 			local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
-			local blizzard_id = map.blizzard_id
+			blizzard_id = map.blizzard_id
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 			isLocked = itemInfo.isLocked
@@ -1029,7 +1035,7 @@ function ArkInventory.Action.Use.Thread( thread_id, manual )
 		test = string.format( "(%s)", ArkInventory.Localise["CONFIG_ACTION_TESTING"] )
 	end
 	
-	if manual and qsize > 0 and ArkInventory.db.option.action.use.list then
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.use.list ) then
 		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_USE"], runtype, ArkInventory.Localise["START"] ) )
 	end
 	
@@ -1092,7 +1098,7 @@ function ArkInventory.Action.Use.Thread( thread_id, manual )
 	end
 	
 	
-	if manual and qsize > 0 and ArkInventory.db.option.action.use.list then
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.use.list ) then
 		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_USE"], runtype, ArkInventory.Localise["COMPLETE"] ) )
 	end
 	
@@ -1148,7 +1154,7 @@ function ArkInventory.Action.Scrap.Check( i, codex, manual )
 	
 	local isMatch = false
 	
-	local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromStorageId( i.loc_id, i.bag_id )
+	local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromWindowId( i.loc_id, i.bag_id )
 	local blizzardLocation = ItemLocation:CreateFromBagAndSlot( blizzard_id, i.slot_id )
 	
 	if C_Item.CanScrapItem( blizzardLocation ) then
@@ -1224,7 +1230,7 @@ function ArkInventory.Action.Scrap.Iterate( manual )
 			--ArkInventory.Output( "scrap check [", loc_id_window, "].[", bag_id_window, "].[", slot_id, "]" )
 			
 			local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
-			local blizzard_id = map.blizzard_id
+			blizzard_id = map.blizzard_id
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 			itemCount = itemInfo.stackCount
@@ -1235,7 +1241,8 @@ function ArkInventory.Action.Scrap.Iterate( manual )
 				local loc_id_storage = map.loc_id_storage
 				local bag_id_storage = map.bag_id_storage
 				local storage = ArkInventory.Codex.GetStorage( nil, loc_id_storage )
-				i = storage.data.location[loc_id_storage].bag[bag_id_storage].slot[slot_id]
+				local bag = storage.data.location[loc_id_storage].bag[bag_id_storage]
+				local i = bag.slot[slot_id]
 				isMatch = ArkInventory.Action.Scrap.Check( i, codex, manual )
 			end
 			
@@ -1265,10 +1272,8 @@ function ArkInventory.Action.Scrap.Thread( thread_id, manual )
 		runtype = ArkInventory.Localise["MANUAL"]
 	end
 	
-	if manual or qsize > 0 then
-		if ArkInventory.db.option.action.scrap.list then
-			ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_SCRAP"], runtype, ArkInventory.Localise["START"] ) )
-		end
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.scrap.list ) then
+		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_SCRAP"], runtype, ArkInventory.Localise["START"] ) )
 	end
 	
 	local test = ""
@@ -1290,7 +1295,7 @@ function ArkInventory.Action.Scrap.Thread( thread_id, manual )
 			break
 		end
 		
-		if IsCurrentSpell( ArkInventory.Action.Scrap.data.spellID ) then
+		if ArkInventory.CrossClient.IsCurrentSpell( ArkInventory.Action.Scrap.data.spellID ) then
 			-- aborted, scrapping in progress
 			break
 		end
@@ -1324,10 +1329,8 @@ function ArkInventory.Action.Scrap.Thread( thread_id, manual )
 	C_ScrappingMachineUI.ValidateScrappingList( )
 	ArkInventory.ThreadYield( thread_id )
 	
-	if manual or qsize > 0 then
-		if ArkInventory.db.option.action.scrap.list then
-			ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_SCRAP"], runtype, ArkInventory.Localise["COMPLETE"] ) )
-		end
+	if manual or ( qsize > 0 and ArkInventory.db.option.action.scrap.list ) then
+		ArkInventory.Output( string.format( ArkInventory.Localise["CONFIG_ACTION_BOOKEND"], ArkInventory.Localise["ACTION"], ArkInventory.Localise["CONFIG_ACTION_SCRAP"], runtype, ArkInventory.Localise["COMPLETE"] ) )
 	end
 	
 	if qsize > 0 then

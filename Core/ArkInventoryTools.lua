@@ -1,8 +1,5 @@
-
+﻿
 ArkInventory.Tools = { }
-
-
-
 
 
 --[[
@@ -42,7 +39,7 @@ end
 
 function ArkInventory.Tools.GlobalSearch( )
 --[[
-	local z = "used by another member"
+	local z = ""
 	ArkInventory.Output( "search=", z )
 	for k, v in pairs (_G) do
 		if type( k ) == "string" and type( v ) == "string" then

@@ -1,4 +1,4 @@
-
+﻿
 ArkInventory.Debug = { }
 
 function ArkInventory.Debug.Frame_OnLoad( frame )

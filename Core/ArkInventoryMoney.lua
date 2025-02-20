@@ -46,7 +46,7 @@ ArkInventory.Const.MoneyTypeInfo["ACCOUNT"] = {
 	end,
 
 	UpdateFunc = function( moneyFrame )
-		return C_Bank.FetchDepositedMoney( Enum.BankType.Account )
+		return C_Bank.FetchDepositedMoney( ArkInventory.ENUM.BANKTYPE.ACCOUNT )
 	end,
 	
 	
@@ -909,7 +909,7 @@ function ArkInventory.MoneyAccountBankDeposit( )
 	if alreadyShown then
 	  StaticPopup_Hide( "BANK_MONEY_DEPOSIT" )
 	else
-	  StaticPopup_Show( "BANK_MONEY_DEPOSIT", nil, nil, { bankType = Enum.BankType.Account } )
+	  StaticPopup_Show( "BANK_MONEY_DEPOSIT", nil, nil, { bankType = ArkInventory.ENUM.BANKTYPE.ACCOUNT } )
 	end
 	
 end
@@ -924,7 +924,7 @@ function ArkInventory.MoneyAccountBankWithdraw( )
 	if alreadyShown then
 	  StaticPopup_Hide( "BANK_MONEY_WITHDRAW" )
 	else
-	  StaticPopup_Show( "BANK_MONEY_WITHDRAW", nil, nil, { bankType = Enum.BankType.Account } )
+	  StaticPopup_Show( "BANK_MONEY_WITHDRAW", nil, nil, { bankType = ArkInventory.ENUM.BANKTYPE.ACCOUNT } )
 	end
 	
 end

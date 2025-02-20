@@ -1,4 +1,4 @@
-local _G = _G
+﻿local _G = _G
 local select = _G.select
 local pairs = _G.pairs
 local ipairs = _G.ipairs
@@ -235,11 +235,15 @@ local function ScanBase( id )
 			-- /dump GetCurrencyInfo( 1220 ) order resources (no limits)
 			-- /dump C_CurrencyInfo.GetBasicCurrencyInfo( 1220 ) order resources (no limits)
 			-- /dump GetCurrencyInfo( 1314 ) order resources (no limits)
+			-- /dump ArkInventory.CrossClient.GetCurrencyInfo( 2032 ) traders tender - account wide
+			
 				
 				cache[id] = info
 				
 				cache[id].id = id
 				cache[id].link = ArkInventory.CrossClient.GetCurrencyLink( id, 0 )
+				
+				--cache[id].isOwned = info.discovered
 				
 				collection.numTotal = collection.numTotal + 1
 				
@@ -302,6 +306,7 @@ local function Scan_Threaded( thread_id )
 	-- scan the currency frame (now fully expanded) for known currencies
 	
 	ArkInventory.Table.Wipe( collection.list )
+	
 	local cache = collection.cache
 	local list = collection.list
 	local active = true
@@ -356,6 +361,8 @@ local function Scan_Threaded( thread_id )
 					hasCurrency = currencyInfo.hasCurrency,
 					isChild = currencyInfo.isChild,
 					parentIndex = nil,
+					isAccountWide = currencyInfo.isAccountWide,
+					isAccountTransferable = currencyInfo.isAccountTransferable,
 					data = nil, -- will eventually point to a cache entry
 				}
 			end
@@ -535,5 +542,23 @@ function ArkInventory:EVENT_ARKINV_COLLECTION_CURRENCY_UPDATE( event, ... )
 	
 	ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_CURRENCY_UPDATE_BUCKET", event )
 	
+end
+
+function ArkInventory:EVENT_ARKINV_ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED( event, ... )
+--[[
+	local dataReady = C_CurrencyInfo.IsAccountCharacterCurrencyDataReady();
+	local canTransfer, failureReason = C_CurrencyInfo.CanTransferCurrency(self.currencyID);
+	local isValidCurrency = C_CurrencyInfo.IsAccountTransferableCurrency(self.currencyID);
+	
+	
+	self.rosterCurrencyData = C_CurrencyInfo.FetchCurrencyDataFromAccountCharacters(currencyID);
+	
+	for index, currencyData in ipairs(self.rosterCurrencyData) do
+		local currencyInfo = C_CurrencyInfo.GetBasicCurrencyInfo(currencyData.currencyID);
+	
+	
+	
+	
+]]--
 end
 

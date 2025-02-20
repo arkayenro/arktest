@@ -57,16 +57,26 @@ if not L then return end
 	L["RESTACK_FAIL_ACCESS"] = "你沒有權限重新堆疊|cffffffff%1$s|r的第|cffffffff%2$s|r個分頁"
 --	L["RESTACK_FAIL_CLOSED"] = ""
 --	L["RESTACK_TYPE"] = ""
---	L["RESTACK_CLEANUP_DEPOSIT"] = ""
+--	L["RESTACK_CLEANUP_DEPOSIT_DESC"] = ""
+--	L["RESTACK_CLEANUP_DEPOSIT_ACCOUNT_REAGENT"] = ""
 --	L["RESTACK_CLEANUP_DELAY"] = ""
 --	L["RESTACK_CLEANUP_DELAY_DESC"] = ""
---	L["RESTACK_TOPUP_FROM_BAGS"] = ""
---	L["RESTACK_TOPUP_FROM_BAGS_DESC"] = ""
---	L["RESTACK_FILL_FROM_BAGS_DESC"] = ""
---	L["RESTACK_FILL_PRIORITY"] = ""
---	L["RESTACK_FILL_PRIORITY_DESC"] = ""
---	L["RESTACK_FILL_PRIORITY_PROFESSION"] = ""
+--	L["RESTACK_BAG_PRIORITY"] = ""
+--	L["RESTACK_BAG_PRIORITY_NORMAL"] = ""
+--	L["RESTACK_BAG_PRIORITY_PROFESSION"] = ""
+--	L["RESTACK_BAG_PRIORITY_REAGENT"] = ""
+--	L["RESTACK_BAG_PRIORITY_ACCOUNT"] = ""
 --	L["RESTACK_REFRESH_WHEN_COMPLETE"] = ""
+--	L["RESTACK_STACK"] = ""
+--	L["RESTACK_STACK_ENABLE_DESC"] = ""
+--	L["RESTACK_CHECKBAG"] = ""
+--	L["RESTACK_CHECKBAG_DESC"] = ""
+--	L["RESTACK_CONSOLIDATE"] = ""
+--	L["RESTACK_CONSOLIDATE_DESC"] = ""
+--	L["RESTACK_CONSOLIDATE_DESC_PROFESSION"] = ""
+--	L["RESTACK_COMPACT"] = ""
+--	L["RESTACK_COMPACT_DESC"] = ""
+--	L["RESTACK_INCLUDE_DESC"] = ""
 	
 	
 --	vault tab tooltips
@@ -172,7 +182,7 @@ if not L then return end
 --	L["MENU_ITEM_ASSIGN_DISABLED_DESC"] = ""
 	L["MENU_ITEM_CUSTOM_NEW"] = "新增一個自訂類別"
 --	L["MENU_ITEM_ITEMCOUNT_DESC"] = ""
---	L["MENU_ITEM_ITEMCOUNT_STATUS_DESC"] = ""
+--	L["MENU_ITEM_STATUS_DESC"] = ""
 --	L["MENU_ITEM_DEBUG_PET_ID"] = ""
 --	L["MENU_ITEM_DEBUG_PET_SPECIES"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "簡短ID"
@@ -183,6 +193,7 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_LVL_USE"] = "使用等級"
 	L["MENU_ITEM_DEBUG_SUBTYPE"] = "次要類型"
 	L["MENU_ITEM_DEBUG_ID"] = "暴風雪 ID"
+--	L["MENU_ITEM_DEBUG_UNIQUE"] = ""
 	L["MENU_ITEM_DEBUG_FAMILY"] = "家族"
 	L["MENU_ITEM_DEBUG_PT"] = "PT 類別"
 	L["MENU_ITEM_DEBUG_PT_DESC"] = "顯示此物品的 PT 類別"
@@ -246,6 +257,10 @@ if not L then return end
 	L["MENU_BAG_SHOWALL"] = "顯示全部"
 	L["MENU_BAG_SHOWALL_DESC"] = "顯示所有背包的內容"
 --	L["MENU_BAG_EMPTY_DESC"] = ""
+--	L["MENU_BAG_PANEL_COMBINE"] = ""
+--	L["MENU_BAG_PANEL_COMBINE_ALL_DESC"] = ""
+--	L["MENU_BAG_PANEL_COMBINE_REAGENT_DESC"] = ""
+--	L["MENU_BAG_PANEL_COMBINE_ACCOUNT_DESC"] = ""
 	
 	
 --	configuration options
@@ -631,7 +646,7 @@ if not L then return end
 	
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_ALREADY_KNOWN_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_EQUIPMENT_DESC"] = ""
---	L["CONFIG_ACTION_VENDOR_SOULBOUND_ITEMLEVEL_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_SOULBOUND_IGNORELEVEL_DESC"] = ""
 	
 --	L["CONFIG_ACTION_DELETE"] = ""
 --	L["CONFIG_ACTION_DELETE_DESC"] = ""
@@ -964,13 +979,13 @@ if not L then return end
 --	L["EXPAND"] = ""
 --	L["COLLAPSE"] = ""
 --	L["SET"] = ""
---	L["ITEM_BIND_PARTYLOOT"] = ""
---	L["ITEM_BIND_REFUNDABLE"] = ""
+--	L["ITEM_BINDING_PARTYLOOT"] = ""
+--	L["ITEM_BINDING_REFUNDABLE"] = ""
 --	L["CONDUITS"] = ""
 --	L["COVENANT"] = ""
 --	L["ALPHA"] = ""
 --	L["BAGS"] = ""
---	L["OPTION_NOT_AVILABLE_EXPANSION"] = ""
+--	L["OPTION_NOT_AVAILABLE_EXPANSION"] = ""
 --	L["SIZE"] = ""
 --	L["AZERITE"] = ""
 --	L["COSMETIC"] = ""
@@ -989,7 +1004,6 @@ if not L then return end
 --	L["USING"] = ""
 --	L["DATA_NOT_READY"] = ""
 --	L["DATA_NOT_FOUND"] = ""
---	L["REAGENT"] = ""
 	
 	
 -- libdatabroker
@@ -1025,6 +1039,9 @@ if not L then return end
 	L["LDB_MOUNTS_FLYING_DISMOUNT_DESC"] = "啟用 = 允許你在飛行中下坐騎。\n\n停用 = 你需要在地面上，才可以下坐騎"
 	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = "您目前正在飛行，請選擇一個降落地點"
 --	L["LDB_MOUNTS_FLYING_DRAGONRIDING_DESC"] = ""
+--	L["LDB_MOUNTS_FLYING_MODE_ALL"] = "",
+--	L["LDB_MOUNTS_FLYING_MODE_STEADY"] = "",
+--	L["LDB_MOUNTS_FLYING_MODE_DRAGON"] = "",
 	L["LDB_MOUNT_SUMMON"] = "召喚坐騎"
 --	L["LDB_MOUNTS_NODATA"] = ""
 --	L["LDB_MOUNTS_TRAVEL_FORM"] = ""

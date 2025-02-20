@@ -35,8 +35,11 @@
   <Binding name="ARKINV_TOGGLE_HEIRLOOM" category="ArkInventory ">
     ArkInventory.Frame_Main_Toggle( ArkInventory.Const.Location.Heirloom )
   </Binding>
-  <Binding name="ARKINV_TOGGLE_TOKEN" category="ArkInventory ">
+  <Binding name="ARKINV_TOGGLE_CURRENCY" category="ArkInventory ">
     ArkInventory.Frame_Main_Toggle( ArkInventory.Const.Location.Currency )
+  </Binding>
+  <Binding name="ARKINV_TOGGLE_REPUTATION" category="ArkInventory ">
+    ArkInventory.Frame_Main_Toggle( ArkInventory.Const.Location.Reputation )
   </Binding>
   <Binding name="ARKINV_TOGGLE_AUCTION" category="ArkInventory ">
     ArkInventory.Frame_Main_Toggle( ArkInventory.Const.Location.Auction )

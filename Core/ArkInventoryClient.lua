@@ -1,4 +1,4 @@
--- blizzzard functions that no longer exist, or have been replaced across clients
+﻿-- blizzzard functions that no longer exist, or have been replaced across clients
 
 ArkInventory.CrossClient = {
 	TemplateVersion = 1,
@@ -42,6 +42,20 @@ function ArkInventory.ClientCheck( id_toc_min, id_toc_max, loud )
 	end
 	
 	return false
+	
+end
+
+if ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.SHADOWLANDS ) then
+	
+	-- remap bank bags back to their original values (pre reagent bag)
+	ArkInventory.ENUM.BAG.INDEX.REAGENTBAG_1 = -999
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_1 = 5
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_2 = 6
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_3 = 7
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_4 = 8
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_5 = 9
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_6 = 10
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_7 = 11
 	
 end
 
@@ -477,17 +491,21 @@ end
 
 function ArkInventory.CrossClient.GetFactionInfo( ... )
 	
-	
-	if GetFactionInfo then
+	if C_Reputation and C_Reputation.GetFactionDataByIndex then
+		
+		return C_Reputation.GetFactionDataByIndex( ... )
+		
+	elseif GetFactionInfo then
 		
 		local r = { }
 		
-		r.name, r.description, r.standingID, r.barMin, r.barMax, r.barValue, r.atWarWith, r.canToggleAtWar, r.isHeader, r.isCollapsed, r.hasRep, r.isWatched, r.isChild, r.factionID, r.hasBonusRepGain, r.canSetInactive = GetFactionInfo( ... )
+		r.name, r.description, r.reaction, r.barMin, r.nextReactionThreshold, r.currentStanding, r.atWarWith, r.canToggleAtWar, r.isHeader, r.isCollapsed, r.isHeaderWithRep, r.isWatched, r.isChild, r.factionID, r.hasBonusRepGain, r.canSetInactive = GetFactionInfo( ... )
 		
-		r.standingID = r.standingID or 0
+		r.reaction = r.reaction or 0
 		r.barMin = r.barMin or 0
-		r.barMax = r.barMax or 0
-		r.barValue = r.barValue or 0
+		r.nextReactionThreshold = r.nextReactionThreshold or 0
+		r.currentStanding = r.currentStanding or 0
+		r.isAccountWide = false
 		
 		return r
 		
@@ -497,13 +515,19 @@ end
 
 function ArkInventory.CrossClient.GetFactionInfoByID( ... )
 	
-	local r = { }
-	
-	if GetFactionInfoByID then
-		r.name, r.description, r.standingID, r.barMin, r.barMax, r.barValue, r.atWarWith, r.canToggleAtWar, r.isHeader, r.isCollapsed, r.hasRep, r.isWatched, r.isChild, r.factionID, r.hasBonusRepGain, r.canSetInactive = GetFactionInfoByID( ... )
+	if C_Reputation and C_Reputation.GetFactionDataByID then
+		
+		return C_Reputation.GetFactionDataByID( ... )
+		
+	elseif GetFactionInfoByID then
+		
+		local r = { }
+		
+		r.name, r.description, r.reaction, r.barMin, r.nextReactionThreshold, r.currentStanding, r.atWarWith, r.canToggleAtWar, r.isHeader, r.isCollapsed, r.isHeaderWithRep, r.isWatched, r.isChild, r.factionID, r.hasBonusRepGain, r.canSetInactive = GetFactionInfoByID( ... )
+		
+		return r
+		
 	end
-	
-	return r
 	
 end
 
@@ -595,6 +619,20 @@ function ArkInventory.CrossClient.GetCVarBool( ... )
 	end
 end
 
+function ArkInventory.CrossClient.SetCVarBool( ... )
+	
+	local cv_name, cv_value = ...
+	
+	if cv_value then
+		cv_value = "1"
+	else
+		cv_value = "0"
+	end
+	
+	ArkInventory.CrossClient.SetCVar( cv_name, cv_value )
+	
+end
+
 function ArkInventory.CrossClient.GetBagSlotFlag( ... )
 	if C_Container and C_Container.GetBagSlotFlag then
 		return C_Container.GetBagSlotFlag( ... )
@@ -660,7 +698,7 @@ function ArkInventory.CrossClient.OptionNotAvailableExpansion( check, text )
 	local disabled = not not check
 	local text = text
 	if disabled then
-		text = string.format( "%s\n\n%s%s", text, RED_FONT_COLOR_CODE, ArkInventory.Localise["OPTION_NOT_AVILABLE_EXPANSION"] )
+		text = string.format( "%s\n\n%s%s", text, RED_FONT_COLOR_CODE, ArkInventory.Localise["OPTION_NOT_AVAILABLE_EXPANSION"] )
 	end
 	return disabled, text
 end
@@ -759,12 +797,12 @@ end
 function ArkInventory.CrossClient.GetContainerNumFreeSlots( ... )
 	-- return the number of free slots, and the bag type
 	if C_Container and C_Container.GetContainerNumFreeSlots then
-		local f, t = C_Container.GetContainerNumFreeSlots( ... )
-		if f == 0 and not t then
-			f = #ArkInventory.CrossClient.GetContainerFreeSlots( ... )
-			t = 0
+		local numFreeSlots, bagFamily = C_Container.GetContainerNumFreeSlots( ... )
+		if numFreeSlots == 0 and not bagFamily then
+			numFreeSlots = #ArkInventory.CrossClient.GetContainerFreeSlots( ... )
+			bagFamily = 0
 		end
-		return f, t
+		return numFreeSlots, bagFamily
 	elseif GetContainerNumFreeSlots then
 		return GetContainerNumFreeSlots( ... )
 	end
@@ -807,6 +845,12 @@ function ArkInventory.CrossClient.SortReagentBankBags( ... )
 		return C_Container.SortReagentBankBags( ... )
 	elseif SortReagentBankBags then
 		return SortReagentBankBags( ... )
+	end
+end
+
+function ArkInventory.CrossClient.SortAccountBankBags( ... )
+	if C_Container and C_Container.SortAccountBankBags then
+		return C_Container.SortAccountBankBags( ... )
 	end
 end
 
@@ -892,6 +936,13 @@ function ArkInventory.CrossClient.IsWarbankInUseByAnotherCharacter( )
 	
 end
 
+function ArkInventory.CrossClient.SplitContainerItem( ... )
+	if C_Container and C_Container.SplitContainerItem then
+		return C_Container.SplitContainerItem( ... )
+	elseif SplitContainerItem then
+		return SplitContainerItem( ... )
+	end
+end
 
 function ArkInventory.CrossClient.LoadAddOn( ... )
 	if C_AddOns and C_AddOns.LoadAddOn then
@@ -942,7 +993,7 @@ end
 
 function ArkInventory.CrossClient.GetItemCooldown( ... )
 	
-	if C_Container and C_Container.GetItemCooldown then
+	if C_Item and C_Item.GetItemCooldown then
 		return C_Container.GetItemCooldown( ... )
 	end
 	
@@ -1025,6 +1076,14 @@ function ArkInventory.CrossClient.GetItemInfoInstant( ... )
 		return GetItemInfoInstant( ... )
 	end
 	
+end
+
+function ArkInventory.CrossClient.GetItemFamily( ... )
+	if C_Item and C_Item.GetItemFamily then
+		return C_Item.GetItemFamily( ... )
+	else
+		return GetItemFamily( ... )
+	end
 end
 
 function ArkInventory.CrossClient.GetItemClassInfo( ... )
@@ -1145,6 +1204,185 @@ function ArkInventory.CrossClient.IsUsableSpell( ... )
 	end
 end
 
+function ArkInventory.CrossClient.IsCurrentSpell( ... )
+	if C_Spell and C_Spell.IsCurrentSpell then
+		return C_Spell.IsCurrentSpell( ... )
+	elseif IsCurrentSpell then
+		return IsCurrentSpell( ... )
+	end
+end
+
+function ArkInventory.CrossClient.GetGuildBankItemInfo( ... )
+	
+	local r = { }
+	
+	r.texture, r.stackCount, r.isLocked, r.isFiltered, r.quality = GetGuildBankItemInfo( ... )
+	
+	if r.texture then
+		r.hyperlink = ArkInventory.CrossClient.GetGuildBankItemLink( ... )
+	end
+	
+	return r
+	
+end
+
+function ArkInventory.CrossClient.GetGuildBankItemLink( ... )
+	return GetGuildBankItemLink( ... )
+end
+
+function ArkInventory.CrossClient.PickupGuildBankItem( ... )
+	return PickupGuildBankItem( ... )
+end
+
+function ArkInventory.CrossClient.SplitGuildBankItem( ... )
+	return SplitGuildBankItem( ... )
+end
+
+function ArkInventory.CrossClient.PutItemInReagentBank( blizzard_id, slot_id )
+	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WARWITHIN ) then
+		ArkInventory.CrossClient.UseContainerItem( blizzard_id, slot_id, nil, nil, true )
+	else
+		ArkInventory.CrossClient.UseContainerItem( blizzard_id, slot_id, nil, true )
+	end
+end
+
+function ArkInventory.CrossClient.PutItemInBackpack( )
+	PutItemInBackpack( )
+end
+
+local function PutItemInOtherBank( blizzard_id )
+	
+	ArkInventory.Util.Assert( type( blizzard_id ) == "number", "blizzard_id is [", type( blizzard_id ), "], should be [number]" )
+	
+	if CursorHasItem( ) then
+		
+		for slot_id = 1, ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id ) do
+			
+			local h = ArkInventory.CrossClient.GetContainerItemLink( blizzard_id, slot_id )
+			
+			if not h and not ArkInventory.Util.getMovedItemBlock( blizzard_id, slot_id ) then
+				
+				ArkInventory.CrossClient.PickupContainerItem( blizzard_id, slot_id )
+				ArkInventory.Util.setMovedItemBlock( blizzard_id, slot_id )
+				
+				return
+				
+			end
+			
+		end
+		
+		ClearCursor( )
+		
+		UIErrorsFrame:AddMessage( ERR_BAG_FULL, 1.0, 0.1, 0.1, 1.0 )
+		
+	end
+	
+end
+
+function ArkInventory.CrossClient.PutItemInBank( )
+	PutItemInOtherBank( ArkInventory.ENUM.BAG.INDEX.BANK )
+end
+
+function ArkInventory.CrossClient.DropItemOnReagentBank( )
+	PutItemInOtherBank( ArkInventory.ENUM.BAG.INDEX.REAGENTBANK )
+end
+
+function ArkInventory.CrossClient.PutItemInAccountBank( blizzard_id )
+	PutItemInOtherBank( blizzard_id )
+end
+
+function ArkInventory.CrossClient.PutItemInGuildBank( )
+	
+	local loc_id_window = ArkInventory.Const.Location.Vault
+	local bag_id_window = GetCurrentGuildBankTab( )
+	local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromWindowId( loc_id_window, bag_id_window )
+	
+	if CursorHasItem( ) then
+		
+		local _, _, _, canDeposit = GetGuildBankTabInfo( bag_id_window )
+		
+		if canDeposit then
+			
+			for slot_id = 1, ArkInventory.Const.BLIZZARD.GLOBAL.GUILDBANK.NUM_SLOTS do
+				
+				local h = ArkInventory.CrossClient.GetGuildBankItemLink( bag_id_window, slot_id )
+				
+				if not h and not ArkInventory.Util.getMovedItemBlock( blizzard_id, slot_id ) then
+					
+					ArkInventory.CrossClient.PickupGuildBankItem( bag_id_window, slot_id )
+					ArkInventory.Util.setMovedItemBlock( blizzard_id, slot_id )
+					
+					return
+					
+				end
+				
+			end
+			
+			ClearCursor( )
+			
+			UIErrorsFrame:AddMessage( ERR_BAG_FULL, 1.0, 0.1, 0.1, 1.0 )
+			
+		end
+		
+	end
+	
+end
+
+function ArkInventory.CrossClient.IsNewItem( ... )
+	
+	if C_NewItems and C_NewItems.IsNewItem then
+		return C_NewItems.IsNewItem( ... )
+	end
+	
+end
+
+function ArkInventory.CrossClient.DepositReagentBank( )
+	if DepositReagentBank then
+		DepositReagentBank( )
+	end
+end
+
+function ArkInventory.CrossClient.DepositAccountBank( )
+	if C_Bank and C_Bank.AutoDepositItemsIntoBank then
+		C_Bank.AutoDepositItemsIntoBank( ArkInventory.ENUM.BANKTYPE.ACCOUNT )
+	end
+end
+
+function ArkInventory.CrossClient.IsEngravingEnabled( ... )
+	if C_Engraving and C_Engraving.IsEngravingEnabled then
+		return C_Engraving.IsEngravingEnabled( ... )
+	end
+end
+
+function ArkInventory.CrossClient.IsInventorySlotEngravable( ... )
+	if C_Engraving and C_Engraving.IsInventorySlotEngravable then
+		return C_Engraving.IsInventorySlotEngravable( ... )
+	end
+end
+
+function ArkInventory.CrossClient.GetRuneForInventorySlot( ... )
+	if C_Engraving and C_Engraving.GetRuneForInventorySlot then
+		return C_Engraving.GetRuneForInventorySlot( ... )
+	end
+end
+
+function ArkInventory.CrossClient.IsEquipmentSlotEngravable( ... )
+	if C_Engraving and C_Engraving.IsEquipmentSlotEngravable then
+		return C_Engraving.IsEquipmentSlotEngravable( ... )
+	end
+end
+
+function ArkInventory.CrossClient.IsEquipmentSlotEngravable( ... )
+	if C_Engraving and C_Engraving.IsEquipmentSlotEngravable then
+		return C_Engraving.IsEquipmentSlotEngravable( ... )
+	end
+end
+
+function ArkInventory.CrossClient.GetRuneForEquipmentSlot( ... )
+	if C_Engraving and C_Engraving.GetRuneForEquipmentSlot then
+		return C_Engraving.GetRuneForEquipmentSlot( ... )
+	end
+end
 
 
 

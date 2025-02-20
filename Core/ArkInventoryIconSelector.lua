@@ -1,4 +1,4 @@
-
+﻿
 ArkInventoryIconSelectorPopupFrameMixin = { }
 
 local IconPopupFrameName = "ARKINV_IconSelectorPopupFrame"
@@ -33,7 +33,7 @@ function ArkInventory.Icon_Selector_Show( loc_id_window, bag_id_window )
 	
 	if map.loc_id_storage == ArkInventory.Const.Location.AccountBank then
 		
-		local tabData = C_Bank.FetchPurchasedBankTabData( Enum.BankType.Account )
+		local tabData = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.ACCOUNT )
 		self.selectedTabData = tabData[map.tab_id]
 		
 	elseif map.loc_id_storage == ArkInventory.Const.Location.Vault then
@@ -92,11 +92,6 @@ function ArkInventoryIconSelectorPopupFrameMixin:OnShow( )
 	
 	--ArkInventory.Output( loc_id_window, " / ", bag_id_window, " / ", parentframename )
 	
-	
-	
-	
-	
-	
 	local editBoxHeaderText = "not set"
 	
 	local loc_id_storage = self.ARK_Data.loc_id_storage
@@ -109,9 +104,6 @@ function ArkInventoryIconSelectorPopupFrameMixin:OnShow( )
 	end
 	
 	self.BorderBox.EditBoxHeaderText:SetText( editBoxHeaderText )
-	
-	
-	
 	
 	IconSelectorPopupFrameTemplateMixin.OnShow( self )
 	
@@ -228,4 +220,3 @@ function ArkInventoryIconSelectorPopupFrameMixin:OkayButton_OnClick( )
 	ArkInventory:SendMessage( "EVENT_ARKINV_CHANGER_UPDATE_BUCKET", self.ARK_Data.loc_id_window )
 	
 end
-

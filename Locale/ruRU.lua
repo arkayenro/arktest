@@ -57,16 +57,26 @@ if not L then return end
 	L["RESTACK_FAIL_ACCESS"] = "У вас недостаточно прав, чтобы пересобрать закладку %2$s в %1$s" -- 1 = guild bank, 2 = tab number
 --	L["RESTACK_FAIL_CLOSED"] = ""
 --	L["RESTACK_TYPE"] = ""
---	L["RESTACK_CLEANUP_DEPOSIT"] = ""
+--	L["RESTACK_CLEANUP_DEPOSIT_DESC"] = ""
+--	L["RESTACK_CLEANUP_DEPOSIT_ACCOUNT_REAGENT"] = ""
 --	L["RESTACK_CLEANUP_DELAY"] = ""
 --	L["RESTACK_CLEANUP_DELAY_DESC"] = ""
---	L["RESTACK_TOPUP_FROM_BAGS"] = ""
---	L["RESTACK_TOPUP_FROM_BAGS_DESC"] = ""
---	L["RESTACK_FILL_FROM_BAGS_DESC"] = ""
---	L["RESTACK_FILL_PRIORITY"] = ""
---	L["RESTACK_FILL_PRIORITY_DESC"] = ""
---	L["RESTACK_FILL_PRIORITY_PROFESSION"] = ""
+--	L["RESTACK_BAG_PRIORITY"] = ""
+--	L["RESTACK_BAG_PRIORITY_NORMAL"] = ""
+--	L["RESTACK_BAG_PRIORITY_PROFESSION"] = ""
+--	L["RESTACK_BAG_PRIORITY_REAGENT"] = ""
+--	L["RESTACK_BAG_PRIORITY_ACCOUNT"] = ""
 --	L["RESTACK_REFRESH_WHEN_COMPLETE"] = ""
+--	L["RESTACK_STACK"] = ""
+--	L["RESTACK_STACK_ENABLE_DESC"] = ""
+--	L["RESTACK_CHECKBAG"] = ""
+--	L["RESTACK_CHECKBAG_DESC"] = ""
+--	L["RESTACK_CONSOLIDATE"] = ""
+--	L["RESTACK_CONSOLIDATE_DESC"] = ""
+--	L["RESTACK_CONSOLIDATE_DESC_PROFESSION"] = ""
+--	L["RESTACK_COMPACT"] = ""
+--	L["RESTACK_COMPACT_DESC"] = ""
+--	L["RESTACK_INCLUDE_DESC"] = ""
 	
 	
 --	vault tab tooltips
@@ -172,7 +182,7 @@ if not L then return end
 --	L["MENU_ITEM_ASSIGN_DISABLED_DESC"] = ""
 	L["MENU_ITEM_CUSTOM_NEW"] = "Создать новую пользовательскую категорию"
 --	L["MENU_ITEM_ITEMCOUNT_DESC"] = ""
---	L["MENU_ITEM_ITEMCOUNT_STATUS_DESC"] = ""
+--	L["MENU_ITEM_STATUS_DESC"] = ""
 --	L["MENU_ITEM_DEBUG_PET_ID"] = ""
 --	L["MENU_ITEM_DEBUG_PET_SPECIES"] = ""
 	L["MENU_ITEM_DEBUG_AI_ID_SHORT"] = "Короткий ID"
@@ -183,6 +193,7 @@ if not L then return end
 	L["MENU_ITEM_DEBUG_LVL_USE"] = "Уровень предмета (исп)"
 	L["MENU_ITEM_DEBUG_SUBTYPE"] = "Подтип"
 --	L["MENU_ITEM_DEBUG_ID"] = ""
+--	L["MENU_ITEM_DEBUG_UNIQUE"] = ""
 	L["MENU_ITEM_DEBUG_FAMILY"] = "Семейство"
 	L["MENU_ITEM_DEBUG_PT"] = "PT Сеты"
 	L["MENU_ITEM_DEBUG_PT_DESC"] = "Показывает в каких PT сетах находится этот предмет"
@@ -246,6 +257,10 @@ if not L then return end
 	L["MENU_BAG_SHOWALL"] = "Показывать всё"
 	L["MENU_BAG_SHOWALL_DESC"] = "показывать содержимое всех сумок в этом окне"
 --	L["MENU_BAG_EMPTY_DESC"] = ""
+--	L["MENU_BAG_PANEL_COMBINE"] = ""
+--	L["MENU_BAG_PANEL_COMBINE_ALL_DESC"] = ""
+--	L["MENU_BAG_PANEL_COMBINE_REAGENT_DESC"] = ""
+--	L["MENU_BAG_PANEL_COMBINE_ACCOUNT_DESC"] = ""
 	
 	
 --	configuration options
@@ -631,7 +646,7 @@ if not L then return end
 	
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_ALREADY_KNOWN_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_EQUIPMENT_DESC"] = ""
---	L["CONFIG_ACTION_VENDOR_SOULBOUND_ITEMLEVEL_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_SOULBOUND_IGNORELEVEL_DESC"] = ""
 	
 --	L["CONFIG_ACTION_DELETE"] = ""
 --	L["CONFIG_ACTION_DELETE_DESC"] = ""
@@ -964,13 +979,13 @@ if not L then return end
 --	L["EXPAND"] = ""
 --	L["COLLAPSE"] = ""
 --	L["SET"] = ""
---	L["ITEM_BIND_PARTYLOOT"] = ""
---	L["ITEM_BIND_REFUNDABLE"] = ""
+--	L["ITEM_BINDING_PARTYLOOT"] = ""
+--	L["ITEM_BINDING_REFUNDABLE"] = ""
 --	L["CONDUITS"] = ""
 --	L["COVENANT"] = ""
 --	L["ALPHA"] = ""
 --	L["BAGS"] = ""
---	L["OPTION_NOT_AVILABLE_EXPANSION"] = ""
+--	L["OPTION_NOT_AVAILABLE_EXPANSION"] = ""
 --	L["SIZE"] = ""
 --	L["AZERITE"] = ""
 --	L["COSMETIC"] = ""
@@ -989,7 +1004,6 @@ if not L then return end
 --	L["USING"] = ""
 --	L["DATA_NOT_READY"] = ""
 --	L["DATA_NOT_FOUND"] = ""
---	L["REAGENT"] = ""
 	
 	
 -- libdatabroker
@@ -1025,6 +1039,9 @@ if not L then return end
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_DESC"] = ""
 --	L["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] = ""
 --	L["LDB_MOUNTS_FLYING_DRAGONRIDING_DESC"] = ""
+--	L["LDB_MOUNTS_FLYING_MODE_ALL"] = "",
+--	L["LDB_MOUNTS_FLYING_MODE_STEADY"] = "",
+--	L["LDB_MOUNTS_FLYING_MODE_DRAGON"] = "",
 --	L["LDB_MOUNT_SUMMON"] = ""
 --	L["LDB_MOUNTS_NODATA"] = ""
 --	L["LDB_MOUNTS_TRAVEL_FORM"] = ""
