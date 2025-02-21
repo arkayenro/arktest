@@ -5,6 +5,15 @@
  - updated - mount and pet data
 
 
+110002
+
+
+40400
+30400
+20504
+
+11403
+
 # known issues
  - some default frames (vendor/merchant at minimum) that would normally open via the PlayerInteractionFrameManager no longer open if you are in combat, you just get an addon error.  there is currently no workaround.
  - (dragonflight) reagentbank slots are no longer readable unless the bank is open
