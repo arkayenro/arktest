@@ -4,7 +4,7 @@
 ## Notes: test mod for packager testing
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 10104
+## Version: 10110.02
 ## X-ReleaseType: Do Not Use
 
 ## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
