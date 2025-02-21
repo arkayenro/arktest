@@ -25,10 +25,10 @@ jobs:
         
       - name: Package (release)
         if: ${{ !(contains(github.ref,'alpha') || contains(github.ref,'beta')) }}
-        uses: arkayenro/packager@master
+        uses: BigWigsMods/packager@v2
         
       - name: Package (alpha/beta)
         if: ${{ contains(github.ref,'alpha') || contains(github.ref,'beta') }}
-        uses: arkayenro/packager@master
+        uses: BigWigsMods/packager@v2
         with: # wowinterface doesnt support alpha/beta so dont upload them there
           args: -w 0
