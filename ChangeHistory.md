@@ -1,17 +1,9 @@
-﻿# 3.11.04 (20-FEB-2025)
- - updated - toc (retail) updated to 11.0.7
+﻿# 3.11.05 (09-MAR-2025)
+ - updated - toc (retail) updated to 11.1.0
  - updated - toc (cataclysm) updated to 4.4.2
  - updated - toc (classic) updated to 1.15.6
  - updated - mount and pet data
 
-
-110002
-
-
-30400
-20504
-
-11403
 
 # known issues
  - some default frames (vendor/merchant at minimum) that would normally open via the PlayerInteractionFrameManager no longer open if you are in combat, you just get an addon error.  there is currently no workaround.
