@@ -40,6 +40,7 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.System.Equipment.Cosmetic.Other"] = "",
 	
 	-- <itemID>:<speciesID> - only set for unique pets
+	["ArkInventory.System.Pet.Parts.Gorillion"] = "234431,234430,234433,234427,234432,236961",
 	["ArkInventory.System.Pet.Parts.Salverun"] = "206009:3545,206010:3545,206011:3545,206012:3545,206013:3545,206014:3545,206015:3545,206016:3545,206017:3545,206021:3545",
 	["ArkInventory.System.Pet.Parts.Bugbiter Tortoise"] = "202082,202084", -- 3360
 	["ArkInventory.System.Pet.Parts.Chip"] = "198082:386985,198357:386985,199219:386985", -- 3376
@@ -143,12 +144,16 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	
 	-- used for both item to currency mappings (itemid:currencyid), and just knowing what items are currencies
 	["ArkInventory.System.Currency.Timerunning.Pandaria.Bronze"] = "224461",
-	
+
+	["ArkInventory.System.Currency.TWW.Undermine.Miscellaneous Mechanica"] = "234741",
 	["ArkInventory.System.Currency.TWW.Mereldar Derby Mark"] = "226392:3055",
+	["ArkInventory.System.Currency.TWW.Crest.Undermine.Weathered"] = "231267:3107",
+	["ArkInventory.System.Currency.TWW.Crest.Undermine.Carved"] = "231269:3108",
+	["ArkInventory.System.Currency.TWW.Valorstone.Season 2"] = "236953:3008",
 	["ArkInventory.System.Currency.TWW.Crest.Harbinger.Weathered"] = "221268:2914",
 	["ArkInventory.System.Currency.TWW.Crest.Harbinger.Carved"] = "221373:2915",
 	["ArkInventory.System.Currency.TWW.Crest.Harbinger.Runed"] = "", -- 2916
-	["ArkInventory.System.Currency.TWW.Valorstone"] = "221269:3008",
+	["ArkInventory.System.Currency.TWW.Valorstone.Season 1"] = "221269:3008",
 	["ArkInventory.System.Currency.TWW.Other"] = "212493,220769,223951,224642",
 	["ArkInventory.System.Currency.TWW.Sizzling Cinderpollen"] = "225557",
 	["ArkInventory.System.Currency.Dragonflight.Bullion"] = "213089",
@@ -800,6 +805,12 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.Consumable.Power.TWW.Brann.Curios.Combat"] = "218129,225897,225898,225899,225900,225902,229353",
 	["ArkInventory.Consumable.Power.TWW.Brann.Curios.Utility"] = "225903,225904,225905,225906,225907,225908,228582",
 	["ArkInventory.Consumable.Power.TWW.Siren Isle"] = "229365",
+	["ArkInventory.Consumable.Power.TWW.Undermine.Drive.Paint"] = "235388,235389,235390,235391",
+	["ArkInventory.Consumable.Power.TWW.Undermine.Drive.Engine"] = "232982,232981",
+	["ArkInventory.Consumable.Power.TWW.Undermine.Drive.Wheels"] = "232985,232986",
+	["ArkInventory.Consumable.Power.TWW.Undermine.Drive.Turbo.Handcrank"] = "232984,234381,234386,234415,234417,234420",
+	["ArkInventory.Consumable.Power.TWW.Undermine.Drive.Turbo.Steamboil"] = "232983,234380,234387,234416,234418,234419",
+	["ArkInventory.Consumable.Power.TWW.Undermine.Drive.Horn"] = "236672,236670,236671,236669",
 	
 	
 	-- power items - dragonflight
