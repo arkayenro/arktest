@@ -21,7 +21,7 @@ if not L then return end
 --	L["WOW_ZONE_AHNQIRAJ"] = ""
 --	L["WOW_ZONE_VASHJIR"] = ""
 	L["WOW_ZONE_KELPTHAR_FOREST"] = "Bosque Kelp'thar"
-	L["WOW_ZONE_SHIMMERING_EXPANSE"] = "Extensión Bruñida"
+	L["WOW_ZONE_SHIMMERING_EXPANSE"] = "Extensiï¿½n Bruï¿½ida"
 	L["WOW_ZONE_ABYSSAL_DEPTHS"] = "Profundidades Abisales"
 	
 	
@@ -108,6 +108,7 @@ if not L then return end
 --	L["CATEGORY_CONSUMABLE_FLASK"] = ""
 --	L["CATEGORY_CONSUMABLE_SCROLL"] = ""
 --	L["CATEGORY_CONSUMABLE_CHAMPION_EQUIPMENT"] = ""
+--	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"] = ""
 --	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_OLD"] = ""
 --	L["CATEGORY_CONSUMABLE_ABILITIES_AND_ACTIONS"] = ""
 	
@@ -259,8 +260,10 @@ if not L then return end
 --	L["MENU_BAG_EMPTY_DESC"] = ""
 --	L["MENU_BAG_PANEL_COMBINE"] = ""
 --	L["MENU_BAG_PANEL_COMBINE_ALL_DESC"] = ""
+--	L["MENU_BAG_PANEL_COMBINE_BANK_DESC"] = ""
 --	L["MENU_BAG_PANEL_COMBINE_REAGENT_DESC"] = ""
 --	L["MENU_BAG_PANEL_COMBINE_ACCOUNT_DESC"] = ""
+--	L["MENU_BAG_CHANGE_SETTINGS"] = ""
 	
 	
 --	configuration options
@@ -440,7 +443,9 @@ if not L then return end
 --	L["CONFIG_CONTROL_BLUEPRINT_DESC"] = ""
 --	L["CONFIG_CONTROL_WITH_ARKINV"] = "" -- %1$s = program, %2$s = location
 --	L["CONFIG_CONTROL_WITH_BLIZZARD"] = "" -- %1$s = program, %2$s = location
-	
+--	L["CONFIG_CONTROL_RESELECT"] = ""
+--	L["CONFIG_CONTROL_RESELECT_PER_SESSION"] = ""
+
 	
 --	configuration settings > design
 --	L["CONFIG_DESIGN"] = ""
@@ -523,6 +528,8 @@ if not L then return end
 --	L["CONFIG_DESIGN_ITEM_TINT_UNUSABLE_DESC"] = ""
 --	L["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE"] = ""
 --	L["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE_DESC"] = ""
+--	L["CONFIG_DESIGN_ITEM_TINT_IGNORE_ITEMLEVEL_DESC"] = ""
+--	L["CONFIG_DESIGN_ITEM_TINT_IGNORE_KNOWN_DESC"] = ""
 --	L["CONFIG_DESIGN_ITEM_ITEMLEVEL"] = ""
 --	L["CONFIG_DESIGN_ITEM_ITEMLEVEL_DESC"] = ""
 --	L["CONFIG_DESIGN_ITEM_ITEMLEVEL_QUALITY_DESC"] = ""
@@ -943,7 +950,8 @@ if not L then return end
 --	L["ORDER"] = ""
 --	L["MOUSEOVER"] = ""
 --	L["NO_DATA_AVAILABLE"] = ""
---	L["TOOLTIP_PURCHASE_BANK_BAG_SLOT"] = ""
+--	L["TOOLTIP_PURCHASE_NEXT_SLOT"] = ""
+--	L["TOOLTIP_PURCHASE_NEXT_TAB"] = ""
 --	L["LABEL"] = ""
 --	L["ABORTED"] = ""
 --	L["RESTORE"] = ""
@@ -1004,6 +1012,7 @@ if not L then return end
 --	L["USING"] = ""
 --	L["DATA_NOT_READY"] = ""
 --	L["DATA_NOT_FOUND"] = ""
+--	L["TINT"] = ""
 	
 	
 -- libdatabroker

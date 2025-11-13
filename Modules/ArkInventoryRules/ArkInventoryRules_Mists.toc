@@ -1,6 +1,6 @@
-﻿## Interface: 11508
+﻿## Interface: 50500
 
-## Title: ArkInventory [Classic] [Rules]
+## Title: ArkInventory [Pandaria] [Rules]
 ## Notes: Rules for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com

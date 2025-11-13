@@ -1,25 +1,35 @@
 ﻿
-ArkInventoryIconSelectorPopupFrameMixin = { }
+ArkInventoryGuildBankTabSettingsMixin = { }
+ArkInventoryAccountBankTabSettingsMixin = { }
 
-local IconPopupFrameName = "ARKINV_IconSelectorPopupFrame"
 
-local function nameCheck( name )
+local function nameCheck( name, tabID )
 	
 	name = string.gsub( name or "", "\"", "" )
 	name = string.trim( name )
 	if ( not name or name == "" ) then
-		name = string.format( GUILDBANK_TAB_NUMBER, self.selectedTabData.ID )
+		name = GUILDBANK_TAB_NUMBER:format( tabID )
 	end
 	
 	return name
 	
 end
 
-function ArkInventory.Icon_Selector_Show( loc_id_window, bag_id_window )
+function ArkInventory.TabSettingsOpen( loc_id_window, bag_id_window )
+--	if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+--		ArkInventory.AccountBankTabSettingsOpen( loc_id_window, bag_id_window )
+--	else
+		ArkInventory.GuildBankTabSettingsOpen( loc_id_window, bag_id_window )
+--	end
+end
+
+
+
+function ArkInventory.GuildBankTabSettingsOpen( loc_id_window, bag_id_window )
 	
 	local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
 	
-	local self = _G[IconPopupFrameName]
+	local self = _G["ARKINV_TabSettingsFrame"]
 	
 	self:Hide( )
 	
@@ -31,25 +41,47 @@ function ArkInventory.Icon_Selector_Show( loc_id_window, bag_id_window )
 		bag_id_storage = map.bag_id_storage,
 	}
 	
-	if map.loc_id_storage == ArkInventory.Const.Location.AccountBank then
+	local tabdata
+
+	if map.loc_id_storage == ArkInventory.Const.Location.Bank and ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
 		
-		local tabData = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.ACCOUNT )
-		self.selectedTabData = tabData[map.tab_id]
+		tabdata = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.CHARACTER )[map.tab_id]
+--		tabdata.tabNameEditBoxHeader = BANK
+
+	elseif map.loc_id_storage == ArkInventory.Const.Location.AccountBank then
 		
+		tabdata = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.ACCOUNT )[map.tab_id]
+
+		if not ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+			tabdata.tabNameEditBoxHeader = ACCOUNT_BANK_TAB_NAME_PROMPT
+		end
+
 	elseif map.loc_id_storage == ArkInventory.Const.Location.Vault then
 		
 		local name, icon = GetGuildBankTabInfo( map.tab_id )
 		
-		self.selectedTabData = {
+		tabdata = {
 			ID = map.tab_id,
 			name = name,
 			icon = icon,
+			tabNameEditBoxHeader = GUILDBANK_POPUP_TEXT,
+			depositFlags = 0,
 		}
 		
+		-- the vault doesnt have any deposit settings
+		if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+			self.DepositSettingsMenu:Hide( )
+		end
+
 	end
 	
-	local name = nameCheck( self.selectedTabData.name )
-	self.selectedTabData.name = name
+	tabdata.name = nameCheck( tabdata.name, tabdata.ID )
+
+	self.selectedTabData = tabdata
+	
+	if not ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+		self.BorderBox.EditBoxHeaderText:SetText( self.selectedTabData.tabNameEditBoxHeader )
+	end
 	
 	self.mode = IconSelectorPopupFrameModes.Edit
 	
@@ -57,8 +89,7 @@ function ArkInventory.Icon_Selector_Show( loc_id_window, bag_id_window )
 	
 end
 
-
-function ArkInventoryIconSelectorPopupFrameMixin:OnLoad( )
+function ArkInventoryGuildBankTabSettingsMixin:OnLoad( )
 	
 	CallbackRegistryMixin.OnLoad( self )
 	
@@ -78,7 +109,7 @@ function ArkInventoryIconSelectorPopupFrameMixin:OnLoad( )
 	
 end
 
-function ArkInventoryIconSelectorPopupFrameMixin:OnShow( )
+function ArkInventoryGuildBankTabSettingsMixin:OnShow( )
 	
 	local loc_id_window = self.ARK_Data.loc_id_window
 	local bag_id_window = self.ARK_Data.bag_id_window
@@ -120,7 +151,7 @@ function ArkInventoryIconSelectorPopupFrameMixin:OnShow( )
 	
 end
 
-function ArkInventoryIconSelectorPopupFrameMixin:RefreshIconDataProvider( )
+function ArkInventoryGuildBankTabSettingsMixin:RefreshIconDataProvider( )
 	
 	if self.iconDataProvider == nil then
 		self.iconDataProvider = CreateAndInitFromMixin( IconDataProviderMixin, IconDataProviderExtraType.None )
@@ -130,7 +161,7 @@ function ArkInventoryIconSelectorPopupFrameMixin:RefreshIconDataProvider( )
 	
 end
 
-function ArkInventoryIconSelectorPopupFrameMixin:OnHide( )
+function ArkInventoryGuildBankTabSettingsMixin:OnHide( )
 	
 	IconSelectorPopupFrameTemplateMixin.OnHide( self )
 	
@@ -143,7 +174,7 @@ function ArkInventoryIconSelectorPopupFrameMixin:OnHide( )
 	
 end
 
-function ArkInventoryIconSelectorPopupFrameMixin:Update( )
+function ArkInventoryGuildBankTabSettingsMixin:Update( )
 	
 	local name = self.selectedTabData.name
 	local icon = self.selectedTabData.icon
@@ -173,7 +204,7 @@ function ArkInventoryIconSelectorPopupFrameMixin:Update( )
 	
 end
 
-function ArkInventoryIconSelectorPopupFrameMixin:CancelButton_OnClick( )
+function ArkInventoryGuildBankTabSettingsMixin:CancelButton_OnClick( )
 	
 	IconSelectorPopupFrameTemplateMixin.CancelButton_OnClick( self )
 	
@@ -181,13 +212,11 @@ function ArkInventoryIconSelectorPopupFrameMixin:CancelButton_OnClick( )
 	
 end
 
-function ArkInventoryIconSelectorPopupFrameMixin:OkayButton_OnClick( )
+function ArkInventoryGuildBankTabSettingsMixin:OkayButton_OnClick( )
 	
 	IconSelectorPopupFrameTemplateMixin.OkayButton_OnClick( self )
 	
 	PlaySound( SOUNDKIT.GS_TITLE_OPTION_OK )
-	
-	
 	
 	local icon = self.BorderBox.SelectedIconArea.SelectedIconButton:GetIconTexture( )
 	local name = nameCheck( self.BorderBox.IconSelectorEditBox:GetText( ) )
@@ -217,6 +246,150 @@ function ArkInventoryIconSelectorPopupFrameMixin:OkayButton_OnClick( )
 	bag.name = name
 	bag.texture = icon
 	
+	ArkInventory:SendMessage( "EVENT_ARKINV_CHANGER_UPDATE_BUCKET", self.ARK_Data.loc_id_window )
+	
+end
+
+
+
+function ArkInventory.AccountBankTabSettingsOpen( loc_id_window, bag_id_window )
+	
+	local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+	
+	local self = _G["ARKINV_TabSettingsFrame"]
+	
+	self.DepositSettingsMenu:Show( )
+	self:Hide( )
+	
+	self.ARK_Data = {
+		blizzard_id = map.blizzard_id,
+		loc_id_window = map.loc_id_window,
+		bag_id_window = map.bag_id_window,
+		loc_id_storage = map.loc_id_storage,
+		bag_id_storage = map.bag_id_storage,
+	}
+	
+	local tabdata
+
+	if map.loc_id_storage == ArkInventory.Const.Location.Bank and ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+		
+		tabdata = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.CHARACTER )[map.tab_id]
+--		tabdata.tabNameEditBoxHeader = BANK
+
+	elseif map.loc_id_storage == ArkInventory.Const.Location.AccountBank then
+		
+		tabdata = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.ACCOUNT )[map.tab_id]
+
+		if not ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+			tabdata.tabNameEditBoxHeader = ACCOUNT_BANK_TAB_NAME_PROMPT
+		end
+
+	elseif map.loc_id_storage == ArkInventory.Const.Location.Vault then
+		
+		local name, icon = GetGuildBankTabInfo( map.tab_id )
+		
+		tabdata = {
+			ID = map.tab_id,
+			name = name,
+			icon = icon,
+			tabNameEditBoxHeader = GUILDBANK_POPUP_TEXT,
+			depositFlags = 0,
+		}
+		
+		-- the vault doesnt have any deposit settings
+		if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+			self.DepositSettingsMenu:Hide( )
+		end
+
+	end
+	
+	tabdata.name = nameCheck( tabdata.name, tabdata.ID )
+	
+	self.selectedTabData = tabdata
+
+	if not ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+		self.BorderBox.EditBoxHeaderText:SetText( self.selectedTabData.tabNameEditBoxHeader )
+	end
+
+	self.mode = IconSelectorPopupFrameModes.Edit
+	
+	self:Show( )
+	
+end
+
+function ArkInventoryAccountBankTabSettingsMixin:OnShow( )
+	
+	local loc_id_window = self.ARK_Data.loc_id_window
+	local bag_id_window = self.ARK_Data.bag_id_window
+	
+	local parentframename = string.format( "ARKINV_Frame%dTitle", loc_id_window )
+	local parentframe = _G[parentframename]
+	
+	self:ClearAllPoints( )
+	self:SetScale( 0.75 )
+	self:SetPoint( "TOPLEFT", parentframe, "TOPRIGHT", 10, 0 )
+	
+	--ArkInventory.Output( loc_id_window, " / ", bag_id_window, " / ", parentframename )
+	
+	--CallbackRegistrantMixin.OnShow( self )
+
+	IconSelectorPopupFrameTemplateMixin.OnShow( self )
+	
+	self.iconDataProvider = self:RefreshIconDataProvider( )
+	
+	self:Update( )
+	
+	self:SetIconFilter( IconSelectorPopupFrameIconFilterTypes.All )
+	
+	self.BorderBox.IconSelectorEditBox:SetFocus( )
+	self.BorderBox.IconSelectorEditBox:OnTextChanged( )
+	
+	PlaySound( SOUNDKIT.IG_CHARACTER_INFO_OPEN )
+	
+end
+
+function ArkInventoryAccountBankTabSettingsMixin:UpdateBankTabSettings( )
+
+	local tabData = self:GetSelectedTabData( )
+	if not tabData then
+		return
+	end
+
+	local tabID = tabData.ID
+	local tabIcon = self:GetNewTabIcon( ) -- self.BorderBox.SelectedIconArea.SelectedIconButton:GetIconTexture( ) or QUESTION_MARK_ICON
+	local tabName = nameCheck( self:GetNewTabName( ), tabID ) -- self.BorderBox.IconSelectorEditBox:GetText( ) or ""
+	local depositFlags = self:GetNewTabDepositFlags( )
+
+	local loc_id_storage = self.ARK_Data.loc_id_storage
+
+	if loc_id_storage == ArkInventory.Const.Location.Bank and ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+		
+		C_Bank.UpdateBankTabSettings( ArkInventory.ENUM.BANKTYPE.CHARACTER, tabID, tabName, tabIcon, depositFlags )
+
+	elseif loc_id_storage == ArkInventory.Const.Location.AccountBank then
+		
+		C_Bank.UpdateBankTabSettings( ArkInventory.ENUM.BANKTYPE.ACCOUNT, tabID, tabName, tabIcon, depositFlags )
+		
+	elseif loc_id_storage == ArkInventory.Const.Location.Vault then
+		
+		SetGuildBankTabInfo( tabID, tabName, tabIcon )
+		
+	else
+
+		return
+
+	end
+	
+
+	
+	local bag_id_storage = self.ARK_Data.bag_id_storage
+	local codex = ArkInventory.Codex.GetPlayer( loc_id_storage )
+	local bag = codex.player.data.location[loc_id_storage].bag[bag_id_storage]
+
+	bag.name = tabName
+	bag.texture = tabIcon
+	bag.df = depositFlags
+
 	ArkInventory:SendMessage( "EVENT_ARKINV_CHANGER_UPDATE_BUCKET", self.ARK_Data.loc_id_window )
 	
 end

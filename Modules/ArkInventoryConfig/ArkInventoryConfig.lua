@@ -1938,7 +1938,7 @@ function ArkInventory.ConfigInternal( )
 							name = ArkInventory.Action.Use.data.name,
 							type = "group",
 							hidden = function( )
-								return ArkInventory.Global.TimerunningSeasonID == 0
+								return ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID == 0
 							end,
 							args = {
 								conflict = {
@@ -9635,8 +9635,15 @@ function ArkInventory.ConfigInternalDesignData( path )
 										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 									end,
 								},
-								unusable_tint = {
-									order = 500,
+							},
+						},
+						tint = {
+							order = 1000,
+							name = ArkInventory.Localise["TINT"],
+							type = "group",
+							args = {
+								unusable = {
+									order = 100,
 									name = ArkInventory.Localise["CONFIG_DESIGN_ITEM_TINT_UNUSABLE"],
 									desc = ArkInventory.Localise["CONFIG_DESIGN_ITEM_TINT_UNUSABLE_DESC"],
 									type = "toggle",
@@ -9652,8 +9659,8 @@ function ArkInventory.ConfigInternalDesignData( path )
 										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 									end,
 								},
-								unwearable_tint = {
-									order = 600,
+								unwearable = {
+									order = 200,
 									name = ArkInventory.Localise["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE"],
 									desc = ArkInventory.Localise["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE_DESC"],
 									type = "toggle",
@@ -9666,6 +9673,40 @@ function ArkInventory.ConfigInternalDesignData( path )
 										local id = ConfigGetNodeArg( info, #info - 4 )
 										local style = ArkInventory.ConfigInternalDesignGet( id )
 										style.slot.unwearable.tint = v
+										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
+									end,
+								},
+								ignore_level = {
+									order = 300,
+									name = ArkInventory.Localise["CONFIG_DESIGN_ITEM_ITEMLEVEL"],
+									desc = ArkInventory.Localise["CONFIG_DESIGN_ITEM_TINT_IGNORE_ITEMLEVEL_DESC"],
+									type = "toggle",
+									get = function( info )
+										local id = ConfigGetNodeArg( info, #info - 4 )
+										local style = ArkInventory.ConfigInternalDesignGet( id )
+										return style.slot.tint.ignore.itemLevel
+									end,
+									set = function( info, v )
+										local id = ConfigGetNodeArg( info, #info - 4 )
+										local style = ArkInventory.ConfigInternalDesignGet( id )
+										style.slot.tint.ignore.itemLevel = v
+										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
+									end,
+								},
+								ignore_known = {
+									order = 400,
+									name = ArkInventory.Localise["ALREADY_KNOWN"],
+									desc = ArkInventory.Localise["CONFIG_DESIGN_ITEM_TINT_IGNORE_KNOWN_DESC"],
+									type = "toggle",
+									get = function( info )
+										local id = ConfigGetNodeArg( info, #info - 4 )
+										local style = ArkInventory.ConfigInternalDesignGet( id )
+										return style.slot.tint.ignore.known
+									end,
+									set = function( info, v )
+										local id = ConfigGetNodeArg( info, #info - 4 )
+										local style = ArkInventory.ConfigInternalDesignGet( id )
+										style.slot.tint.ignore.known = v
 										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 									end,
 								},
@@ -12689,6 +12730,40 @@ function ArkInventory.ConfigInternalProfileControl( path )
 						local profile = ArkInventory.ConfigInternalProfileGet( id )
 						local loc_id = ConfigGetNodeArg( info, #info - 2 )
 						profile.location[loc_id].preload = v
+					end,
+				},
+				lastselected = {
+					order = 800,
+					name = ArkInventory.Localise["CONFIG_CONTROL_RESELECT"],
+					desc = function( info )
+						local id = ConfigGetNodeArg( info, #info - 4 )
+						local profile = ArkInventory.ConfigInternalProfileGet( id )
+						local loc_id = ConfigGetNodeArg( info, #info - 2 )
+						return string.format( "When the %s window is opened re-select the last selected tab", ArkInventory.Global.Location[loc_id].Name )
+					end,
+					type = "select",
+					values = function( )
+						local t = { [ArkInventory.ENUM.TAB_RESELECT.NEVER] = ArkInventory.Localise["NEVER"], [ArkInventory.ENUM.TAB_RESELECT.SESSION] = ArkInventory.Localise["CONFIG_CONTROL_RESELECT_PER_SESSION"], [ArkInventory.ENUM.TAB_RESELECT.ALWAYS] = ArkInventory.Localise["ALWAYS"] }
+						return t
+					end,
+					hidden = function( info )
+						if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+							local loc_id = ConfigGetNodeArg( info, #info - 2 )
+							return loc_id ~= ArkInventory.Const.Location.Bank
+						end
+						return true
+					end,
+					get = function( info )
+						local id = ConfigGetNodeArg( info, #info - 4 )
+						local profile = ArkInventory.ConfigInternalProfileGet( id )
+						local loc_id = ConfigGetNodeArg( info, #info - 2 )
+						return profile.location[loc_id].lastselected.remember
+					end,
+					set = function( info, v )
+						local id = ConfigGetNodeArg( info, #info - 4 )
+						local profile = ArkInventory.ConfigInternalProfileGet( id )
+						local loc_id = ConfigGetNodeArg( info, #info - 2 )
+						profile.location[loc_id].lastselected.remember = v
 					end,
 				},
 			},

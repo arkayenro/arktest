@@ -1,14 +1,19 @@
-﻿# 3.11.05 Alpha 1 (xx-xxx-2025)
- - updated - category for some items
+﻿# 3.12.05 Alpha 2 (12-NOV-2025)
+ - added - basic support for the midnight beta
+ - removed - the ability to purchase account bank tabs as its now a protected function
 
+# 3.12.05 Alpha 1 (03-NOV-2025)
+ - fixed - issue with scrapable rule and empty slots (i think)
+ - updated - category for some items
+ 
+# known issues post 11.2
+ - without reagent or profession bags in the bank a restack wont transfer new stacks of reageants or profession items - potential workaround will be to look for tabs that have been assigned 'reagents' and treat those the same way the reagent bank was previously
 
 # known issues
  - some default frames (vendor/merchant at minimum) that would normally open via the PlayerInteractionFrameManager no longer open if you are in combat, you just get an addon error.  there is currently no workaround.
- - (dragonflight) reagentbank slots are no longer readable unless the bank is open
- - Enum.ItemConsumableSubclass is missing the Flask entry and everything after has moved down a value which screws up the category names (have hardcoded a workaround for the moment)
  - items with an active cooldown dont allow comparison tooltips to generate
  - cooldowns no longer start automatically.  you can close/open the bag to get them to show (if you enable that option).  all of the cooldown events ACTIONBAR_UPDATE_COOLDOWN, BAG_UPDATE_COOLDOWN, PET_BAR_UPDATE_COOLDOWN, SPELL_UPDATE_COOLDOWN, appear to trigger off other players as well, but do not provide any indication whether the event was triggered by you or them, so cooldowns will trigger window refreshes fairly constantly when you are around large numbers of players.  even limiting it to one update per second generated too much lag, especially in massive groups.
- - chat link for a battlepet in the guild bank will not send
+ - caged pets in the guild bank show up as caged pets, not the pet itself
  - the first time you click on a hyperlink in chat it wont show the item counts
 
 

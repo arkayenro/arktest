@@ -1,0 +1,12 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+<!-- ICON SELECTOR WITH ASSIGNMENT FILTERS -->
+
+  <Frame name="ARKINV_TabSettingsTypeBFrame" inherits="BankPanelTabSettingsMenuTemplate" mixin="ArkInventoryTabSettingsTypeBMixin" enableMouse="true" hidden="true" frameLevel="50">
+    <Anchors>
+      <Anchor point="TOPLEFT" x="0" y="5"/>
+    </Anchors>
+	</Frame>
+
+</Ui>

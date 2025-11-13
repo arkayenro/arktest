@@ -1140,11 +1140,11 @@
       <OnLeave>
         ArkInventory.Frame_Changer_Generic_OnLeave( self )
       </OnLeave>
-
+      
       <OnClick>
         ArkInventory.Frame_Changer_Slot_OnClick( self, button, down )
       </OnClick>
-
+      
       <OnDragStart>
         <!-- override template, do nothing -->
       </OnDragStart>
@@ -1156,7 +1156,7 @@
       <OnEvent>
         <!-- override template, do nothing -->
       </OnEvent>
-
+      
     </Scripts>
 
   </ItemButton>

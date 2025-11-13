@@ -1,5 +1,7 @@
 ﻿local ConnectedRealms = { }
 
+local portal = ArkInventory.CrossClient.GetCVar( "Portal" ) or ""
+
 local function addRealms( ... )
 	
 	local ac = select( '#', ... )
@@ -38,8 +40,6 @@ local function addRealms( ... )
 end
 
 function ArkInventory.LoadConnectedRealmData( )
-	
-	local portal = ArkInventory.CrossClient.GetCVar( "Portal" ) or ""
 	
 	if portal == "US" then
 		
@@ -207,7 +207,7 @@ function ArkInventory.LoadConnectedRealmData( )
 		
 	end
 	
-	-- in case i dont have the data ask blizzard for the realms connected to the current one
+	-- in case i dont have up to date data, ask blizzard for the realms connected to the current one
 	addRealms( true, unpack( GetAutoCompleteRealms( ) or { } ) )
 	
 end

@@ -1175,7 +1175,6 @@ local ImportCrossRefTable = {
 {400733,{204091}}, -- Rocket Shredder 9001
 {400976,{203727}}, -- Gleaming Moonbeast / Gleaming Moonbeast's Reins
 {404018,{210140}}, -- [PH] Black-Furred Bakar
-{405623,{}}, -- Armadillo Roller
 {406637,{204798}}, -- Inferno Armoredon
 {407555,{206162}}, -- Tarecgosa's Visage / Lingering Echo of Tarecgosa
 {408313,{205155}}, -- Big Slick in the City
@@ -1231,7 +1230,7 @@ local ImportCrossRefTable = {
 {424534,{210070}}, -- Vicious Moonbeast
 {424535,{210069}}, -- Vicious Moonbeast
 {424539,{210077}}, -- Draconic Gladiator's Drake
-{424601,{210141}}, -- [PH] Brown-Furred Spiky Bakar
+{424601,{210141}}, -- Brown-Furred Spiky Bakar
 {424607,{210142}}, -- Taivan / Good Boy's Leash
 {424608,{210143}}, -- [PH] White-Furred Bakar
 {424610,{210144}}, -- [PH] Yellow-Furred Spiky Bakar
@@ -1255,7 +1254,7 @@ local ImportCrossRefTable = {
 {428062,{211085}}, -- Jeweled Sapphire Scarab / Sapphire Resonating Crystal
 {428065,{211086}}, -- Jeweled Jade Scarab / Jade Resonating Crystal
 {428067,{211087}}, -- Hateforged Blazecycle
-{428068,{211089}}, -- Felreaver Deathcycle
+{428068,{211089}}, -- Voidfire Deathcycle / Felreaver Deathcycle
 {430225,{211873}}, -- Gilnean Prowler / Reins of the Gilnean Prowler
 {430747,{}}, -- Soar
 {430833,{}}, -- Soar
@@ -1311,7 +1310,7 @@ local ImportCrossRefTable = {
 {446017,{220766}}, -- August Phoenix / Reins of the August Phoenix
 {446022,{220768}}, -- Astral Emperor's Serpent / Reins of the Astral Emperor's Serpent
 {446052,{219391}}, -- Delver's Dirigible
-{446352,{221270}}, -- [PH] Goblin Surfboard
+{446352,{221270}}, -- Kickin' Kezan Waveshredder
 {447057,{221753}}, -- Smoldering Cinderbee
 {447149,{223152}}, -- [PH] Firebee Mount (Grey Skin, Silver Saddle)
 {447151,{223153}}, -- Soaring Meaderbee / Reins of the Soaring Meaderbee
@@ -1322,7 +1321,7 @@ local ImportCrossRefTable = {
 {447176,{222989}}, -- Cyan Glowmite
 {447181,{222991}}, -- [PH] Firefly2 Mount (Purple) / [PH] Firefly2Mount (Purple)
 {447185,{223264}}, -- Aquamarine Swarmite
-{447189,{223265}}, -- [PH] FlyingNerubian2 Mount (Tan Body, Orange Saddle)
+{447189,{223265}}, -- Nesting Swarmite
 {447190,{223266}}, -- Shadowed Swarmite / Reins of the Shadowed Swarmite
 {447195,{223267}}, -- Swarmite Skyhunter
 {447213,{223270}}, -- Alunira
@@ -1399,10 +1398,38 @@ local ImportCrossRefTable = {
 {463133,{228760}}, -- Coldflame Tempest / Reins of the Coldflame Tempest
 {464443,{229128}}, -- Harmonious Salutations Bear
 {465235,{229418}}, -- Trader's Gilded Brutosaur / Reins of the Trader's Gilded Brutosaur
+{465999,{229935}}, -- Crimson Armored Growler
+{466000,{229924}}, -- Darkfuse Chompactor
+{466001,{229937}}, -- Blackwater Bonecrusher
+{466002,{229936}}, -- Violet Armored Growler
+{466011,{229940}}, -- Flarendo the Furious
+{466012,{229945}}, -- Thunderdrum Misfire
+{466013,{229946}}, -- Ochre Delivery Rocket
+{466014,{229943}}, -- Steamwheedle Supplier
+{466016,{229944}}, -- The Topskimmer Special
+{466017,{229941}}, -- Innovation Investigator
+{466018,{229950}}, -- Darkfuse Demolisher
+{466019,{229948}}, -- Blackwater Shredder Deluxe Mk 2
+{466020,{229949}}, -- Personalized Goblin S.C.R.A.P.per
+{466021,{229947}}, -- Violet Goblin Shredder
+{466022,{229951}}, -- Venture Co-ordinator
+{466023,{229952}}, -- Asset Advocator
+{466024,{229957}}, -- Bilgewater Bombardier
+{466025,{229954}}, -- Margin Manipulator
+{466026,{229953}}, -- Salvaged Goblin Gazillionaire's Flying Machine
+{466027,{229955}}, -- Darkfuse Spy-Eye
+{466028,{229956}}, -- Mean Green Flying Machine
+{466133,{229974}}, -- Delver's Gob-Trotter
+{466144,{229987}}, -- Prized Gladiator's Fel Bat
+{466145,{229988}}, -- Vicious Electro Eel
+{466146,{229989}}, -- Vicious Electro Eel
+{466423,{}}, -- Unstable Rocket
+{466464,{}}, -- Unstable Rocketpack
 {466811,{230184}}, -- Chaos-Forged Gryphon
 {466812,{230185}}, -- Chaos-Forged Hippogryph
 {466838,{230200}}, -- Chaos-Forged Dreadwing
 {466845,{230201}}, -- Chaos-Forged Wind Rider
+{468068,{231173}}, -- Junkmaestro's Magnetomech
 {468205,{231297}}, -- Timbered Sky Snake
 {468353,{231374}}, -- Enchanted Spellweave Carpet
 {471538,{232624}}, -- Timely Buzzbee
@@ -1415,7 +1442,13 @@ local ImportCrossRefTable = {
 {472489,{233019}}, -- Sky Witch's Sweeper
 {472752,{232991}}, -- The Breaker's Song
 {473137,{233058}}, -- Soweezi's Vintage Waveshredder
+{473188,{233064}}, -- Bronze Goblin Waveshredder
 {473472,{235515}}, -- Jani's Trashpile
+{473739,{233282}}, -- Meeksi Rufflefur
+{473741,{233283}}, -- Meeksi Softpaw
+{473743,{233284}}, -- Meeksi Rollingpaw
+{473744,{233285}}, -- Meeksi Teatuft
+{473745,{233286}}, -- Meeksi Brewthief
 {473861,{233354}}, -- Savage Alabaster Battle Turtle
 {474086,{233489}}, -- Prismatic Snapdragon
 -- end of live
@@ -1707,7 +1740,7 @@ function ArkInventory.Collection.Mount.isFlyable( )
 		
 		-- you can fly here but you need a specific spell
 		if IsFlyable and ArkInventory.Const.Flying.Spell[instancemapid] then
-			local known = IsSpellKnown( ArkInventory.Const.Flying.Spell[instancemapid] )
+			local known = IsSpellKnown( ArkInventory.Const.Flying.Spell[instancemapid], false )
 			if not known then
 				--ArkInventory.Output( "zone ", instancemapid, " but you do not have spell ", ArkInventory.Const.Flying.Spell[instancemapid] )
 				IsFlyable = false
@@ -1728,7 +1761,7 @@ function ArkInventory.Collection.Mount.isFlyable( )
 		
 		for index = 1, ArkInventory.CrossClient.GetNumWorldPVPAreas( ) do
 			
-			local pvpID, pvpZone, isActive = GetWorldPVPAreaInfo( index )
+			local pvpID, pvpZone, isActive = ArkInventory.CrossClient.GetWorldPVPAreaInfo( index )
 			--ArkInventory.Output( pvpID, " / ", pvpZone, " / ", isActive )
 			
 			if isActive and GetRealZoneText( ) == pvpZone then
@@ -1805,30 +1838,30 @@ function ArkInventory.Collection.Mount.SkillLevel( )
 	
 	if UnitLevel( "player" ) >= PLAYER_MOUNT_LEVEL then
 		
-		if IsSpellKnown( 90265 ) then
+		if IsSpellKnown( 90265, false ) then
 			-- master
 			-- level 80
 			-- 310% flying
 			-- 100% ground
 			skill = 310
-		elseif IsSpellKnown( 34091 ) then
+		elseif IsSpellKnown( 34091, false ) then
 			-- artisan
 			-- level 70
 			-- 280% flying
 			-- 100% ground
 			skill = 300
-		elseif IsSpellKnown( 34090 ) then
+		elseif IsSpellKnown( 34090, false ) then
 			-- expert
 			-- level 60
 			-- 150% flying
 			-- 100% ground
 			skill = 225
-		elseif IsSpellKnown( 33391 ) then
+		elseif IsSpellKnown( 33391, false ) then
 			-- journeyman
 			-- level 40
 			-- 100% ground
 			skill = 150
-		elseif IsSpellKnown( 33388 ) then
+		elseif IsSpellKnown( 33388, false ) then
 			-- apprentice
 			-- level 20
 			-- 60% ground
@@ -2290,7 +2323,6 @@ function ArkInventory.SetMountMacro( )
 			btn:Hide( )
 			btn:SetMouseClickEnabled( true )
 			btn:RegisterForClicks( "AnyDown", "AnyUp" )
-			--btn:SetAttribute( "macrotext", "/sit" )
 		end
 		
 		btn:SetAttribute( "macrotext", macrotext )

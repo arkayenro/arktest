@@ -50,6 +50,7 @@ end
 
 helper_ResetItemDataTypes( 186515, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Aspiring Aspirant's Regalia
 helper_ResetItemDataTypes( 186727, ArkInventory.ENUM.ITEM.TYPE.KEY.PARENT, ArkInventory.ENUM.ITEM.TYPE.KEY.KEY ) -- Seal Breaker Key
+helper_ResetItemDataTypes( 192545, ArkInventory.ENUM.ITEM.TYPE.QUEST.PARENT, ArkInventory.ENUM.ITEM.TYPE.QUEST.QUEST ) -- Primal Flame Fragment
 helper_ResetItemDataTypes( 198776, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Renowned Expeditioner's Leather Armor
 helper_ResetItemDataTypes( 199752, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Crimson Valdrakken Clothing
 helper_ResetItemDataTypes( 199753, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Black Valdrakken Clothing
@@ -58,9 +59,9 @@ helper_ResetItemDataTypes( 199756, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, Ark
 helper_ResetItemDataTypes( 208831, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Tyr's Titan Key
 helper_ResetItemDataTypes( 211383, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.FOOD_AND_DRINK ) -- Luvkip
 helper_ResetItemDataTypes( 211446, ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.COSMETIC ) -- Ensemble: Heritage of the Darkspear
+helper_ResetItemDataTypes( 222738, ArkInventory.ENUM.ITEM.TYPE.TRADEGOODS.PARENT, ArkInventory.ENUM.ITEM.TYPE.TRADEGOODS.COOKING ) -- Portioned Steak
 helper_ResetItemDataTypes( 224298, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.PARENT, ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.OTHER ) -- Dilated Eon Canister
 helper_ResetItemDataTypes( 228228, ArkInventory.ENUM.ITEM.TYPE.QUEST.PARENT, ArkInventory.ENUM.ITEM.TYPE.QUEST.QUEST ) -- Strange Lump of Wax
-
 helper_ResetItemDataTypes( 225770, ArkInventory.ENUM.ITEM.TYPE.MISC.PARENT, ArkInventory.ENUM.ITEM.TYPE.MISC.OTHER ) -- Algari Anglerthread
 helper_ResetItemDataTypes( 225771, ArkInventory.ENUM.ITEM.TYPE.MISC.PARENT, ArkInventory.ENUM.ITEM.TYPE.MISC.OTHER ) -- Algari Seekerthread
 
@@ -317,14 +318,17 @@ local function helper_UpdateObjectInfo( info, thread_id )
 				
 				
 				info.invtypeid = C_Item.GetItemInventoryTypeByID( info.h )
-				if ArkInventory.Const.Slot.INVTYPE_SortOrder[info.equiploc] then
-					if ArkInventory.Const.Slot.INVTYPE_SortOrder[info.equiploc] <= 0 then
-						-- clear unwanted equipment types so they arent seen as equipable
+				
+				-- clear unwanted equipment types so they arent seen as equipment
+				if info.equiploc ~= "" then
+					if _G[info.equiploc] == "" then
 						info.equiploc = ""
-					end
-				else
-					-- clear unknown equipment types so they arent seen as equipable, and warn user about it
-					if info.equiploc ~= "" then
+					elseif ArkInventory.Const.Slot.INVTYPE_SortOrder[info.equiploc] then
+						if ArkInventory.Const.Slot.INVTYPE_SortOrder[info.equiploc] <= 0 then
+							info.equiploc = ""
+						end
+					else
+						-- unknown values, warn user about them (once per session)
 						if not equiplocwarningsent[info.equiploc] then
 							equiplocwarningsent[info.equiploc] = true
 							ArkInventory.OutputWarning( "Equipment Location [", info.equiploc, "] is not coded, please let the author know." )
@@ -332,8 +336,7 @@ local function helper_UpdateObjectInfo( info, thread_id )
 						info.equiploc = ""
 					end
 				end
-				
-				
+
 				if info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT then
 					
 					local stock1, stock2 = ArkInventory.TooltipMatch( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_ITEM_CONTAINER_SLOTS"], false, true, true )
@@ -745,21 +748,35 @@ function ArkInventory.ObjectStringDecode( h, i )
 		--osd.linklevel = osd[10]
 		osd[10] = 0 -- zero out for a more consistent exrid (its the characters current level)
 		
+		local pos = 11
+		
+		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.PANDARIA, ArkInventory.ENUM.EXPANSION.PANDARIA ) then
+			-- classic pandaria hyperlinks issue with extra value at position 11.  we will just jump over it
+			pos = pos + 1
+		end
+
 		--osd.specid = osd[11]
-		osd[11] = 0 -- zero out for a more consistent exrid (its the characters current spec)
+		osd[pos] = 0 -- zero out for a more consistent exrid (its the characters current spec)
+		pos = pos + 1
 		
-		osd.upgradeid = osd[12]
+		osd.upgradeid = osd[pos]
+		pos = pos + 1
 		
-		osd.sourceid = osd[13]
-		osd[13] = 0 -- zero out for a more consistent exrid (its the same item so it doesnt matter where it came from)
+		osd.sourceid = osd[pos]
+		osd[pos] = 0 -- zero out for a more consistent exrid (its the same item so it doesnt matter where it came from)
+		pos = pos + 1
 		
-		local pos = 14
+--		local pos = 14
 		
 		-- [14] bonus ids
 		if osd[pos] and osd[pos] > 0 then
 			osd.bonusids = { }
 			for x = pos + 1, pos + osd[pos] do
-				osd.bonusids[osd[x]] = true
+				if osd[x] then
+					osd.bonusids[osd[x]] = true
+				else
+					ArkInventory.OutputDebug( RED_FONT_COLOR_CODE, "invalid bonusid [", x, " of ", osd[pos], "] in hyperlink - ", h2, FONT_COLOR_CODE_CLOSE )
+				end
 			end
 			pos = pos + osd[pos]
 		end
@@ -1139,7 +1156,7 @@ function ArkInventory.ObjectIDBonus( t, h, i )
 			local id
 			
 			for bid in pairs( osd.bonusids ) do
-				id = ArkInventory.PT_BonusIDIsWanted( t, bid )
+				id = ArkInventory.PT_BonusIDIsWanted( t, bid, osd )
 				if id then
 					c = c + 1
 					r = string.format( "%s:%s", r, id )

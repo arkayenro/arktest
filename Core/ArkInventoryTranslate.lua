@@ -307,7 +307,7 @@ local function GetTooltipBasedTranslations( )
 	
 	for k, v in pairs( tooltipTable ) do
 		
-		local key, id, update = v[1], v[2]
+		local key, id = v[1], v[2]
 		
 		if key and id and updateTable[key] then
 			

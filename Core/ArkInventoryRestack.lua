@@ -416,8 +416,12 @@ local function FindCraftingItem( src_loc_id_window, dst_loc_id_window, dst_bag_i
 									
 									if not info.itemunique then
 										
+										-- we only move stacks of non unique items into empty slots as its too difficult to work out if its viable or not
+
 										if dst_bag_type then
 											
+											-- destination bag is a profession bag
+
 											if info.craft or info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.REAGENT.PARENT or info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.PROJECTILE.PARENT then
 												
 												if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) then -- FIX ME, not sure when this shifted to multi bagtype support
@@ -439,11 +443,24 @@ local function FindCraftingItem( src_loc_id_window, dst_loc_id_window, dst_bag_i
 											end
 											
 										else
+
+											-- not a profession bag, only allow moving crafting reagents
 											
 											if info.craft then
 												
-												--ArkInventory.Output( mode, "> found [", blizzard_id, ".", slot_id, "] " , itemInfo.hyperlink )
-												return false, recheck, true, src_loc_id_window, src_bag_id_window, blizzard_id, slot_id
+												if itemInfo.isBound and (dst_loc_id_storage == ArkInventory.Const.Location.AccountBank or dst_loc_id_storage == ArkInventory.Const.Location.Vault) then
+													
+													-- dont transfer soulbound items to the account bank (or the guild bank, not that we allow consolidate for the vault - its too slow and prone to item loss)
+
+													--ArkInventory.Output( mode, "> ignored (bound) [", blizzard_id, ".", slot_id, "] " , itemInfo.hyperlink )
+
+												else
+													
+													ArkInventory.OutputDebug( mode, "> found [", blizzard_id, ".", slot_id, "] " , itemInfo.hyperlink )
+													
+													return false, recheck, true, src_loc_id_window, src_bag_id_window, blizzard_id, slot_id
+
+												end
 												
 											end
 											
@@ -513,7 +530,7 @@ local function FindNormalItem( src_loc_id_window, dst_loc_id, dst_bag_id, dst_ba
 	local recheck = false
 	
 	local dst_loc_id = dst_loc_id or src_loc_id_window -- destination loc_id
-	local dst_blizzard_id = dst_blizzard_id or 9999 -- destination blizzard_id
+	local dst_bag_id = dst_bag_id or 9999 -- destination blizzard_id
 	local dst_bag_pos = dst_bag_pos or -1 -- destination bag position
 	local dst_slot_id = dst_slot_id or -1 -- destination slot_id
 	
@@ -1021,7 +1038,7 @@ local function CompactBag( loc_id, blizzard_id, bag_pos )
 					
 					--ArkInventory.OutputDebug( "empty @ ", loc_id, ".", blizzard_id, ".", slot_id )
 					
-					local ab, rc, ok, loc_id_partial, bag_id_partial, blizzard_id_partial, slot_id_partial = FindNormalItem( loc_id, loc_id, blizzard_id, bag_pos, slot_id, bt )
+					local ab, rc, ok, loc_id_partial, bag_id_partial, blizzard_id_partial, slot_id_partial = FindNormalItem( loc_id, loc_id, blizzard_id, bag_pos, slot_id )
 					
 					if ab then
 						return ab
@@ -1117,99 +1134,113 @@ local function CleanupBag( )
 end
 
 local function CleanupBank( )
-	ArkInventory.CrossClient.SortBankBags( )
+	
+	if ArkInventory.Global.Location[ArkInventory.Const.Location.Bank].ClientCheck then
+		
+		ArkInventory.CrossClient.SortBankBags( )
+		
+	end
+	
 end
 
 local function CleanupReagentBank( )
 	
-	if ArkInventory.CrossClient.IsReagentBankUnlocked( ) then
+	if ArkInventory.Global.Location[ArkInventory.Const.Location.ReagentBank].ClientCheck then
 		
-		if ArkInventory.db.option.cleanup.deposit[ArkInventory.Const.Location.ReagentBank] then
+		if ArkInventory.CrossClient.IsReagentBankUnlocked( ) then
 			
-			ArkInventory.Output( ArkInventory.RestackString( ), ": ", REAGENTBANK_DEPOSIT, " " , ArkInventory.Localise["ENABLED"] )
-			
-			C_Timer.After(
-				ArkInventory.db.option.cleanup.delay,
-				function( )
-					if ArkInventory.Global.Mode.Bank then
-						ArkInventory.CrossClient.DepositReagentBank( )
-					else
-						RestackMessageAbort( ArkInventory.Const.Location.ReagentBank )
-					end
-				end
-			)
-			
-		else
-			ArkInventory.Output( ArkInventory.RestackString( ), ": ", REAGENTBANK_DEPOSIT, " " , ArkInventory.Localise["DISABLED"] )
-		end
-		
-		local codex = ArkInventory.Codex.GetPlayer( )
-		
-		for bag_id_storage, map in ipairs( ArkInventory.Util.MapGetStorage( ArkInventory.Const.Location.ReagentBank ) ) do
-			
-			local loc_id_window = map.loc_id_window
-			local bag_id_window = map.bag_id_window
-			
-			if not codex.player.data.option[loc_id_window].bag[bag_id_window].restack.ignore then
+			if ArkInventory.db.option.cleanup.deposit[ArkInventory.Const.Location.ReagentBank] then
+				
+				ArkInventory.Output( ArkInventory.RestackString( ), ": ", REAGENTBANK_DEPOSIT, " " , ArkInventory.Localise["ENABLED"] )
+				
 				C_Timer.After(
-					0.6,
+					ArkInventory.db.option.cleanup.delay,
 					function( )
 						if ArkInventory.Global.Mode.Bank then
-							ArkInventory.CrossClient.SortReagentBankBags( )
+							ArkInventory.CrossClient.DepositReagentBank( )
 						else
 							RestackMessageAbort( ArkInventory.Const.Location.ReagentBank )
 						end
 					end
 				)
 				
-				break -- only run cleanup once, no matter how many reagent bank tabs there are
+			else
+				ArkInventory.Output( ArkInventory.RestackString( ), ": ", REAGENTBANK_DEPOSIT, " " , ArkInventory.Localise["DISABLED"] )
+			end
+			
+			local codex = ArkInventory.Codex.GetPlayer( )
+			
+			for bag_id_storage, map in ipairs( ArkInventory.Util.MapGetStorage( ArkInventory.Const.Location.ReagentBank ) ) do
+				
+				local loc_id_window = map.loc_id_window
+				local bag_id_window = map.bag_id_window
+				
+				if not codex.player.data.option[loc_id_window].bag[bag_id_window].restack.ignore then
+					C_Timer.After(
+						0.6,
+						function( )
+							if ArkInventory.Global.Mode.Bank then
+								ArkInventory.CrossClient.SortReagentBankBags( )
+							else
+								RestackMessageAbort( ArkInventory.Const.Location.ReagentBank )
+							end
+						end
+					)
+					
+					break -- only run cleanup once, no matter how many reagent bank tabs there are
+					
+				end
 				
 			end
 			
 		end
-		
+
 	end
 	
 end
 
 local function CleanupAccountBank( )
 	
-	if ArkInventory.db.option.cleanup.deposit[ArkInventory.Const.Location.AccountBank] then
-		
-		ArkInventory.Output( ArkInventory.RestackString( ), ": ", ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL, " " , ArkInventory.Localise["ENABLED"] )
-		
-		local cv_name = "bankAutoDepositReagents"
-		local cv_value = ArkInventory.CrossClient.GetCVarBool( cv_name )
-		if cv_value then
-			ArkInventory.Output( ArkInventory.RestackString( ), ": ", BANK_DEPOSIT_INCLUDE_REAGENTS_CHECKBOX_LABEL, " " , ArkInventory.Localise["ENABLED"] )
+	if ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].ClientCheck then
+
+		if ArkInventory.db.option.cleanup.deposit[ArkInventory.Const.Location.AccountBank] then
+			
+			ArkInventory.Output( ArkInventory.RestackString( ), ": ", ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL, " " , ArkInventory.Localise["ENABLED"] )
+			
+			local cv_name = "bankAutoDepositReagents"
+			local cv_value = ArkInventory.CrossClient.GetCVarBool( cv_name )
+			if cv_value then
+				ArkInventory.Output( ArkInventory.RestackString( ), ": ", BANK_DEPOSIT_INCLUDE_REAGENTS_CHECKBOX_LABEL, " " , ArkInventory.Localise["ENABLED"] )
+			else
+				ArkInventory.Output( ArkInventory.RestackString( ), ": ", BANK_DEPOSIT_INCLUDE_REAGENTS_CHECKBOX_LABEL, " " , ArkInventory.Localise["DISABLED"] )
+			end
+			
+			C_Timer.After(
+				ArkInventory.db.option.cleanup.delay,
+				function( )
+					if ArkInventory.Global.Mode.Bank or ArkInventory.Global.Mode.AccountBank then
+						ArkInventory.CrossClient.DepositAccountBank( )
+					else
+						RestackMessageAbort( ArkInventory.Const.Location.AccountBank )
+					end
+				end
+			)
+			
 		else
-			ArkInventory.Output( ArkInventory.RestackString( ), ": ", BANK_DEPOSIT_INCLUDE_REAGENTS_CHECKBOX_LABEL, " " , ArkInventory.Localise["DISABLED"] )
+			
+			ArkInventory.Output( ArkInventory.RestackString( ), ": ", ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL, " " , ArkInventory.Localise["DISABLED"] )
+			
 		end
 		
-		C_Timer.After(
-			ArkInventory.db.option.cleanup.delay,
-			function( )
-				if ArkInventory.Global.Mode.Bank or ArkInventory.Global.Mode.AccountBank then
-					ArkInventory.CrossClient.DepositAccountBank( )
-				else
-					RestackMessageAbort( ArkInventory.Const.Location.AccountBank )
-				end
-			end
-		)
 		
-	else
-		
-		ArkInventory.Output( ArkInventory.RestackString( ), ": ", ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL, " " , ArkInventory.Localise["DISABLED"] )
+		if ArkInventory.Global.Mode.Bank or ArkInventory.Global.Mode.AccountBank then
+			ArkInventory.CrossClient.SortAccountBankBags( )
+		else
+			RestackMessageAbort( ArkInventory.Const.Location.AccountBank )
+		end
 		
 	end
-	
-	
-	if ArkInventory.Global.Mode.Bank or ArkInventory.Global.Mode.AccountBank then
-		ArkInventory.CrossClient.SortAccountBankBags( )
-	else
-		RestackMessageAbort( ArkInventory.Const.Location.AccountBank )
-	end
-	
+
 end
 
 local function RestackRun_Threaded( loc_id_window )
@@ -1361,14 +1392,16 @@ local function RestackRun( loc_id_window )
 end
 
 function ArkInventory.Restack( loc_id_window )
-	if ArkInventory.db.option.restack.enable then
-		if ArkInventory.Global.Thread.Use then
-			RestackRun( loc_id_window )
+	if ArkInventory.Global.Location[loc_id_window].ClientCheck then
+		if ArkInventory.db.option.restack.enable then
+			if ArkInventory.Global.Thread.Use then
+				RestackRun( loc_id_window )
+			else
+				ArkInventory.OutputWarning( "cannot restack when threads are disabled" )
+			end
 		else
-			ArkInventory.OutputWarning( "cannot restack when threads are disabled" )
+			ArkInventory.OutputWarning( ArkInventory.RestackString( ), " is currently disabled.  Right click on the icon for options." )
 		end
-	else
-		ArkInventory.OutputWarning( ArkInventory.RestackString( ), " is currently disabled.  Right click on the icon for options." )
 	end
 end
 

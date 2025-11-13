@@ -1,6 +1,6 @@
-## Interface: 40402
+## Interface: 50501
 
-## Title: ArkTest [Cataclysm]
+## Title: ArkTest [Mists]
 ## Notes: test mod for packager testing
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com

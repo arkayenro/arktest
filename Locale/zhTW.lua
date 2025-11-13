@@ -108,6 +108,7 @@ if not L then return end
 --	L["CATEGORY_CONSUMABLE_FLASK"] = ""
 --	L["CATEGORY_CONSUMABLE_SCROLL"] = ""
 --	L["CATEGORY_CONSUMABLE_CHAMPION_EQUIPMENT"] = ""
+--	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"] = ""
 --	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_OLD"] = ""
 --	L["CATEGORY_CONSUMABLE_ABILITIES_AND_ACTIONS"] = ""
 	
@@ -259,8 +260,10 @@ if not L then return end
 --	L["MENU_BAG_EMPTY_DESC"] = ""
 --	L["MENU_BAG_PANEL_COMBINE"] = ""
 --	L["MENU_BAG_PANEL_COMBINE_ALL_DESC"] = ""
+--	L["MENU_BAG_PANEL_COMBINE_BANK_DESC"] = ""
 --	L["MENU_BAG_PANEL_COMBINE_REAGENT_DESC"] = ""
 --	L["MENU_BAG_PANEL_COMBINE_ACCOUNT_DESC"] = ""
+--	L["MENU_BAG_CHANGE_SETTINGS"] = ""
 	
 	
 --	configuration options
@@ -440,6 +443,8 @@ if not L then return end
 	L["CONFIG_CONTROL_BLUEPRINT_DESC"] = "選擇當產生%1$s視窗時使用的設定"
 --	L["CONFIG_CONTROL_WITH_ARKINV"] = "" -- %1$s = program, %2$s = location
 --	L["CONFIG_CONTROL_WITH_BLIZZARD"] = "" -- %1$s = program, %2$s = location
+--	L["CONFIG_CONTROL_RESELECT"] = ""
+--	L["CONFIG_CONTROL_RESELECT_PER_SESSION"] = ""
 	
 	
 --	configuration settings > design
@@ -523,6 +528,8 @@ if not L then return end
 	L["CONFIG_DESIGN_ITEM_TINT_UNUSABLE_DESC"] = "將可使用物品標示為紅色"
 --	L["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE"] = ""
 --	L["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE_DESC"] = ""
+--	L["CONFIG_DESIGN_ITEM_TINT_IGNORE_ITEMLEVEL_DESC"] = ""
+--	L["CONFIG_DESIGN_ITEM_TINT_IGNORE_KNOWN_DESC"] = ""
 --	L["CONFIG_DESIGN_ITEM_ITEMLEVEL"] = ""
 --	L["CONFIG_DESIGN_ITEM_ITEMLEVEL_DESC"] = ""
 --	L["CONFIG_DESIGN_ITEM_ITEMLEVEL_QUALITY_DESC"] = ""
@@ -943,7 +950,8 @@ if not L then return end
 	L["ORDER"] = "順序"
 --	L["MOUSEOVER"] = ""
 	L["NO_DATA_AVAILABLE"] = "無數據"
---	L["TOOLTIP_PURCHASE_BANK_BAG_SLOT"] = ""
+--	L["TOOLTIP_PURCHASE_NEXT_SLOT"] = ""
+--	L["TOOLTIP_PURCHASE_NEXT_TAB"] = ""
 --	L["LABEL"] = ""
 --	L["ABORTED"] = ""
 --	L["RESTORE"] = ""
@@ -1004,6 +1012,7 @@ if not L then return end
 --	L["USING"] = ""
 --	L["DATA_NOT_READY"] = ""
 --	L["DATA_NOT_FOUND"] = ""
+--	L["TINT"] = ""
 	
 	
 -- libdatabroker

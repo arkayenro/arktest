@@ -1,4 +1,6 @@
 
+.vscode/
+.github/
 ArkInventoryDeprecated.lua
-Core/old-bucket-update-timers.txt
+ArkInventoryDeprecated.txt
 notepad_session

@@ -56,7 +56,6 @@ local function helper_GetCurrencyName( currencyID )
 end
 
 -- game client based localisations and internal stuff
-L["TOC_FAIL"] = "*****  This is a Legion Beta version, it will not work on the live servers, please downgrade to 3.05.12  *****"
 
 -- class names
 L["WOW_CLASS_DRUID"] = LOCALIZED_CLASS_NAMES_MALE["DRUID"] or true
@@ -88,7 +87,7 @@ L["WOW_SKILL_MINING"] = string.match( UNIT_SKINNABLE_ROCK, FormatForCapture( "IT
 L["CATEGORY_SYSTEM"] = CHAT_MSG_SYSTEM or true
 L["CATEGORY_CONSUMABLE"] = AUCTION_CATEGORY_CONSUMABLES or true
 L["CATEGORY_TRADEGOODS"] = AUCTION_CATEGORY_TRADE_GOODS or true
-L["CATEGORY_ITEM_ENHANCEMENTS"] = AUCTION_CATEGORY_ITEM_ENHANCEMENTS or true
+L["CATEGORY_ITEM_ENHANCEMENTS"] = AUCTION_CATEGORY_ITEM_ENHANCEMENT or true
 --L["CATEGORY_REAGENT"] = AUCTION_CATEGORY_REAGENT or true -- only exists in classic
 L["CATEGORY_SKILL"] = SKILL or true
 L["CATEGORY_CLASS"] = CLASS or true
@@ -136,7 +135,7 @@ L["ASSIGN"] = COMBAT_ALLY_START_MISSION or true
 L["AT_WAR"] = AT_WAR or true
 L["AUCTION_HOUSE"] = BUTTON_LAG_AUCTIONHOUSE or true
 L["AUCTIONS"] = AUCTIONS or true
-L["BACKPACK"] = BACKPACK_TOOLTIP or true
+L["BACKPACK"] = BAG_NAME_BACKPACK or BACKPACK_TOOLTIP or true
 L["BAG"] = INVTYPE_BAG or true
 L["BANK"] = BANK or true
 L["BLIZZARD"] = "Blizzard"
@@ -233,6 +232,7 @@ L["KEYRING"] = KEYRING or true
 L["LEARN"] = LEARN or true
 L["LEARNED"] = TRADE_SKILLS_LEARNED_TAB or true
 L["LEVEL_LINKED_NOT_USABLE"] = LEVEL_LINKED_NOT_USABLE or true
+L["LOADING"] = SEARCH_LOADING_TEXT or true
 L["LOCK"] = LOCK or true
 L["LOCKED"] = LOCKED or true
 L["LOW"] = LOW or true
@@ -253,6 +253,7 @@ L["MOVE_DOWN"] = TRACKER_SORT_MANUAL_DOWN or true
 L["MOVE_TO_INACTIVE"] = MOVE_TO_INACTIVE or true
 L["MOVE_UP"] = TRACKER_SORT_MANUAL_UP or true
 L["NAME"] = NAME or true
+L["NEVER"] = NEVER or true
 L["NEW"] = NEW or true
 L["NO"] = NO or true
 L["NONE"] = NONE or true

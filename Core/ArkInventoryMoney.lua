@@ -151,6 +151,7 @@ ArkInventory.Const.MoneyTypeInfo["TARGET_TRADE"] = {
 	
 }
 
+--[[
 ArkInventory.Const.MoneyTypeInfo["SEND_MAIL"] = {
 
 	OnloadFunc = function( moneyFrame )
@@ -181,7 +182,9 @@ ArkInventory.Const.MoneyTypeInfo["SEND_MAIL"] = {
 	showSmallerCoins = "Backpack",
 	
 }
+--]]
 
+--[[
 ArkInventory.Const.MoneyTypeInfo["SEND_MAIL_COD"] = {
 	
 	OnloadFunc = function( moneyFrame )
@@ -211,6 +214,7 @@ ArkInventory.Const.MoneyTypeInfo["SEND_MAIL_COD"] = {
 	canPickup = 1,
 	
 }
+]]--
 
 ArkInventory.Const.MoneyTypeInfo["GUILDBANK"] = {
 	
@@ -653,7 +657,7 @@ function ArkInventory.MoneyFrame_Update(frameName, money, forceShow)
 	
 	local info = frame.info;
 	if ( not info ) then
-		message("Error moneyType not set");
+		message("Error moneyType not set", false);
 	end
 
 	-- Breakdown the money into denominations
@@ -676,7 +680,7 @@ function ArkInventory.MoneyFrame_Update(frameName, money, forceShow)
 	local maxDisplayWidth = frame.maxDisplayWidth;
 	
 	-- Set values for each denomination
-	if ( ENABLE_COLORBLIND_MODE == "1" ) then
+	if ( ArkInventory.Global.Mode.ColourBlind ) then
 		
 		if ( not frame.colorblind or not frame.vadjust or frame.vadjust ~= MONEY_TEXT_VADJUST ) then
 			

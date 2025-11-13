@@ -17,6 +17,8 @@ Dependencies: AceLibrary
 License: LGPL v2.1
 ]]
 
+
+
 local libname = "ArkDewdrop"
 local libversion = 30111
 local lib = LibStub:NewLibrary( libname, libversion )
@@ -1459,7 +1461,7 @@ function lib:FeedAceOptionsTable(options, difference)
 						'tooltipText', tooltipText
 					)
 				elseif v.type == "execute" then
-					local func, arg1, arg2, arg3, arg4
+					local func, arg1, arg2, arg3, arg4, checked
 					local confirm = v.confirm
 					if confirm == true then
 						confirm = DEFAULT_CONFIRM_MESSAGE:format(tooltipText or tooltipTitle)
@@ -1687,6 +1689,7 @@ function lib:FeedAceOptionsTable(options, difference)
 		local multiToggle = options.multiToggle
 		local passValue = options.passValue or passValue
 		if not multiToggle then
+			local k -- k is meant to be the setting name, but not sure what it should be here as k doesnt exist.  it shouldnt cause any issues though
 			current = callMethod(k, handler, options_p, "get", passValue)
 		end
 		local indexed = true
@@ -2393,7 +2396,13 @@ function OpenEditBox(parent)
 				local type, alpha, bravo = GetCursorInfo()
 				local text
 				if type == "spell" then
-					text = GetSpellName(alpha, bravo)
+					if C_Spell and C_Spell.GetSpellName then
+						text = C_Spell.GetSpellName(alpha)
+					elseif GetSpellBookItemName then
+						text = GetSpellBookItemName(alpha, bravo)
+					elseif GetSpellName then
+						text = GetSpellName(alpha, bravo)
+					end
 				elseif type == "item" then
 					text = bravo
 				end
@@ -3138,7 +3147,7 @@ function lib:AddLine(...)
 		button.b = info.b or 1
 		button.hasOpacity = info.hasOpacity
 		button.opacity = info.opacity or 1
-		button.colorSwatch.texture:SetColorTexture(button.r, button.g, button.b, opacity)
+		button.colorSwatch.texture:SetColorTexture(button.r, button.g, button.b, button.opacity)
 		button.checked = false
 		button.func = nil
 		button.colorFunc = info.colorFunc
@@ -3469,7 +3478,7 @@ activate( )
 
 function lib:argCheck(arg, num, kind, kind2, kind3, kind4, kind5)
 	if type(num) ~= "number" then
-		return error(self, "Bad argument #3 to `argCheck' (number expected, got %s)", type(num))
+		return error(self,"Bad argument #3 to `argCheck' (number expected, got %s)", type(num))
 	elseif type(kind) ~= "string" then
 		return error(self, "Bad argument #4 to `argCheck' (string expected, got %s)", type(kind))
 	end
@@ -3481,15 +3490,15 @@ function lib:argCheck(arg, num, kind, kind2, kind3, kind4, kind5)
 			func = stack:match("([`<].-['>])")
 		end
 		if kind5 then
-			return error(self, "Bad argument #%s to %s (%s, %s, %s, %s, or %s expected, got %s)", tonumber(num) or 0/0, func, kind, kind2, kind3, kind4, kind5, arg)
+			return error(self, "Bad argument #%s to %s (%s, %s, %s, %s, or %s expected, got %s)", tonumber(num) or 0, func, kind, kind2, kind3, kind4, kind5, arg)
 		elseif kind4 then
-			return error(self, "Bad argument #%s to %s (%s, %s, %s, or %s expected, got %s)", tonumber(num) or 0/0, func, kind, kind2, kind3, kind4, arg)
+			return error(self, "Bad argument #%s to %s (%s, %s, %s, or %s expected, got %s)", tonumber(num) or 0, func, kind, kind2, kind3, kind4, arg)
 		elseif kind3 then
-			return error(self, "Bad argument #%s to %s (%s, %s, or %s expected, got %s)", tonumber(num) or 0/0, func, kind, kind2, kind3, arg)
+			return error(self, "Bad argument #%s to %s (%s, %s, or %s expected, got %s)", tonumber(num) or 0, func, kind, kind2, kind3, arg)
 		elseif kind2 then
-			return error(self, "Bad argument #%s to %s (%s or %s expected, got %s)", tonumber(num) or 0/0, func, kind, kind2, arg)
+			return error(self, "Bad argument #%s to %s (%s or %s expected, got %s)", tonumber(num) or 0, func, kind, kind2, arg)
 		else
-			return error(self, "Bad argument #%s to %s (%s expected, got %s)", tonumber(num) or 0/0, func, kind, arg)
+			return error(self, "Bad argument #%s to %s (%s expected, got %s)", tonumber(num) or 0, func, kind, arg)
 		end
 	end
 end

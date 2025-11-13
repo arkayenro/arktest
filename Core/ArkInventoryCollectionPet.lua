@@ -52,6 +52,7 @@ local ImportCrossRefTable = {
 {17254,{23712,-30152}}, -- Ash'ana / White Tiger Cub
 {55187,{75040}}, -- Darkmoon Balloon / Flimsy Darkmoon Balloon
 {91226,{122477}}, -- Graves / My Special Pet
+{113827,{141349}}, -- Strange Humming Crystal / Wondrous Wisdomball
 
 -- extracted from wowhead
 {2671,{4401,-4055}}, -- Mechanical Squirrel / Mechanical Squirrel Box
@@ -1126,6 +1127,7 @@ local ImportCrossRefTable = {
 {185322,{190173,-366833}}, -- Lil' Maka'jin
 {183686,{190175,-366841}}, -- Pippin
 {185324,{190176,-366842}}, -- Drazka'zet the Wrathful
+{185425,{241193,-367189}}, -- Helpful Workshop Bot / Threadis's Workshop Bot 2.0
 {185477,{191039,-367376}}, -- Pocopoc / Pocopoc Traveler
 {183638,{190583,-367696}}, -- Ichabod
 {185586,{190586,-367702}}, -- Lil' Ursoc
@@ -1349,7 +1351,7 @@ local ImportCrossRefTable = {
 {222200,{221848,-445823}}, -- Tiberius
 {222202,{221850,-445824}}, -- Bean / Freshly Webbed Kebab
 {222201,{221849,-445826}}, -- Vanilla
-{222204,{221851,-445828}}, -- Argos
+{222204,{221851,-445828}}, -- Argos / Argos's Bell
 {222298,{220771,-446004}}, -- Hallowed Glowfly
 {222318,{223155,-446024}}, -- Bop
 {222319,{224439,-446027}}, -- Oop'lajax
@@ -1373,6 +1375,7 @@ local ImportCrossRefTable = {
 {222585,{-446491}}, -- Kaheti Bull Worm
 {222583,{225934,-446493}}, -- Lil' Bonechewer
 {222590,{225337,-446498}}, -- Violet Sporbit
+{222592,{-446500}}, -- Hemospore
 {222607,{221761,-446512}}, -- Venomwing
 {222609,{221759,-446513}}, -- Sceaduthax
 {222606,{221760,-446514}}, -- Pillarnest Bonedrinker
@@ -1395,7 +1398,7 @@ local ImportCrossRefTable = {
 {223316,{223145,-448355}}, -- Marrlok
 {223600,{223339,-449046}}, -- Trishi
 {223645,{223474,-449173}}, -- Worgli the Apprehensive
-{223691,{223498,-449280}}, -- Charismatic Courier
+{223691,{223498,-449280}}, -- Whoopy
 {223695,{223499,-449286}}, -- Lil' Manny
 {223706,{228097,-449369}}, -- Pinkskin Burrower
 {223718,{223624,-449475}}, -- Sneef
@@ -1425,6 +1428,7 @@ local ImportCrossRefTable = {
 {229890,{228790,-463242}}, -- Thrillbot 9000
 {229901,{228793,-463251}}, -- Chillbot 9000
 {198987,{229366,-464798}}, -- Brrrgl
+{230834,{229368,-464808}}, -- Gill'el
 {231713,{229993,-466179}}, -- Bluedoo
 {231840,{228781,-466575}}, -- Lil'Doomy / Lil'Doomy's Hilt
 {231841,{230011,-466576}}, -- Lil'Kaz / Lil'Kaz's Hilt
@@ -1437,6 +1441,45 @@ local ImportCrossRefTable = {
 {233797,{233247,-471479}}, -- Sparklesnap
 {233965,{232653,-471751}}, -- Portentous Present
 {233967,{235989,-471798}}, -- Parley
+{231477,{-471893}}, -- Wily Rat
+{231479,{232859,-471895}}, -- Lab Rat
+{231470,{-471896}}, -- Acid-Drenched Rat
+{231481,{-471897}}, -- Underroach
+{231728,{-471898}}, -- Alchemical Runoff
+{231548,{232858,-471899}}, -- Cruncher
+{231466,{232857,-471900}}, -- Goggles / Goggles's Favorite Chew-Wrench
+{231467,{232856,-471901}}, -- Scruff
+{231469,{232855,-471902}}, -- Foreman
+{231465,{232854,-471903}}, -- Grinner
+{231468,{232853,-471904}}, -- Eepy
+{231464,{232852,-471907}}, -- Mutt
+{231567,{-471908}}, -- Venture Bombshell / Venture Crab
+{231550,{-471909}}, -- Bombshell Crab
+{231570,{-471910}}, -- Cave Crab
+{231572,{-471911}}, -- Kaja Crab
+{231616,{-471912}}, -- Tropical Frog
+{231574,{-471917}}, -- Paleshell Crab
+{231450,{232851,-471918}}, -- Rocketfist
+{231459,{232850,-471920}}, -- Blackwater Kegmover
+{231460,{232849,-471921}}, -- Venture Companyman
+{231462,{232848,-471922}}, -- Mr. DELVER
+{231463,{232847,-471923}}, -- Personal-Use Sapper
+{231461,{232846,-471924}}, -- Steamwheedle Flunkie
+{231458,{232845,-471925}}, -- Bilgewater Junkhauler
+{231577,{-471932}}, -- Varmint MK II / Varmint Mark II
+{231454,{232844,-471933}}, -- Fun-Size Flarendo / Fuz-Size Flarendo
+{231579,{-471934}}, -- Lime Roboclucker
+{231451,{232843,-471935}}, -- Gorillion
+{231686,{-471937}}, -- Ultrahopper EX
+{231455,{232842,-471939}}, -- Crimson Mechasaur
+{231453,{232841,-471940}}, -- Professor Punch
+{231622,{232840,-471941}}, -- Mechagopher
+{231457,{232839,-471942}}, -- Wavebreaker Mechasaur
+{231684,{-471943}}, -- Spring-Loaded Ribbitron
+{231456,{232838,-471944}}, -- Viridian Mechasaur
+{231448,{232806,-471945}}, -- Tiny Torq
+{231621,{232807,-471946}}, -- Iron Chick
+{234071,{232895,-472194}}, -- Spotty
 {234131,{232923,-472439}}, -- Living Rose
 {234365,{233056,-472536}}, -- Marmaduke
 {234366,{233057,-473127}}, -- Rock Hound Mica
@@ -1737,10 +1780,10 @@ function ArkInventory.Collection.Pet.GetStats( arg1 )
 	end
 end
 
-function ArkInventory.Collection.Pet.PickupPet( arg1, arg2 )
+function ArkInventory.Collection.Pet.PickupPet( arg1 )
 	local obj = ArkInventory.Collection.Pet.GetByID( arg1 )
 	if obj then
-		return C_PetJournal.PickupPet( obj.guid, arg2 )
+		return C_PetJournal.PickupPet( obj.guid )
 	end
 end
 
@@ -2090,7 +2133,7 @@ local function Scan_Threaded( thread_id )
 		if petID and isOwned then
 			
 			local speciesID, customName, level, xp, maxXp, displayID, isFavorite, petName, petIcon, petType, creatureID, sourceText, description, isWild, canBattle, isTradable, isUnique, isObtainable = C_PetJournal.GetPetInfoByPetID( petID )
-			local needsFanfare = petID and C_PetJournal.PetNeedsFanfare( petID )
+			local needsFanfare = petID and ArkInventory.CrossClient.C_PetJournal.PetNeedsFanfare( petID )
 			local health, maxHealth, power, speed, quality = C_PetJournal.GetPetStats( petID )
 			quality = quality - 1 -- back down to item colour
 			--local link = ArkInventory.BattlepetBaseHyperlink( speciesID, level, quality, health, power, speed, customName, petID )
@@ -2310,7 +2353,7 @@ function ArkInventory:EVENT_ARKINV_BATTLEPET_OPENING_DONE( event, ... )
 	
 	
 	local player = ArkInventory.ENUM.BATTLEPET.ENEMY
-	local isnpc = C_PetBattles.IsPlayerNPC( player )
+	local isnpc = ArkInventory.CrossClient.C_PetBattles.IsPlayerNPC( player )
 	local opponents = C_PetBattles.GetNumPets( player )
 	
 	if ArkInventory.db.option.message.battlepet.opponent then
@@ -2341,7 +2384,7 @@ function ArkInventory:EVENT_ARKINV_BATTLEPET_OPENING_DONE( event, ... )
 		end
 		
 		local quality = C_PetBattles.GetBreedQuality( player, i )
-		quality = ( quality and ( quality - 1 ) ) or -1
+		-- quality = ( quality and ( quality - 1 ) ) or -1  # quality return finally fixed in 11.0.0 so this adjustment is no longer needed
 		
 		local info = ""
 		local count

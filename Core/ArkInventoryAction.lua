@@ -343,6 +343,7 @@ function ArkInventory.Action.Vendor.Thread( thread_id, manual )
 		if not ArkInventory.db.option.action.vendor.test then
 			if ArkInventory.Global.Mode.Merchant then
 				ArkInventory.CrossClient.UseContainerItem( item[1], item[2] )
+				--C_Item.EndRefund(0)
 				ArkInventory.ThreadYield( thread_id )
 			end
 		end
@@ -742,7 +743,7 @@ function ArkInventory.Action.Mail.Ready( manual )
 		return
 	end
 	
-	if ArkInventory.CrossClient.TimerunningSeasonID( ) > 0 then
+	if ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID > 0 then
 		if manual then
 			ArkInventory.OutputWarning( ArkInventory.Localise["CONFIG_ACTION_MAIL"], " aborted, you are timerunning." )
 		end
@@ -1154,28 +1155,32 @@ function ArkInventory.Action.Scrap.Check( i, codex, manual )
 	
 	local isMatch = false
 	
-	local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromWindowId( i.loc_id, i.bag_id )
-	local blizzardLocation = ItemLocation:CreateFromBagAndSlot( blizzard_id, i.slot_id )
-	
-	if C_Item.CanScrapItem( blizzardLocation ) then
+	if C_Item and C_Item.CanScrapItem then
 		
-		local info = i.info or ArkInventory.GetObjectInfo( i.h, i )
+		local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromWindowId( i.loc_id, i.bag_id )
+		local blizzardLocation = ItemLocation:CreateFromBagAndSlot( blizzard_id, i.slot_id )
 		
-		if codex and i and i.h and info.q <= ArkInventory.db.option.action.scrap.raritycutoff then
+		if blizzardLocation and C_Item.CanScrapItem( blizzardLocation ) then
 			
-			local info = i.info or ArkInventory.GetObjectInfo( i.h )
-			if info.ready and info.id then
+			local info = i.info or ArkInventory.GetObjectInfo( i.h, i )
+			
+			if codex and i and i.h and info.q <= ArkInventory.db.option.action.scrap.raritycutoff then
 				
-				local cat_id = ArkInventory.ItemCategoryGet( i )
-				local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_id )
-				
-				local action = codex.catset.ca[cat_type][cat_num].action
-				if action.t == ArkInventory.ENUM.ACTION.TYPE.SCRAP then
+				local info = i.info or ArkInventory.GetObjectInfo( i.h )
+				if info.ready and info.id then
 					
-					if action.w == ArkInventory.ENUM.ACTION.WHEN.AUTO then
-						isMatch = true
-					elseif manual and action.w == ArkInventory.ENUM.ACTION.WHEN.MANUAL then
-						isMatch = true
+					local cat_id = ArkInventory.ItemCategoryGet( i )
+					local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_id )
+					
+					local action = codex.catset.ca[cat_type][cat_num].action
+					if action.t == ArkInventory.ENUM.ACTION.TYPE.SCRAP then
+						
+						if action.w == ArkInventory.ENUM.ACTION.WHEN.AUTO then
+							isMatch = true
+						elseif manual and action.w == ArkInventory.ENUM.ACTION.WHEN.MANUAL then
+							isMatch = true
+						end
+						
 					end
 					
 				end
@@ -1185,7 +1190,7 @@ function ArkInventory.Action.Scrap.Check( i, codex, manual )
 		end
 		
 	end
-	
+
 	return isMatch
 	
 end
@@ -1201,14 +1206,12 @@ function ArkInventory.Action.Scrap.Iterate( manual )
 	local bag_id_window = 1
 	local slot_id = 0
 	
-	local recipient, blizzard_id, isLocked, itemLink
-	
 	
 	return function( )
 		
-		isMatch = false
-		blizzard_id = nil
-		itemLink = nil
+		local isMatch = false
+		local blizzard_id = nil
+		local itemLink = nil
 		
 		while not isMatch do
 			
@@ -1233,9 +1236,9 @@ function ArkInventory.Action.Scrap.Iterate( manual )
 			blizzard_id = map.blizzard_id
 			
 			local itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
-			itemCount = itemInfo.stackCount
-			isLocked = itemInfo.isLocked
-			itemLink = itemInfo.hyperlink
+			local itemCount = itemInfo.stackCount
+			local isLocked = itemInfo.isLocked
+			local itemLink = itemInfo.hyperlink
 			
 			if itemCount and not isLocked and itemLink then
 				local loc_id_storage = map.loc_id_storage

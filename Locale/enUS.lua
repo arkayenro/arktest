@@ -108,7 +108,8 @@ if not L then return end
 	L["CATEGORY_CONSUMABLE_FLASK"] = "Flask"
 	L["CATEGORY_CONSUMABLE_SCROLL"] = "Scroll"
 	L["CATEGORY_CONSUMABLE_CHAMPION_EQUIPMENT"] = "Champion Equipment"
-	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_OLD"] = "Power Systems (Old)"
+	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"] = "Power System (%s)"
+	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_OLD"] = "Power System (Old)"
 	L["CATEGORY_CONSUMABLE_ABILITIES_AND_ACTIONS"] = "Abilities and Actions"
 	
 	L["CATEGORY_TIMERUNNING"] = "Timerunning"
@@ -257,10 +258,12 @@ if not L then return end
 	L["MENU_BAG_SHOWALL"] = "Display All"
 	L["MENU_BAG_SHOWALL_DESC"] = "display the contents of all bags for this location"
 	L["MENU_BAG_EMPTY_DESC"] = "moves the contents of this bag to your other bags"
-	L["MENU_BAG_PANEL_COMBINE"] = "Panel (Combine %s)"
-	L["MENU_BAG_PANEL_COMBINE_ALL_DESC"] = "\nenabled = combine all bank bags/tabs into a single panel\n\ndisabled = the bank, reagent bank, and each account bank tab, are shown in their own individual panels"
-	L["MENU_BAG_PANEL_COMBINE_REAGENT_DESC"] = "\nenabled = combine the bank and reagent bank into a single panel\n\n\ndisabled = the bank and reagent bank are shown in their own individual panels"
-	L["MENU_BAG_PANEL_COMBINE_ACCOUNT_DESC"] = "\nenabled = combine all account tabs into a single panel\n\n\ndisabled = each account bank tab is shown in its own individual panel"
+	L["MENU_BAG_PANEL_COMBINE"] = "Single Panel (%s)"
+	L["MENU_BAG_PANEL_COMBINE_ALL_DESC"] = "\nenabled = combine the bank, reagent bank, and account bank into a single panel\n\ndisabled = the bank, reagent bank, and account bank, are shown in their own individual panels"
+	L["MENU_BAG_PANEL_COMBINE_BANK_DESC"] = "\nenabled = combine all bank bags/tabs into a single panel\n\n\ndisabled = the bank bags/tabs are shown in their own individual panels"
+	L["MENU_BAG_PANEL_COMBINE_REAGENT_DESC"] = "\nenabled = combine the bank and all reagent bank tabs into a single panel (this will only work if the bank bags/tabs are already combined)\n\n\ndisabled = the reagent bank tabs are shown in their own individual panels"
+	L["MENU_BAG_PANEL_COMBINE_ACCOUNT_DESC"] = "\nenabled = combine all account bank tabs into a single panel\n\n\ndisabled = each account bank tab is shown in its own individual panel"
+	L["MENU_BAG_CHANGE_SETTINGS"] = "Change the name, icon, or filters, for this tab/bag"
 	
 	
 --	configuration options
@@ -440,6 +443,8 @@ if not L then return end
 	L["CONFIG_CONTROL_BLUEPRINT_DESC"] = "select which %2$s to use when generating the %1$s window" -- %1$s = location name
 	L["CONFIG_CONTROL_WITH_ARKINV"] = "Click to override the original Blizzard %2$s so that %1$s controls it instead." -- %1$s = program, %2$s = location
 	L["CONFIG_CONTROL_WITH_BLIZZARD"] = "Click to testore the original Blizzard %2$s so that %1$s no longer controls it." -- %1$s = program, %2$s = location
+	L["CONFIG_CONTROL_RESELECT"] = "Reselect tabs"
+	L["CONFIG_CONTROL_RESELECT_PER_SESSION"] = "Per Session"
 	
 	
 --	configuration settings > design/style/layout
@@ -519,10 +524,12 @@ if not L then return end
 	L["CONFIG_DESIGN_ITEM_HIDDEN_DESC"] = "toggle hidden categories and stacks"
 	L["CONFIG_DESIGN_ITEM_FADE"] = "Fade offline"
 	L["CONFIG_DESIGN_ITEM_FADE_DESC"] = "fade offline items"
-	L["CONFIG_DESIGN_ITEM_TINT_UNUSABLE"] = "Tint Unusable"
-	L["CONFIG_DESIGN_ITEM_TINT_UNUSABLE_DESC"] = "tint unusable items red"
-	L["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE"] = "Tint Unwearable"
-	L["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE_DESC"] = "tint items that are not your armor class red.\n\nWhile you can wear them, you really shouldnt."
+	L["CONFIG_DESIGN_ITEM_TINT_UNUSABLE"] = "Unusable"
+	L["CONFIG_DESIGN_ITEM_TINT_UNUSABLE_DESC"] = "enabled = if the item is unusable then tint it\n\ndisabled = if the item is unusable then do not tint it"
+	L["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE"] = "Unwearable"
+	L["CONFIG_DESIGN_ITEM_TINT_UNWEARABLE_DESC"] = "enabled = if the item is unwearable then tint it\n\ndisabled = if the item is unwearable then do not tint it"
+	L["CONFIG_DESIGN_ITEM_TINT_IGNORE_ITEMLEVEL_DESC"] = "enabled = if the item level is higher than the character level then do not tint the item\n\ndisabled = if the item level is higher than the character level then tint the item"
+	L["CONFIG_DESIGN_ITEM_TINT_IGNORE_KNOWN_DESC"] = "enabled = if the item is known then do not tint the item\n\ndisabled = if the item is known then tint the item"
 	L["CONFIG_DESIGN_ITEM_ITEMLEVEL"] = "Item Level"
 	L["CONFIG_DESIGN_ITEM_ITEMLEVEL_DESC"] = "show item level"
 	L["CONFIG_DESIGN_ITEM_ITEMLEVEL_QUALITY_DESC"] = "use the items quality colour for the item text"
@@ -945,7 +952,8 @@ if not L then return end
 	L["ORDER"] = "Order"
 	L["MOUSEOVER"] = "Mouse Over"
 	L["NO_DATA_AVAILABLE"] = "No Data Available"
-	L["TOOLTIP_PURCHASE_BANK_BAG_SLOT"] = "Click to purchase the next available %s slot."
+	L["TOOLTIP_PURCHASE_NEXT_SLOT"] = "\nClick to purchase the next available slot"
+	L["TOOLTIP_PURCHASE_NEXT_TAB"] = "\nClick to purchase the next available tab"
 	L["LABEL"] = "Label"
 	L["ABORTED"] = "Aborted"
 	L["RESTORE"] = "Restore"
@@ -990,7 +998,7 @@ if not L then return end
 	L["OPTION_NOT_AVAILABLE_EXPANSION"] = "This option is not available in this expansion"
 	L["SIZE"] = "Size"
 	L["AZERITE"] = "Azerite"
-	L["COSMETIC"] = COSMETIC or ITEM_COSMETIC or "Cosmetic"
+	L["COSMETIC"] = ITEM_COSMETIC or "Cosmetic"
 	L["WHEN"] = "When"
 	L["RECIPIENT"] = "Recipient"
 	L["ACTIONS"] = "Actions"
@@ -1006,6 +1014,7 @@ if not L then return end
 	L["USING"] = "Using"
 	L["DATA_NOT_READY"] = "Data not ready"
 	L["DATA_NOT_FOUND"] = "Data not found"
+	L["TINT"] = "Tint"
 	
 	
 -- libdatabroker

@@ -342,10 +342,8 @@ local function Scan_Threaded( thread_id )
 		if currencyInfo then
 			
 			--ArkInventory.OutputDebug( "CURRENCY: ", index, " = ", currencyInfo )
-			
-			if currencyInfo.currencyID then
-				currencyID = currencyInfo.currencyID
-			else
+			local currencyID = currencyInfo.currencyID
+			if not currencyID then
 				-- cater for list headers like other and inactive that dont have a faction id assigned to them
 				fakeID = fakeID - 1
 				currencyID = fakeID
@@ -440,8 +438,8 @@ local function Scan_Threaded( thread_id )
 						update = true
 					end
 					
-					if cache[id].discovered ~= discovered then
-						cache[id].discovered = discovered
+					if cache[id].discovered ~= currencyInfo.discovered then
+						cache[id].discovered = currencyInfo.discovered
 						update = true
 					end
 					

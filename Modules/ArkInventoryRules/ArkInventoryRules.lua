@@ -320,6 +320,37 @@ function ArkInventoryRules.System.boolean_iscraftingreagent( )
 	return ArkInventoryRules.Object.info.craft
 end
 
+function ArkInventoryRules.System.boolean_scrapable( )
+	
+	if not ArkInventoryRules.Object.h then
+		return false
+	end
+	
+	local fn = "scrapable"
+
+	if ArkInventoryRules.Object.loc_id == ArkInventory.Const.Location.Bag then
+	 
+		if not ArkInventory.Global.Location[ArkInventoryRules.Object.loc_id].isOffline then
+
+			if C_Item and C_Item.CanScrapItem then
+
+				local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromWindowId( ArkInventoryRules.Object.loc_id, ArkInventoryRules.Object.bag_id )
+				local blizzardLocation = ItemLocation:CreateFromBagAndSlot( blizzard_id, ArkInventoryRules.Object.slot_id )
+				
+				if blizzardLocation and C_Item.CanScrapItem( blizzardLocation ) then
+					return true
+				end
+
+			end
+
+		end
+
+	end
+
+	return false
+
+end
+
 function ArkInventoryRules.System.boolean_itemstring( ... )
 	
 	local fn = "itemstring"
@@ -968,6 +999,8 @@ function ArkInventoryRules.System.boolean_outfit_outfitter( ... )
 		return false
 	end
 	
+	local fn = "outfit (outfitter)"
+
 	local ac = select( '#', ... )
 	
 	if ac == 0 then
@@ -1048,6 +1081,8 @@ function ArkInventoryRules.System.boolean_outfit_itemrack( ... )
 		return false
 	end
 	
+	local fn = "outfit (itemrack)"
+
 	local ac = select( '#', ... )
 	
 	if ac == 0 then
@@ -1113,6 +1148,8 @@ function ArkInventoryRules.System.boolean_outfit_gearquipper( ... )
 		return false
 	end
 	
+	local fn = "outfit (gearquipper)"
+
 	local ac = select( '#', ... )
 	
 	if ac == 0 then
@@ -1170,60 +1207,62 @@ function ArkInventoryRules.System.boolean_outfit_blizzard( ... )
 		
 		if items then
 			
-			local loc_id_window, bag_id_window, slot_id, id, player, bank, bags, void, slot, bag, voidtab, voidslot
+			local loc_id_window, bag_id_window, locationData, slot_id, id
 			
 			for k, location in pairs( items ) do
 				
-				loc_id_window = nil
-				bag_id_window = nil
-				slot_id = nil
-				void = nil
-				voidtab = nil
-				voidslot = nil
-				id = nil
+				locationData = ArkInventory.CrossClient.EquipmentManager_UnpackLocation( location )
+				if locationData.isValid then
 				
-				if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Void].ClientCheck ) then
-					player, bank, bags, void, slot, bag, voidtab, voidslot = EquipmentManager_UnpackLocation( location )
-				else
-					player, bank, bags, slot, bag = EquipmentManager_UnpackLocation( location )
-				end
-				
-				--ArkInventory.Output( setname, ":", k, " -> [", player, ", ", bank, ", ", bags, ", ", void, "] [", bag, ".", slot, "] [", voidtab, ".", voidslot, "] = ", location )
-				
-				if void and voidtab and voidslot then
+					--ArkInventory.Output( setname, ":", k, " -> [", locationData.isPlayer, ", ", locationData.isBank, ", ", locationData.isBags, ", ", locationData.isVoid, "] [", locationData.bag, ".", locationData.slot, "] [", locationData.voidTab, ".", locationData.voidSlot, "] = ", location )
 					
-					loc_id_window = ArkInventory.Const.Location.Void
-					bag_id_window = ArkInventory.Const.Offset.Void + voidtab
-					slot_id = voidslot
-					id = GetVoidItemInfo( voidtab, voidslot )
+					if locationData.isVoid and locationData.voidTab and locationData.voidSlot then
+						
+						loc_id_window = ArkInventory.Const.Location.Void
+						bag_id_window = ArkInventory.Const.Offset.Void + locationData.voidTab
+						slot_id = locationData.voidSlot
+						id = ArkInventory.CrossClient.GetVoidItemInfo( locationData.voidTab, locationData.voidSlot )
+						
+						--ArkInventory.Output( setname, ":", k, " -> [void] [", loc_id_window, ".", bag_id_window, ".", slot_id, "] [", id, "] = ", location )
+						
+					elseif ( not locationData.isBags ) and locationData.slot then
+						
+						loc_id_window = ArkInventory.Const.Location.Wearing
+						bag_id_window = ArkInventory.Const.Offset.Wearing + 1
+						slot_id = locationData.slot
+						id = GetInventoryItemID( "player", locationData.slot )
+						
+						--ArkInventory.Output( setname, ":", k, " -> [player] [", loc_id_window, ".", bag_id_window, ".", slot_id, "] [", id, "] = ", location )
+						
+					elseif locationData.bag and locationData.slot then
+						
+						loc_id_window, bag_id_window = ArkInventory.Util.getWindowIdFromBlizzardBagId( locationData.bag )
+						slot_id = locationData.slot
+						id = ArkInventory.CrossClient.GetContainerItemID( locationData.bag, locationData.slot )
+						
+						--ArkInventory.Output( setname, ":", k, " -> [bag] [", loc_id_window, ".", bag_id_window, ".", slot_id, "] [", id, "] = ", location )
+						
+					else
+
+						loc_id_window = nil
+						bag_id_window = nil
+						slot_id = nil
+						id = nil
+
+					end
 					
-					--ArkInventory.Output( setname, ":", k, " -> [void] [", loc_id_window, ".", bag_id_window, ".", slot_id, "] [", id, "] = ", location )
-					
-				elseif ( not bags ) and slot then
-					
-					loc_id_window = ArkInventory.Const.Location.Wearing
-					bag_id_window = ArkInventory.Const.Offset.Wearing + 1
-					slot_id = slot
-					id = GetInventoryItemID( "player", slot )
-					
-					--ArkInventory.Output( setname, ":", k, " -> [player] [", loc_id_window, ".", bag_id_window, ".", slot_id, "] [", id, "] = ", location )
-					
-				elseif bag and slot then
-					
-					loc_id_window, bag_id_window = ArkInventory.Util.getWindowIdFromBlizzardBagId( bag )
-					
-					slot_id = slot
-					id = ArkInventory.CrossClient.GetContainerItemID( bag, slot )
-					
-					--ArkInventory.Output( setname, ":", k, " -> [bag] [", loc_id_window, ".", bag_id_window, ".", slot_id, "] [", id, "] = ", location )
-					
-				end
-				
-				if loc_id_window and bag_id_window and slot_id and id and ArkInventoryRules.Object.info.id and ArkInventoryRules.Object.loc_id == loc_id_window and ArkInventoryRules.Object.bag_id == bag_id_window and ArkInventoryRules.Object.slot_id == slot_id and id == ArkInventoryRules.Object.info.id then
-					--ArkInventory.Output( setname, ":", k, " -> [", ArkInventoryRules.Object.h, " / ", id )
-					table.insert( outfits, setname )
-					--ArkInventory.Output( "found ", ArkInventoryRules.Object.h, " in set [", setname, ":", k, "] [", ArkInventoryRules.Object.loc_id, ".", ArkInventoryRules.Object.bag_id, ".", ArkInventoryRules.Object.slot_id, "]" )
-					break
+					if loc_id_window and bag_id_window and slot_id and id and ArkInventoryRules.Object.info.id and ArkInventoryRules.Object.loc_id == loc_id_window and ArkInventoryRules.Object.bag_id == bag_id_window and ArkInventoryRules.Object.slot_id == slot_id and id == ArkInventoryRules.Object.info.id then
+						
+						--ArkInventory.Output( setname, ":", k, " -> [", ArkInventoryRules.Object.h, " / ", id )
+
+						table.insert( outfits, setname )
+						
+						--ArkInventory.Output( "found ", ArkInventoryRules.Object.h, " in set [", setname, ":", k, "] [", ArkInventoryRules.Object.loc_id, ".", ArkInventoryRules.Object.bag_id, ".", ArkInventoryRules.Object.slot_id, "]" )
+
+						break
+
+					end
+
 				end
 				
 			end
@@ -1239,6 +1278,8 @@ function ArkInventoryRules.System.boolean_outfit_blizzard( ... )
 	
 	local ac = select( '#', ... )
 	
+	local fn = "outfit (blizzard)"
+
 	if ac == 0 then
 		return true
 	end
@@ -1532,8 +1573,8 @@ function ArkInventoryRules.System.internal_unwearable( wearable, ignore_known, i
 	
 	-- class based armor subtype restrictions
 	local class = ArkInventoryRules.Object.playerinfo.class
-	if class == HUNTER and ArkInventoryRules.Object.playerinfo.level < 40 then
-		class = LOWLEVELHUNTER
+	if class == "HUNTER" and ArkInventoryRules.Object.playerinfo.level < 40 then
+		class = "LOWLEVELHUNTER"
 	end
 	
 	
@@ -2388,6 +2429,8 @@ ArkInventoryRules.Environment = {
 	transmog = ArkInventoryRules.System.boolean_transmog,
 	xmog = ArkInventoryRules.System.boolean_transmog,
 	
+	scrapable = ArkInventoryRules.System.boolean_scrapable,
+	
 	-- 3rd party addons requried for the following functions to work
 	
 	junk = ArkInventoryRules.System.boolean_junk,
@@ -3154,7 +3197,7 @@ end
 
 function ArkInventoryRules.Frame_Rules_Button_Modify_Cancel( frame )
 
-	f = frame:GetParent( ):GetParent( ):GetParent( ):GetName( )
+	local f = frame:GetParent( ):GetParent( ):GetParent( ):GetName( )
 	
 	_G[f .. "Modify"]:Hide( )
 	_G[f .. "View"]:Show( )

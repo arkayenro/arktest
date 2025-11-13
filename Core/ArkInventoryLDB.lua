@@ -32,7 +32,7 @@ function ArkInventory.LDB.Update( )
 		
 		ArkInventory.LDB.Bags = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s", ArkInventory.Const.Program.Name, "Bags" ), {
 			type = "data source",
-			text = BLIZZARD_STORE_LOADING,
+			text = ArkInventory.Localise["LOADING"],
 		} )
 		
 		ArkInventory.LDB.Bags.Update = ldb.Bags.Update
@@ -41,7 +41,7 @@ function ArkInventory.LDB.Update( )
 		
 		ArkInventory.LDB.Money = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s", ArkInventory.Const.Program.Name, "Money" ), {
 			type = "data source",
-			text = BLIZZARD_STORE_LOADING,
+			text = ArkInventory.Localise["LOADING"],
 		} )
 		
 		ArkInventory.LDB.Money.Update = ldb.Money.Update
@@ -49,8 +49,8 @@ function ArkInventory.LDB.Update( )
 		
 		
 		ArkInventory.LDB.Tracking_Currency = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s_%s", ArkInventory.Const.Program.Name, "Tracking", "Currency" ), {
-			type = ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Currency].ClientCheck ) and "data source" or "hidden",
-			text = BLIZZARD_STORE_LOADING,
+			type = ArkInventory.Global.Location[ArkInventory.Const.Location.Currency].ClientCheck and "data source" or "hidden",
+			text = ArkInventory.Localise["LOADING"],
 		} )
 		
 		ArkInventory.LDB.Tracking_Currency.Update = ldb.Tracking_Currency.Update
@@ -59,8 +59,8 @@ function ArkInventory.LDB.Update( )
 		
 		
 		ArkInventory.LDB.Tracking_Bronze = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s_%s", ArkInventory.Const.Program.Name, "Tracking", "Bronze" ), {
-			type = ArkInventory.Global.TimerunningSeasonID > 0 and ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Currency].ClientCheck ) and "data source" or "hidden",
-			text = BLIZZARD_STORE_LOADING,
+			type = ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID > 0 and ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Currency].ClientCheck ) and "data source" or "hidden",
+			text = ArkInventory.Localise["LOADING"],
 		} )
 		
 		ArkInventory.LDB.Tracking_Bronze.Update = ldb.Tracking_Bronze.Update
@@ -70,7 +70,7 @@ function ArkInventory.LDB.Update( )
 		
 		ArkInventory.LDB.Tracking_Reputation = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s_%s", ArkInventory.Const.Program.Name, "Tracking", "Reputation" ), {
 			type = ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Reputation].ClientCheck ) and "data source" or "hidden",
-			text = BLIZZARD_STORE_LOADING,
+			text = ArkInventory.Localise["LOADING"],
 		} )
 		
 		ArkInventory.LDB.Tracking_Reputation.Update = ldb.Tracking_Reputation.Update
@@ -80,7 +80,7 @@ function ArkInventory.LDB.Update( )
 		
 		ArkInventory.LDB.Tracking_Item = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s_%s", ArkInventory.Const.Program.Name, "Tracking", "Item" ), {
 			type = "data source",
-			text = BLIZZARD_STORE_LOADING,
+			text = ArkInventory.Localise["LOADING"],
 		} )
 		
 		ArkInventory.LDB.Tracking_Item.Update = ldb.Tracking_Item.Update
@@ -90,7 +90,7 @@ function ArkInventory.LDB.Update( )
 		
 		ArkInventory.LDB.Pets = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s", ArkInventory.Const.Program.Name, "Pets" ), {
 			type = ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Pet].ClientCheck ) and "data source" or "hidden",
-			text = BLIZZARD_STORE_LOADING,
+			text = ArkInventory.Localise["LOADING"],
 		} )
 		
 		ArkInventory.LDB.Pets.Update = ldb.Pets.Update
@@ -100,7 +100,7 @@ function ArkInventory.LDB.Update( )
 		
 		ArkInventory.LDB.Mounts = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s", ArkInventory.Const.Program.Name, "Mounts" ), {
 			type = ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].ClientCheck ) and "data source" or "hidden",
-			text = BLIZZARD_STORE_LOADING,
+			text = ArkInventory.Localise["LOADING"],
 		} )
 		
 		ArkInventory.LDB.Mounts.Update = ldb.Mounts.Update

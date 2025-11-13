@@ -1,22 +1,13 @@
-﻿-- blizzzard functions that no longer exist, or have been replaced across clients
+﻿
+-- blizzzard functions that no longer exist, or have been replaced across clients
 
 ArkInventory.CrossClient = {
-	TemplateVersion = 1,
+	
+	TemplateVersion = 1, -- 1=ItemButton | 2=Button when used in xml
+	
+	C_PetBattles = { },
+	C_PetJournal = { },
 }
-
-local C_AddOns = _G.C_AddOns
-local C_AzeriteEmpoweredItem = _G.C_AzeriteEmpoweredItem
-local C_Container = _G.C_Container
-local C_CurrencyInfo = _G.C_CurrencyInfo
-local C_CVar = _G.C_CVar
-local C_GossipInfo = _G.C_GossipInfo
-local C_Item = _G.C_Item
-local C_MajorFactions = _G.C_MajorFactions
-local C_Reputation = _G.C_Reputation
-local C_Soulbinds = _G.C_Soulbinds
-local C_TradeSkillUI = _G.C_TradeSkillUI
-local C_TransmogCollection = _G.C_TransmogCollection
-
 
 
 function ArkInventory.ClientCheck( id_toc_min, id_toc_max, loud )
@@ -25,11 +16,13 @@ function ArkInventory.ClientCheck( id_toc_min, id_toc_max, loud )
 	
 	local tmin = id_toc_min or ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION[ArkInventory.ENUM.EXPANSION.CLASSIC].TOC.MIN
 	if tmin < ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION[ArkInventory.ENUM.EXPANSION.CLASSIC].TOC.MIN then
+		-- its an expansion value, covert it to the min toc value for that expansion
 		tmin = ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION[tmin].TOC.MIN or ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION[ArkInventory.ENUM.EXPANSION.CLASSIC].TOC.MIN
 	end
 	
 	local tmax = id_toc_max or ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION[ArkInventory.ENUM.EXPANSION.CURRENT].TOC.MAX
 	if tmax < ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION[ArkInventory.ENUM.EXPANSION.CLASSIC].TOC.MIN then
+		-- its an expansion value, covert it to the max toc value for that expansion
 		tmax = ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION[tmax].TOC.MAX or ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION[ArkInventory.ENUM.EXPANSION.CURRENT].TOC.MAX
 	end
 	
@@ -44,21 +37,6 @@ function ArkInventory.ClientCheck( id_toc_min, id_toc_max, loud )
 	return false
 	
 end
-
-if ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.SHADOWLANDS ) then
-	
-	-- remap bank bags back to their original values (pre reagent bag)
-	ArkInventory.ENUM.BAG.INDEX.REAGENTBAG_1 = -999
-	ArkInventory.ENUM.BAG.INDEX.BANKBAG_1 = 5
-	ArkInventory.ENUM.BAG.INDEX.BANKBAG_2 = 6
-	ArkInventory.ENUM.BAG.INDEX.BANKBAG_3 = 7
-	ArkInventory.ENUM.BAG.INDEX.BANKBAG_4 = 8
-	ArkInventory.ENUM.BAG.INDEX.BANKBAG_5 = 9
-	ArkInventory.ENUM.BAG.INDEX.BANKBAG_6 = 10
-	ArkInventory.ENUM.BAG.INDEX.BANKBAG_7 = 11
-	
-end
-
 
 function ArkInventory.CrossClient.GetAverageItemLevel( )
 	
@@ -234,9 +212,9 @@ function ArkInventory.CrossClient.GetContainerItemQuestInfo( i, ... )
 	
 end
 
-function ArkInventory.CrossClient.IsReagentBankUnlocked( ... )
+function ArkInventory.CrossClient.IsReagentBankUnlocked( )
 	if IsReagentBankUnlocked then
-		return IsReagentBankUnlocked( ... )
+		return IsReagentBankUnlocked( )
 	end
 end
 
@@ -753,21 +731,17 @@ function ArkInventory.CrossClient.GetContainerItemInfo( ... )
 end
 
 function ArkInventory.CrossClient.GetContainerItemID( ... )
-	
 	if C_Container and C_Container.GetContainerItemID then
 		return C_Container.GetContainerItemID( ... )
 	elseif GetContainerItemID then
 		return GetContainerItemID( ... )
 	end
-	
 end
 
 function ArkInventory.CrossClient.GetInventoryItemID( ... )
-	
 	if GetInventoryItemID then
 		return GetInventoryItemID( ... )
 	end
-	
 end
 
 function ArkInventory.CrossClient.IsBattlePayItem( ... )
@@ -1010,6 +984,12 @@ function ArkInventory.CrossClient.GetNumWorldPVPAreas( ... )
 	return 0
 end
 
+function ArkInventory.CrossClient.GetWorldPVPAreaInfo( ... )
+	if GetWorldPVPAreaInfo then
+		return GetWorldPVPAreaInfo( ... )
+	end
+end
+
 function ArkInventory.CrossClient.TimerunningSeasonID( )
 	
 	local r = 0
@@ -1246,87 +1226,475 @@ function ArkInventory.CrossClient.PutItemInReagentBank( blizzard_id, slot_id )
 	end
 end
 
-function ArkInventory.CrossClient.PutItemInBackpack( )
-	PutItemInBackpack( )
+
+local function helper_CursorGetObjectInfo( )
+	local infoType, info1, info2 = GetCursorInfo( )
+	local info = ArkInventory.GetObjectInfo( info2 )
+	return info
 end
 
-local function PutItemInOtherBank( blizzard_id )
+local function helper_MoveCursorItemIntoContainer2( blizzard_id )
 	
+	ArkInventory.OutputDebug( "helper_MoveCursorItemIntoContainer2 [", blizzard_id, "]" )
+
 	ArkInventory.Util.Assert( type( blizzard_id ) == "number", "blizzard_id is [", type( blizzard_id ), "], should be [number]" )
 	
-	if CursorHasItem( ) then
-		
-		for slot_id = 1, ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id ) do
+	local map = ArkInventory.Util.MapGetBlizzard( blizzard_id )
+
+	local freeSlots = ArkInventory.CrossClient.GetContainerNumFreeSlots( blizzard_id )
+	if freeSlots > 0 then
+
+		local numSlots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
+		for slot_id = 1, numSlots do
 			
-			local h = ArkInventory.CrossClient.GetContainerItemLink( blizzard_id, slot_id )
-			
-			if not h and not ArkInventory.Util.getMovedItemBlock( blizzard_id, slot_id ) then
-				
+			local itemLocation = ItemLocation:CreateFromBagAndSlot( blizzard_id, slot_id )
+			if not C_Item.DoesItemExist( itemLocation ) and not ArkInventory.Util.getMovedItemBlock( blizzard_id, slot_id ) then
+
+				ArkInventory.OutputDebug( "empty slot [", slot_id, "]" )
+
+				-- put it down in the empty slot
 				ArkInventory.CrossClient.PickupContainerItem( blizzard_id, slot_id )
+
 				ArkInventory.Util.setMovedItemBlock( blizzard_id, slot_id )
 				
-				return
-				
+				return true
+
 			end
 			
 		end
-		
-		ClearCursor( )
-		
-		UIErrorsFrame:AddMessage( ERR_BAG_FULL, 1.0, 0.1, 0.1, 1.0 )
-		
+
+	else
+
+		ArkInventory.OutputDebug( "no free slots / no bag / not purchased [", blizzard_id, "]" )
+
 	end
-	
+
 end
 
-function ArkInventory.CrossClient.PutItemInBank( )
-	PutItemInOtherBank( ArkInventory.ENUM.BAG.INDEX.BANK )
-end
+local function helper_MoveCursorItemIntoContainer( blizzard_id, force )
 
-function ArkInventory.CrossClient.DropItemOnReagentBank( )
-	PutItemInOtherBank( ArkInventory.ENUM.BAG.INDEX.REAGENTBANK )
-end
+	ArkInventory.OutputDebug( "helper_MoveCursorItemIntoContainer [", blizzard_id, "] [", force, "]" )
 
-function ArkInventory.CrossClient.PutItemInAccountBank( blizzard_id )
-	PutItemInOtherBank( blizzard_id )
-end
+	ArkInventory.Util.Assert( type( blizzard_id ) == "number", "blizzard_id is [", type( blizzard_id ), "], should be [number]" )
 
-function ArkInventory.CrossClient.PutItemInGuildBank( )
-	
-	local loc_id_window = ArkInventory.Const.Location.Vault
-	local bag_id_window = GetCurrentGuildBankTab( )
-	local blizzard_id = ArkInventory.Util.getBlizzardBagIdFromWindowId( loc_id_window, bag_id_window )
-	
 	if CursorHasItem( ) then
 		
-		local _, _, _, canDeposit = GetGuildBankTabInfo( bag_id_window )
-		
-		if canDeposit then
-			
-			for slot_id = 1, ArkInventory.Const.BLIZZARD.GLOBAL.GUILDBANK.NUM_SLOTS do
-				
-				local h = ArkInventory.CrossClient.GetGuildBankItemLink( bag_id_window, slot_id )
-				
-				if not h and not ArkInventory.Util.getMovedItemBlock( blizzard_id, slot_id ) then
+		local infoType, info1, info2 = GetCursorInfo( )
+		if infoType == "item" then
+
+			local freeSlots = ArkInventory.CrossClient.GetContainerNumFreeSlots( blizzard_id )
+			if ( freeSlots > 0 ) or force then
+
+				local map = ArkInventory.Util.MapGetBlizzard( blizzard_id )
+
+				if map.bag_id_storage == 1 and map.loc_id_storage == ArkInventory.Const.Location.Bag then
 					
-					ArkInventory.CrossClient.PickupGuildBankItem( bag_id_window, slot_id )
+					ArkInventory.OutputDebug( "PutItemInBackpack" )
+					PutItemInBackpack( )
+					return true
+
+				else
+
+					if blizzard_id == -1 and not ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+						
+						ArkInventory.OutputDebug( "PutItemInBank (OLD)" )
+						
+						return helper_MoveCursorItemIntoContainer2( blizzard_id )
+
+					else
+
+						local id = ArkInventory.CrossClient.ContainerIDToInventoryID( blizzard_id )
+						if id then
+
+							ArkInventory.OutputDebug( "PutItemInBag [", id, "] [", blizzard_id, "]" )
+							PutItemInBag( id )
+							return true
+
+						else
+
+							ArkInventory.OutputWarning( "code issue - invalid container id [", id, "] [", blizzard_id, "]" )
+
+						end
+
+					end
+
+				end
+
+			else
+
+				ArkInventory.OutputDebug( "no free slots / no bag / not purchased [", blizzard_id, "]" )
+
+			end
+
+		else
+
+			ArkInventory.OutputDebug( "uncoded infoType [", infoType, "] [", info1, "] [", info2, "]" )
+
+		end
+
+	else
+
+		ArkInventory.OutputDebug( "no item on cursor" )
+
+	end
+
+end
+
+local function helper_MoveCursorItemIntoContainer3( blizzard_id )
+	
+	ArkInventory.OutputDebug( "helper_MoveCursorItemIntoContainer3 [", blizzard_id, "]" )
+
+	ArkInventory.Util.Assert( type( blizzard_id ) == "number", "blizzard_id is [", type( blizzard_id ), "], should be [number]" )
+	
+	local map = ArkInventory.Util.MapGetBlizzard( blizzard_id )
+
+	if map.loc_id_storage == ArkInventory.Const.Location.Vault then
+
+		if ArkInventory.Global.Mode.Vault then
+
+			local bag_id_window = map.bag_id_window
+			local tab_current = GetCurrentGuildBankTab( )
+
+			if tab_current == bag_id_window then
+				
+				local _, _, _, canDeposit = GetGuildBankTabInfo( bag_id_window )
+				if canDeposit then
+
+					for slot_id = 1, ArkInventory.Const.BLIZZARD.GLOBAL.GUILDBANK.NUM_SLOTS do
+						
+						tab_current = GetCurrentGuildBankTab( )
+						if ArkInventory.Global.Mode.Vault and tab_current == bag_id_window then
+
+							local h = ArkInventory.CrossClient.GetGuildBankItemLink( bag_id_window, slot_id )
+							if not h and not ArkInventory.Util.getMovedItemBlock( blizzard_id, slot_id ) then
+								
+								ArkInventory.CrossClient.PickupGuildBankItem( bag_id_window, slot_id )
+								ArkInventory.Util.setMovedItemBlock( blizzard_id, slot_id )
+								
+								return true
+								
+							end
+							
+						else
+							
+							ArkInventory.OutputWarning( "item move aborted - guild bank closed or tab changed" )
+							return
+
+						end
+
+					end
+
+				else
+					
+					--ArkInventory.OutputWarning( "you do not have permission to deposit items into this tab [", bag_id_window ,"]" )
+
+				end
+
+			else
+
+				ArkInventory.OutputWarning( "items can only be moved into the active guild bank tab" )
+
+			end
+	
+		else
+
+			ArkInventory.OutputWarning( "item move aborted - guild bank was closed" )
+
+		end
+
+		return
+
+	else
+
+		local freeSlots = ArkInventory.CrossClient.GetContainerNumFreeSlots( blizzard_id )
+		if freeSlots > 0 then
+
+			local numSlots = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
+			for slot_id = 1, numSlots do
+				
+				local itemLocation = ItemLocation:CreateFromBagAndSlot( blizzard_id, slot_id )
+				if not C_Item.DoesItemExist( itemLocation ) and not ArkInventory.Util.getMovedItemBlock( blizzard_id, slot_id ) then
+
+					ArkInventory.OutputDebug( "empty slot [", slot_id, "]" )
+
+					-- put it down in the empty slot
+					ArkInventory.CrossClient.PickupContainerItem( blizzard_id, slot_id )
+
 					ArkInventory.Util.setMovedItemBlock( blizzard_id, slot_id )
 					
-					return
-					
+					return true
+
 				end
 				
 			end
+
+		else
+
+			ArkInventory.OutputDebug( "no free slots / no bag / not purchased [", blizzard_id, "]" )
+
+		end
+
+	end
+
+end
+
+local function helper_MoveItemIntoCharacterBank( dst_blizzard_id, src_blizzard_id, src_slot_id, isContainer )
+	
+	ArkInventory.OutputDebug( "helper_MoveItemIntoCharacterBank" )
+
+	local bankType = ArkInventory.ENUM.BANKTYPE.CHARACTER
+	local loc_id_storage = ArkInventory.Const.Location.Bank
+	local itemLocation = ItemLocation:CreateFromBagAndSlot( src_blizzard_id, src_slot_id )
+	
+	if C_Item.DoesItemExist( itemLocation ) then
+
+		ArkInventory.CrossClient.PickupContainerItem( src_blizzard_id, src_slot_id )
+
+		if C_Bank.IsItemAllowedInBankType( bankType, itemLocation ) then
 			
-			ClearCursor( )
+			local helper_Function = helper_MoveCursorItemIntoContainer
 			
-			UIErrorsFrame:AddMessage( ERR_BAG_FULL, 1.0, 0.1, 0.1, 1.0 )
+			local info = helper_CursorGetObjectInfo( )
+			if info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT then
+				helper_Function = helper_MoveCursorItemIntoContainer2
+			end
+
+			if helper_Function( dst_blizzard_id ) then
+				ArkInventory.OutputDebug( "item moved from [", src_blizzard_id, ".", src_slot_id, "] to selected tab [", dst_blizzard_id, "]" )
+				return true
+			end
+
+			local map = ArkInventory.Util.MapGetBlizzard( dst_blizzard_id )
+			for _, map in ipairs( ArkInventory.Util.MapGetWindow( map.loc_id_window ) ) do
+				if not map.hidden and map.loc_id_storage == loc_id_storage and map.blizzard_id ~= dst_blizzard_id then
+					if helper_Function( map.blizzard_id ) then
+						ArkInventory.OutputDebug( "item moved from [", src_blizzard_id, ".", src_slot_id, "] to other tab [", map.blizzard_id, "]" )
+						return true
+					end
+				end
+			end
 			
 		end
+
+		ArkInventory.OutputDebug( "item move failed" )
+
+		helper_MoveCursorItemIntoContainer( dst_blizzard_id, true ) -- this gets around all tabs being full and ending up elsewhere
+
+		return true
+
+	else
+
+		ArkInventory.OutputDebug( "source slot is empty" )
+	
+	end
+
+end
+
+local function helper_MoveItemIntoCharacterBank2( dst_blizzard_id, src_blizzard_id, src_slot_id )
+	
+	ArkInventory.OutputDebug( "helper_MoveItemIntoCharacterBank" )
+
+	local bankType = ArkInventory.ENUM.BANKTYPE.CHARACTER
+	local loc_id_storage = ArkInventory.Const.Location.Bank
+	local itemLocation = ItemLocation:CreateFromBagAndSlot( src_blizzard_id, src_slot_id )
+	
+	if C_Item.DoesItemExist( itemLocation ) then
+
+		ArkInventory.CrossClient.PickupContainerItem( src_blizzard_id, src_slot_id )
+
+		if helper_MoveCursorItemIntoContainer( dst_blizzard_id ) then
+			ArkInventory.OutputDebug( "item moved from [", src_blizzard_id, ".", src_slot_id, "] to selected tab [", dst_blizzard_id, "]" )
+			return true
+		end
+
+		local map = ArkInventory.Util.MapGetBlizzard( dst_blizzard_id )
+		for _, map in ipairs( ArkInventory.Util.MapGetWindow( map.loc_id_window ) ) do
+			if not map.hidden and map.loc_id_storage == loc_id_storage and map.blizzard_id ~= dst_blizzard_id then
+				if helper_MoveCursorItemIntoContainer( map.blizzard_id ) then
+					ArkInventory.OutputDebug( "item moved from [", src_blizzard_id, ".", src_slot_id, "] to other tab [", map.blizzard_id, "]" )
+					return true
+				end
+			end
+		end
+
+		ArkInventory.OutputDebug( "item move failed" )
 		
+		helper_MoveCursorItemIntoContainer( dst_blizzard_id, true ) -- this gets around all tabs being full and ending up elsewhere
+
+		return true
+
+	else
+
+		ArkInventory.OutputDebug( "source slot is empty" )
+	
+	end
+
+end
+
+local function helper_MoveItemIntoAccountBank( dst_blizzard_id, src_blizzard_id, src_slot_id, isContainer )
+	
+	ArkInventory.OutputDebug( "helper_MoveItemIntoAccountBank" )
+
+	local bankType = ArkInventory.ENUM.BANKTYPE.ACCOUNT
+	local loc_id_storage = ArkInventory.Const.Location.AccountBank
+	local itemLocation = ItemLocation:CreateFromBagAndSlot( src_blizzard_id, src_slot_id )
+
+	if C_Item.DoesItemExist( itemLocation ) then
+
+		ArkInventory.CrossClient.PickupContainerItem( src_blizzard_id, src_slot_id )
+
+		if C_Bank.IsItemAllowedInBankType( bankType, itemLocation ) then
+
+			local helper_Function = helper_MoveCursorItemIntoContainer
+			
+			local info = helper_CursorGetObjectInfo( )
+			if info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT then
+				helper_Function = helper_MoveCursorItemIntoContainer2
+			end
+
+			if helper_Function( dst_blizzard_id ) then
+				ArkInventory.OutputDebug( "item moved from [", src_blizzard_id, ".", src_slot_id, "] to selected tab [", dst_blizzard_id, "]" )
+				return true
+			end
+
+			local map = ArkInventory.Util.MapGetBlizzard( dst_blizzard_id )
+			for _, map in ipairs( ArkInventory.Util.MapGetWindow( map.loc_id_window ) ) do
+				if not map.hidden and map.loc_id_storage == loc_id_storage and map.blizzard_id ~= dst_blizzard_id then
+					if helper_Function( map.blizzard_id ) then
+						ArkInventory.OutputDebug( "item moved from [", src_blizzard_id, ".", src_slot_id, "] to other tab [", map.blizzard_id, "]" )
+						return true
+					end
+				end
+			end
+			
+		end
+
+		ArkInventory.OutputDebug( "item move failed" )
+
+		helper_MoveCursorItemIntoContainer( dst_blizzard_id, true ) -- this gets around all tabs being full and ending up elsewhere
+
+		return true
+
+	else
+
+		ArkInventory.OutputDebug( "source slot is empty" )
+	
+	end
+
+end
+
+local function helper_MoveItemIntoAccountBank2( dst_blizzard_id, src_blizzard_id, src_slot_id )
+	
+	ArkInventory.OutputDebug( "helper_MoveItemIntoAccountBank" )
+
+	local bankType = ArkInventory.ENUM.BANKTYPE.ACCOUNT
+	local loc_id_storage = ArkInventory.Const.Location.AccountBank
+	local itemLocation = ItemLocation:CreateFromBagAndSlot( src_blizzard_id, src_slot_id )
+	
+
+	if C_Item.DoesItemExist( itemLocation ) then
+
+		ArkInventory.CrossClient.PickupContainerItem( src_blizzard_id, src_slot_id )
+
+		if C_Bank.IsItemAllowedInBankType( bankType, itemLocation ) then
+
+			if helper_MoveCursorItemIntoContainer( dst_blizzard_id ) then
+				ArkInventory.OutputDebug( "item moved from [", src_blizzard_id, ".", src_slot_id, "] to selected tab [", dst_blizzard_id, "]" )
+				return true
+			end
+
+			local map = ArkInventory.Util.MapGetBlizzard( dst_blizzard_id )
+			for _, map in ipairs( ArkInventory.Util.MapGetWindow( map.loc_id_window ) ) do
+				if not map.hidden and map.loc_id_storage == loc_id_storage and map.blizzard_id ~= dst_blizzard_id then
+					if helper_MoveCursorItemIntoContainer( map.blizzard_id ) then
+						ArkInventory.OutputDebug( "item moved from [", src_blizzard_id, ".", src_slot_id, "] to other tab [", map.blizzard_id, "]" )
+						return true
+					end
+				end
+			end
+			
+		end
+
+		ArkInventory.OutputDebug( "item move failed" )
+		helper_MoveCursorItemIntoContainer( dst_blizzard_id, true ) -- this gets around all tabs being full and ending up elsewhere
+		ClearCursor( )
+
+		return true
+
+	else
+
+		ArkInventory.OutputDebug( "source slot is empty" )
+	
+	end
+
+end
+
+function ArkInventory.CrossClient.MoveItemToLocation( loc_id_storage, dst_blizzard_id, src_blizzard_id, src_slot_id )
+
+	ArkInventory.OutputDebug( "move item from [", loc_id_storage, "] [", dst_blizzard_id, "] to [", src_blizzard_id, "] [", src_slot_id, "]" )
+
+	ArkInventory.Util.Assert( type( loc_id_storage ) == "number", "loc_id_storage is [", type( loc_id_storage ), "], should be [number]" )
+	ArkInventory.Util.Assert( type( dst_blizzard_id ) == "number", "dst_blizzard_id is [", type( dst_blizzard_id ), "], should be [number]" )
+	ArkInventory.Util.Assert( type( src_blizzard_id ) == "number", "src_blizzard_id is [", type( src_blizzard_id ), "], should be [number]" )
+	ArkInventory.Util.Assert( type( src_slot_id ) == "number", "src_slot_id is [", type( src_slot_id ), "], should be [number]" )
+
+	if loc_id_storage == ArkInventory.Const.Location.Bank then
+		return helper_MoveItemIntoCharacterBank( dst_blizzard_id, src_blizzard_id, src_slot_id, isContainer )
+	elseif loc_id_storage == ArkInventory.Const.Location.AccountBank then
+		return helper_MoveItemIntoAccountBank( dst_blizzard_id, src_blizzard_id, src_slot_id, isContainer )
 	end
 	
+	ArkInventory.OutputWarning( "code issue - uncoded pre-click move location [", dst_loc_id_storage, "]" )
+
 end
+
+function ArkInventory.CrossClient.DropItemOnChangerSlot( loc_id_storage, dst_blizzard_id )
+
+	ArkInventory.OutputDebug( "drop item on [", loc_id_storage, "] [", dst_blizzard_id, "]" )
+
+	ArkInventory.Util.Assert( type( loc_id_storage ) == "number", "loc_id_storage is [", type( loc_id_storage ), "], should be [number]" )
+	ArkInventory.Util.Assert( type( dst_blizzard_id ) == "number", "dst_blizzard_id is [", type( dst_blizzard_id ), "], should be [number]" )
+
+	if CursorHasItem( ) then
+		
+		local info = helper_CursorGetObjectInfo( )
+		if info.class == "item" then
+			
+			if info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT then
+				
+				local map = ArkInventory.Util.MapGetBlizzard( dst_blizzard_id )
+				if map.fixed then
+					
+					ArkInventory.OutputDebug( "cursor has container but bag is fixed" )
+
+				else
+
+					helper_MoveCursorItemIntoContainer( dst_blizzard_id, true )
+
+				end
+
+			else
+
+				helper_MoveCursorItemIntoContainer( dst_blizzard_id )
+
+			end
+
+		else
+
+			ArkInventory.OutputDebug( "code issue - uncoded item class [", info.class, "]" )
+
+		end
+
+		ClearCursor( )
+
+	else
+
+		ArkInventory.OutputDebug( "no item on cursor" )
+
+	end
+
+end
+
 
 function ArkInventory.CrossClient.IsNewItem( ... )
 	
@@ -1372,49 +1740,228 @@ function ArkInventory.CrossClient.IsEquipmentSlotEngravable( ... )
 	end
 end
 
-function ArkInventory.CrossClient.IsEquipmentSlotEngravable( ... )
-	if C_Engraving and C_Engraving.IsEquipmentSlotEngravable then
-		return C_Engraving.IsEquipmentSlotEngravable( ... )
-	end
-end
-
 function ArkInventory.CrossClient.GetRuneForEquipmentSlot( ... )
 	if C_Engraving and C_Engraving.GetRuneForEquipmentSlot then
 		return C_Engraving.GetRuneForEquipmentSlot( ... )
 	end
 end
 
+function ArkInventory.CrossClient.C_PetJournal.PetNeedsFanfare( ... )
+	if C_PetJournal and C_PetJournal.PetNeedsFanfare then
+		return C_PetJournal.PetNeedsFanfare( ... )
+	end
+end
+
+function ArkInventory.CrossClient.C_PetBattles.IsPlayerNPC( ... )
+	if C_PetBattles and C_PetBattles.IsPlayerNPC then
+		return C_PetBattles.IsPlayerNPC( ... )
+	end
+end
+
+function ArkInventory.CrossClient.FactionToggleAtWar( ... )
+	if FactionToggleAtWar then
+		return FactionToggleAtWar( ... )
+	end
+end
+
+function ArkInventory.CrossClient.UpdateBagSlotStatus( ... )
+	if UpdateBagSlotStatus then
+		return UpdateBagSlotStatus( ... )
+	end
+end
+
+function ArkInventory.CrossClient.GetBankPanel( )
+	if BankPanelSystemMixin and BankPanelSystemMixin.GetBankPanel then
+		return BankPanelSystemMixin:GetBankPanel( )
+	end
+end
+
+function ArkInventory.CrossClient.EquipmentManager_UnpackLocation( ... )
+	
+	local r = { }
+	
+	if EquipmentManager_GetLocationData then
+		
+		r = EquipmentManager_GetLocationData( ... )
+		
+		r.isVoid = false
+		r.voidTab = nil
+		r.voidSlot = nil
+
+		r.isValid = true
+
+	elseif EquipmentManager_UnpackLocation then
+
+		local isPlayer, isBank, isBags, isVoid, slot, bag, voidTab, voidSlot
+
+		if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Void].ClientCheck ) then
+			isPlayer, isBank, isBags, isVoid, slot, bag, voidTab, voidSlot = EquipmentManager_UnpackLocation( ... )
+		else
+			isPlayer, isBank, isBags, slot, bag = EquipmentManager_UnpackLocation( ... )
+		end
+		
+		r.isPlayer = isPlayer
+		r.isBank = isBank
+		r.isBags = isBags
+		r.isVoid = isVoid
+		r.bag = bag
+		r.slot = slot
+		r.voidTab = voidTab
+		r.voidSlot = voidSlot
+
+		r.isValid = true
+
+	end
+
+	return r
+
+end
+
+function ArkInventory.CrossClient.CanUseVoidStorage( )
+	if CanUseVoidStorage then
+		return CanUseVoidStorage( )
+	end
+end
+
+function ArkInventory.CrossClient.GetVoidItemInfo( ... )
+	if GetVoidItemInfo then
+		return GetVoidItemInfo( ... )
+	end
+end
+
+function ArkInventory.CrossClient.GetVoidItemHyperlinkString( ... )
+	if GetVoidItemHyperlinkString then
+		return GetVoidItemHyperlinkString( ... )
+	end
+end
+
+function ArkInventory.CrossClient.BankButtonIDToInvSlotID( ... )
+	if BankButtonIDToInvSlotID then
+		return BankButtonIDToInvSlotID( ... )
+	end
+end
+
+function ArkInventory.CrossClient.ReagentBankButtonIDToInvSlotID( ... )
+	if ReagentBankButtonIDToInvSlotID then
+		return ReagentBankButtonIDToInvSlotID( ... )
+	end
+end
 
 
+
+
+
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local a = string.lower( ArkInventory.CrossClient.GetCVar( "agentuid" ) )
 local p = string.lower( ArkInventory.CrossClient.GetCVar( "portal" ) )
 
-for k, v in pairs( ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION ) do
-	--ArkInventory.Output( k, " = ", v )
-	if ArkInventory.Const.BLIZZARD.TOC >= v.TOC.MIN and ArkInventory.Const.BLIZZARD.TOC <= v.TOC.MAX then
-		ArkInventory.Const.BLIZZARD.CLIENT.ID = v.ID
-		break
-	end
-end
-ArkInventory.ENUM.EXPANSION.CURRENT = ArkInventory.Const.BLIZZARD.CLIENT.ID
+ArkInventory.ENUM.EXPANSION.CURRENT = GetExpansionLevel( )
 
-
-if ArkInventory.Const.BLIZZARD.CLIENT.ID <= ArkInventory.ENUM.EXPANSION.WRATH then
+if ArkInventory.ENUM.EXPANSION.CURRENT <= ArkInventory.ENUM.EXPANSION.WRATH then
 	ArkInventory.CrossClient.TemplateVersion = 2
 end
 
-if ArkInventory.Const.BLIZZARD.CLIENT.ID == nil then
-	ArkInventory.OutputError( "code error: unable to determine game client, please contact the author with the following client data: project=[", WOW_PROJECT_ID, "], agent=[", a, "], portal=[", p, "] TOC=[", ArkInventory.Const.BLIZZARD.TOC, "]")
-else
-	if string.match( a, "alpha" ) then
-		ArkInventory.Const.BLIZZARD.CLIENT.ID = ArkInventory.Const.BLIZZARD.CLIENT.ID + ArkInventory.Const.BLIZZARD.CLIENT.ALPHA
-		ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s: Alpha", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
-	elseif string.match( a, "beta" ) then
-		ArkInventory.Const.BLIZZARD.CLIENT.ID = ArkInventory.Const.BLIZZARD.CLIENT.ID + ArkInventory.Const.BLIZZARD.CLIENT.BETA
-		ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s: Beta", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
-	elseif string.match( a, "ptr" ) or p == "test" then
-		ArkInventory.Const.BLIZZARD.CLIENT.ID = ArkInventory.Const.BLIZZARD.CLIENT.ID + ArkInventory.Const.BLIZZARD.CLIENT.PTR
-		ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s: PTR", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
+if string.match( a, "alpha" ) then
+	ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s: Alpha", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
+elseif string.match( a, "beta" ) then
+	ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s: Beta", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
+elseif string.match( a, "ptr" ) or p == "test" then
+	ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s: PTR", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
+end
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID = ArkInventory.CrossClient.TimerunningSeasonID( )
+
+ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO = ArkInventory.ClientCheck( 110200 )
+
+if true then
+	
+	-- WARNING - DO NOT TRUST ENUMS FOR THIS.
+	-- BLIZZARD DO NOT UPDATE THE VALUES ACROSS ALL CLIENTS SIMULTANEOUSLY.
+	-- YOU NEED TO HARDCODE THE VALUES OR YOU WILL RUN INTO ISSUES.
+
+	ArkInventory.ENUM.BAG.INDEX.BACKPACK = 0
+	ArkInventory.ENUM.BAG.INDEX.BAG_1 = 1
+	ArkInventory.ENUM.BAG.INDEX.BAG_2 = 2
+	ArkInventory.ENUM.BAG.INDEX.BAG_3 = 3
+	ArkInventory.ENUM.BAG.INDEX.BAG_4 = 4
+	
+	ArkInventory.ENUM.BAG.INDEX.KEYRING = -2
+
+	ArkInventory.ENUM.BAG.INDEX.CURRENCY = -4
+
+	ArkInventory.ENUM.BAG.INDEX.BANK = -1
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_1 = 5
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_2 = 6
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_3 = 7
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_4 = 8
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_5 = 9
+	ArkInventory.ENUM.BAG.INDEX.BANKBAG_6 = 10
+
+	ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS = 6
+	ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_SLOTS = 28
+
+
+	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM ) then
+
+		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS = 7
+		
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_7 = 11
+
 	end
+
+		
+	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAENOR ) then
+		
+		ArkInventory.ENUM.BAG.INDEX.REAGENTBANK = -3
+
+	end
+	
+	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT ) then
+
+		ArkInventory.ENUM.BAG.INDEX.REAGENTBAG = 5
+		
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_1 = 6
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_2 = 7
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_3 = 8
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_4 = 9
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_5 = 10
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_6 = 11
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_7 = 12
+
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK = -5
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_1 = 13
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_2 = 14
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_3 = 15
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_4 = 16
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_5 = 17
+
+	end
+
+
+	if ArkInventory.ClientCheck( 110200 ) then
+		
+		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.WIDTH = 14
+		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.HEIGHT = 7
+
+		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS = 6
+		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_SLOTS = 98
+
+		ArkInventory.ENUM.BAG.INDEX.KEYRING = -1
+
+		ArkInventory.ENUM.BAG.INDEX.BANK = -2
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_7 = nil
+		
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK = -3
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_1 = 12
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_2 = 13
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_3 = 14
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_4 = 15
+		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_5 = 16
+		
+	end
+
 end

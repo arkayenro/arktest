@@ -138,7 +138,7 @@ function ArkInventory.MediaObjectFontSet( obj, face, size, reload )
 	if face then
 		path, face = helper_fontinfo( face )
 		if not path then
-			path = old_path
+			path = path_old
 		end
 	end
 	

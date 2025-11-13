@@ -1,10 +1,10 @@
-﻿## Interface: 40402
+﻿## Interface: 50500
 
-## Title: ArkInventory [Cataclysm] [Configuration]
+## Title: ArkInventory [Pandaria] [Configuration]
 ## Notes: Configuration options for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 31200.04
+## Version: 31106.02
 ## X-ReleaseType: Alpha
 ## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
 

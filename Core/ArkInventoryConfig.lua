@@ -812,7 +812,7 @@ end
 
 function ArkInventory.ConfigInternalSortMethodMoveDown( id, key )
 
-	local p = false
+	local p
 	local t = ArkInventory.db.option.sort.method.data[id].order
 	
 	for k, v in ipairs( t ) do
@@ -841,7 +841,7 @@ end
 
 function ArkInventory.ConfigInternalSortMethodMoveUp( id, key )
 
-	local p = false
+	local p
 	local t = ArkInventory.db.option.sort.method.data[id].order
 	
 	for k, v in ipairs( t ) do
@@ -1411,7 +1411,7 @@ function ArkInventory.ConfigInternalProfileExport( id )
 			if catset_used[catset_id] then
 				return true
 			else
-				data = ArkInventory.ConfigInternalCategorysetGet( catset_id )
+				local data = ArkInventory.ConfigInternalCategorysetGet( catset_id )
 				if data then
 					if data.system then
 						return true

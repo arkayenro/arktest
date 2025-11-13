@@ -261,6 +261,7 @@ local function helper_TooltipSetHyperlink( tooltip, h )
 			
 			if tooltip then
 				ArkInventory.CrossClient.TooltipSetCurrencyByID( tooltip, osd.id, osd.amount )
+				tooltip:Show( )
 			end
 			
 		elseif osd.class == "copper" then
@@ -428,8 +429,10 @@ function ArkInventory.TooltipSetFromStorageItem( tooltip, loc_id_storage, bag_id
 	local tooltipSource = tooltip
 	
 	if h and not canUseTooltipInfo then
+
 		-- handle caged battlepets in old clients
 		-- its an item (pet cage) but blizzard will generate a battlepet hyperlink for it instead
+		
 		local osd = ArkInventory.ObjectStringDecode( h )
 		if osd[1] == "battlepet" then
 			
@@ -482,32 +485,44 @@ function ArkInventory.TooltipSetFromStorageItem( tooltip, loc_id_storage, bag_id
 			
 		elseif loc_id_window == ArkInventory.Const.Location.Bank and ArkInventory.Global.Mode.Bank then
 			
-			if loc_id_storage == ArkInventory.Const.Location.Bank and bag_id_storage == 1 then
-				
-				local inv_id = BankButtonIDToInvSlotID( slot_id )
-				if inv_id then
-					tooltipInfo = helper_TooltipSetInventoryItem( tooltip, inv_id )
-				end
-				
-			elseif loc_id_storage == ArkInventory.Const.Location.ReagentBank then
-				
-				local inv_id = ReagentBankButtonIDToInvSlotID( slot_id )
-				if inv_id then
-					tooltipInfo = helper_TooltipSetInventoryItem( tooltip, inv_id )
-				end
-				
-			else
-				
+			if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+
 				if blizzard_id and slot_id then
 					tooltipInfo = helper_TooltipSetBagItem( tooltip, blizzard_id, slot_id )
 				end
 				
+			else
+
+				if loc_id_storage == ArkInventory.Const.Location.Bank and bag_id_storage == 1 then
+					
+					local inv_id = ArkInventory.CrossClient.BankButtonIDToInvSlotID( slot_id )
+					if inv_id then
+						tooltipInfo = helper_TooltipSetInventoryItem( tooltip, inv_id )
+					end
+					
+				elseif loc_id_storage == ArkInventory.Const.Location.ReagentBank then
+					
+					local inv_id = ArkInventory.CrossClient.ReagentBankButtonIDToInvSlotID( slot_id )
+					if inv_id then
+						tooltipInfo = helper_TooltipSetInventoryItem( tooltip, inv_id )
+					end
+					
+				else
+					
+					if blizzard_id and slot_id then
+						tooltipInfo = helper_TooltipSetBagItem( tooltip, blizzard_id, slot_id )
+					end
+					
+				end
+
 			end
 			
 		elseif loc_id_window == ArkInventory.Const.Location.Vault and ArkInventory.Global.Mode.Vault then
 			
 			if bag_id_storage and slot_id then
+				
 				tooltipInfo = helper_TooltipSetGuildBankItem( tooltip, bag_id_storage, slot_id )
+				
 			end
 			
 		elseif loc_id_window == ArkInventory.Const.Location.Mailbox and ArkInventory.Global.Mode.Mailbox then
@@ -1117,7 +1132,7 @@ function ArkInventory.TooltipGetLine( tooltip, i )
 		
 	else
 		
-		tooltipName = tooltip:GetName( )
+		local tooltipName = tooltip:GetName( )
 		
 		obj = _G[string.format( "%s%s%s", tooltipName, "TextLeft", i )]
 		if obj and obj:IsShown( ) then
@@ -1209,7 +1224,7 @@ local function helper_IgnoredText( txt )
 	
 end
 
-function helper_TooltipJumpEmbeddedItem( tooltip, start )
+local function helper_TooltipJumpEmbeddedItem( tooltip, start )
 	
 	-- to jump over the embedded item in a recipe
 	
@@ -1257,7 +1272,6 @@ function helper_TooltipJumpEmbeddedItem( tooltip, start )
 	end
 	
 	--ArkInventory.OutputDebug( "nothing found keep going from [", start, "]" )
-	return
 	
 end
 
@@ -1729,10 +1743,6 @@ function ArkInventory.TooltipValidateDataFromSetBackpackToken( tooltip, ... )
 	
 end
 
-function ArkInventory.TooltipValidateDataFromSetBagItem( tooltip, ... )
-	return helper_CheckTooltipForItemOrSpell( tooltip )
-end
-
 function ArkInventory.TooltipValidateDataFromSetBuybackItem( tooltip, ... )
 	return helper_CheckTooltipForItemOrSpell( tooltip )
 end
@@ -2071,7 +2081,7 @@ function ArkInventory.HookTooltipSetCompanionPet( tooltip, ... )
 		local i = { index = pd.index }
 		
 		ArkInventory.TooltipCustomBattlepetBuild( tooltip, h, i )
-		ArkInventory.TooltipCustomBattlepetAddDetail( tooltip, bpSpeciesID, h, i )
+		ArkInventory.TooltipCustomBattlepetAddDetail( tooltip, sd.speciesID, h, i )
 		
 		local fn = "HookTooltipSetCompanionPet"
 		ArkInventory.TooltipMyDataSave( tooltip, fn, false, false, false, h, i )
@@ -2543,18 +2553,9 @@ function ArkInventory.TooltipAddItemCount( tooltip, h )
 	
 end
 
-function ArkInventory.TooltipAddItemAge( tooltip, h, blizzard_id, slot_id )
-	
-	if type( blizzard_id ) == "number" and type( slot_id ) == "number" then
-		ArkInventory.TooltipAddEmptyLine( tooltip )
-		tooltip:AddLine( tt, 1, 1, 1, 0 )
-	end
-
-end
-
 function ArkInventory.TooltipAddTransmogOwned( tooltip, h )
 	
-	--if ArkInventory.Global.TimerunningSeasonID == 0 then return end
+	--if ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID == 0 then return end
 	
 	if not h or h == "" then return end
 	
@@ -3137,7 +3138,7 @@ function ArkInventory.TooltipRebuildQueueAdd( search_id )
 	if not ArkInventory.db.option.tooltip.itemcount.enable then return end
 	if not search_id then return end
 	
-	--ArkInventory.Output( "adding ", search_id )
+	--ArkInventory.OutputDebug( "adding [", search_id, "] to tooltip rebuild queue" )
 	TooltipRebuildQueue[search_id] = true
 	
 	ArkInventory:SendMessage( "EVENT_ARKINV_TOOLTIP_REBUILD_QUEUE_UPDATE_BUCKET", "START" )
@@ -3337,4 +3338,50 @@ if TooltipDataProcessor then
 	TooltipDataProcessor.AddTooltipPostCall( Enum.TooltipDataType.CompanionPet, ArkInventory.TooltipProcessorSetCompanionPet )
 	TooltipDataProcessor.AddTooltipPostCall( Enum.TooltipDataType.BattlePet, ArkInventory.TooltipProcessorSetBattlePet )
 	TooltipDataProcessor.AddTooltipPostCall( Enum.TooltipDataType.Spell, ArkInventory.TooltipProcessorSetSpell )
+end
+
+
+function ArkInventory.TooltipSetTitle( tooltip, text, overrideColor, wrap )
+	GameTooltip_SetTitle( tooltip, text, overrideColor, wrap )
+end
+
+function ArkInventory.TooltipAddNormalLine( tooltip, text, wrap, leftOffset )
+	GameTooltip_AddColoredLine( tooltip, text, NORMAL_FONT_COLOR, wrap, leftOffset )
+end
+
+
+
+function ArkInventory.TooltipAddBankTabSettings( tooltip, bagInfo, bag_id_storage )
+	
+	if not tooltip or not bagInfo then
+		return
+	end
+
+	local wrapText = false
+
+	ArkInventory.TooltipAddNormalLine( tooltip, ArkInventory.Localise["VAULT_TAB_NAME"]:format( bag_id_storage, bagInfo.name or bag_id_storage ) )
+
+	if bagInfo.df then
+		
+		if FlagsUtil.IsSet( bagInfo.df, Enum.BagSlotFlags.ExpansionCurrent ) then
+			ArkInventory.TooltipAddNormalLine( tooltip, BANK_TAB_EXPANSION_ASSIGNMENT:format( BANK_TAB_EXPANSION_FILTER_CURRENT ), wrapText )
+		elseif FlagsUtil.IsSet( bagInfo.df, Enum.BagSlotFlags.ExpansionLegacy ) then
+			ArkInventory.TooltipAddNormalLine( tooltip, BANK_TAB_EXPANSION_ASSIGNMENT:format( BANK_TAB_EXPANSION_FILTER_LEGACY ), wrapText )
+		end
+		
+		local filterList = ContainerFrameUtil_ConvertFilterFlagsToList( bagInfo.df )
+		if filterList then
+			ArkInventory.TooltipAddNormalLine( tooltip, BANK_TAB_DEPOSIT_ASSIGNMENTS:format( filterList ), wrapText )
+		end
+
+	end
+
+	if bagInfo.access then
+		ArkInventory.TooltipAddNormalLine( tooltip, ArkInventory.Localise["VAULT_TAB_ACCESS"]:format( bagInfo.access ), wrapText )
+	end
+					
+	if bagInfo.withdraw then
+		ArkInventory.TooltipAddNormalLine( tooltip, ArkInventory.Localise["VAULT_TAB_REMAINING_WITHDRAWALS"]:format( bagInfo.withdraw ), wrapText )
+	end
+
 end

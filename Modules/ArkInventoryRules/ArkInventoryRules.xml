@@ -183,7 +183,7 @@
               </Anchors>
               <Scripts>
                 <OnLoad>
-                  self:SetText( BLIZZARD_STORE_LOADING )
+                  self:SetText( ArkInventory.Localise["LOADING"] )
                 </OnLoad>
               </Scripts>
             </FontString>
@@ -713,6 +713,7 @@
         <Scripts>
           
           <OnLoad inherit="prepend" >
+            
             ArkInventoryRules.Frame_Rules_Table_Sort_Build( self )
           </OnLoad>
           

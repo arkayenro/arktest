@@ -1,14 +1,84 @@
-﻿# 3.11.05 (09-MAR-2025)
- - updated - toc (retail) updated to 11.1.0
- - updated - toc (cataclysm) updated to 4.4.2
- - updated - toc (classic) updated to 1.15.6
+﻿# 3.12.05 (24-OCT-2025)
+ - updated - (classic) toc updated to 1.15.8
+ - updated - (retail) toc updated to 11.2.5
+ - updated - (pandaria) toc updated to 5.5.1
+ - updated - category for some items
+ - fixed - timerunning scrolls and openable categories should now be visible again
+ - added - rule function - `scrapable( )` - only works for items in your own bag
+
+# 3.12.04 (08-OCT-2025)
+ - fixed - (non retail) regression issue when dropping an item onto the bank bag
+ - fixed - (timerunning) issue with display code for timerunning characters
+ - updated - debug menu line for data ready with more information, eg retry count and dead state
+ - deleted - all void storage data now that its no longer in game
+ - workaround - bug in bankpanel causing usecontaineritem to access banktype after the bank was closed generating an addon blocked error
+
+# 3.12.03 (14-AUG-2025)
+ - added - config > profiles > bank > general > Reselect tabs - can remember which tab was last selected and will re-select it when the window is re-opened.  can be set to never, per session, or always.
+ - fixed - issues with drag-n-drop onto changer slots as well as moving items into the banks
+ - fixed - cleaned up the periodictable calls to ensure the item is valid.  if its not then its output to the debug window.
+ - fixed - (regression) issue with dropping bags on bagslots
+
+# 3.12.02 (10-AUG-2025)
+ - changed - xml broken up to remove errors in the non retail clients
+ - fixed - (retail) issue with right clicking an item to move it to the character or account bank.  it should no longer end up in the normal bank, or try to wear it.  if the selected tab is full it should get moved to one of the other tabs (if any of those have space).  the normal error messages should also come back.
+ - fixed - (retail) issue with bank tabs opening as bags when AI does not override the bank
+ - fixed - potential issue with bonusid handling from malformed hyperlinks
+ - fixed - (retail) issue with outfit rule function when using equipment manager
+ - fixed - (retail) issue with warbank bag mappings - needs saved data to be removed
+ - fixed - tab name and icon should now update in the changer window immediately after changing it
+ - fixed - (non retail clients) issue with items in bank (bag 0) slots not being able to generate tooltips
+ - fixed - (retail) issue with AccountBankPanel no longer existing
+
+ - note - (retail) all saved keyring data has been erased. please login to each character to update its data
+ - note - (retail) all saved bank data has been erased. please login to each character to update its data
+ - note - (retail) all saved warbank data has been erased. please login to any character to update its data
+
+# 3.12.01 (06-AUG-2025)
+ - fixed - issue with ARKINV_TemplateCurrencyTracking xml OnLoad and OnEnter scripts
+ - fixed - issue with restack and it trying to move soulbound items into the account bank
+ - fixed - issue with scrollbar not resetting to the top when swapping between panels
+ - fixed - issue with 3rd level of the bar menu system not generating properly
+ - fixed - issue with timerunning menu option displaying when it shouldnt
+ - fixed - tab name, icon, and filter settings should now work properly
+ - changed - power system (type) categories changed to be dynamic based off the current expansion.  anything not from the current expansion will end up in the power system (old) category
+ - updated - category for some items
+ - updated - mount data to 11.1.7
+ - updated - pet data to 11.1.7
+ - updated - unuseable and unwearable item tinting options moved to their own tab in the config. added ignore options for item level and already known
+ - updated - some lolcalisations based off game constants
+ - updated - (retail) toc updated to 11.2.0
+ - added - (11.2) option to split the bank tabs up into their own panels, the same way as the warbank can be split up if needed.  the isolate/display options will remain but only work when the bank is combined into a single panel
+ - added - (classic) - workaround for the current invalid hyperlink format blizzard has set
+ - removed - (11.2) locations - reagent bank (internal), void storage
+ - removed - (11.2) events - PLAYERBANKBAGSLOTS_CHANGED, REAGENTBANK_PURCHASED, REAGENTBANK_UPDATE, PLAYERREAGENTBANKSLOTS_CHANGED
+
+# 3.11.07 (17-JUL-2025)
+ - fixed - https://github.com/arkayenro/arkinventory/issues/2052 - issue with battlepet rarity colour in output text
+ - fixed - issue with reputation renown level text
+ - updated - packager - can now handle pandaria toc files/values
+ - updated - category for some items
+ - updated - (retail) toc updated to 11.1.7
+ - added - (pandaria) toc file for 5.5.0
+ - removed - (pandaria) locations - void storage, mount equipment
+ - removed - (pandaria) events - PLAYER_TRADE_CURRENCY, LFG_BONUS_FACTION_ID_UPDATED, VOID_STORAGE_OPEN, VOID_STORAGE_CLOSE
+
+# 3.11.06 (03-MAY-2025)
+ - fixed - (classic) https://github.com/arkayenro/arkinventory/issues/2053 - issue with tooltips and C_Item.GetItemLearnTransmogSet
+ - updated - (retail) toc updated to 11.1.5
+ - updated - category for some items
+
+# 3.11.05 (09-MAR-2025)
+ - updated - (retail) toc updated to 11.1.0
+ - updated - (cataclysm) toc updated to 4.4.2
+ - updated - (classic) toc updated to 1.15.6
  - updated - mount and pet data
 
 # 3.11.04 (20-FEB-2025)
  - no longer available (packager issues)
 
 # 3.11.03 (26-OCT-2024)
- - updated - toc (retail) updated to 11.0.5
+ - updated - (retail) toc updated to 11.0.5
  - fixed - issue with restack consolidate
  - workaround - https://github.com/arkayenro/arkinventory/issues/1864 - itemrack
  - added - item menu option in edit mode to ignore an item for all restack purposes
@@ -218,7 +288,7 @@
  - fixed - https://github.com/arkayenro/arkinventory/issues/1880 - issue with CONTAINER_SLOTS in most non english languages using a conditional format, as well as being reversed, which breaks the matching and the value capture
  - changed - (cataclysm) enabled mounts location
  - changed - (cataclysm) enabled toys location
- - added - cataclysm toc files 40400
+ - updated - (cataclysm) toc updated to 40400
  - added - ability to disable the text for each bag type in the status bar - config > design > window > style > status > empty slot
  - added - ability to disable the text for each bag type in the ldb object text - right click > ldb > display
 

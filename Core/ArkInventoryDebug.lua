@@ -67,12 +67,12 @@ end
 local function paint_Background( frame, config )
 	local obj = _G[string.format( "%s%s", frame:GetName( ), "Background" )]
 	if obj then
-		style = config.background.style or ArkInventory.Const.Texture.BackgroundDefault
+		local style = config.background.style or ArkInventory.Const.Texture.BackgroundDefault
 		if style == ArkInventory.Const.Texture.BackgroundDefault then
-			colour = config.background.colour
+			local colour = config.background.colour
 			ArkInventory.SetTexture( obj, true, colour.r, colour.g, colour.b, colour.a )
 		else
-			file = ArkInventory.Lib.SharedMedia:Fetch( ArkInventory.Lib.SharedMedia.MediaType.BACKGROUND, style )
+			local file = ArkInventory.Lib.SharedMedia:Fetch( ArkInventory.Lib.SharedMedia.MediaType.BACKGROUND, style )
 			ArkInventory.SetTexture( obj, file )
 		end
 	end

@@ -303,7 +303,7 @@ function ArkInventory.Collection.Reputation.ToggleAtWar( id )
 		
 		local data = ArkInventory.Collection.Reputation.GetByID( id )
 		if data and data.canToggleAtWar then
-			FactionToggleAtWar( data.index )
+			ArkInventory.CrossClient.FactionToggleAtWar( data.index )
 		end
 		
 		FilterActionRestore( )
@@ -408,7 +408,7 @@ local function ScanBase( id )
 			local factionInfo = ArkInventory.CrossClient.GetFactionInfoByID( id )
 			if factionInfo then
 				
-				if factionInfo.name and factionInfoname ~= "" then
+				if factionInfo.name and factionInfo.name ~= "" then
 					
 					cache[id] = {
 						id = id,
@@ -683,7 +683,7 @@ local function Scan_Threaded( thread_id )
 								barMax = factionInfo.renownLevelThreshold
 								isCapped = ArkInventory.CrossClient.HasMaximumRenown( id )
 								barValue = isCapped and factionInfo.renownLevelThreshold or factionInfo.renownReputationEarned or 0
-								standingText = string.format( "%s%s", RENOWN_LEVEL_LABEL, factionInfo.renownLevel )
+								standingText = string.format( RENOWN_LEVEL_LABEL, factionInfo.renownLevel )
 								isCapped = isCapped and 1 or 0
 								rankValue = factionInfo.renownLevel
 								rankMax = #ArkInventory.CrossClient.GetRenownLevels( id )

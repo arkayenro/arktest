@@ -1,4 +1,5 @@
-﻿local _G = _G
+﻿---@diagnostic disable: missing-fields
+local _G = _G
 local select = _G.select
 local pairs = _G.pairs
 local ipairs = _G.ipairs
@@ -195,6 +196,31 @@ ArkInventory.Lib.StaticDialog:Register( "PROFILE_IMPORT", {
 	
 	on_show = function( self, data )
 		self.editboxes[1]:SetText( "" )
+	end,
+	
+} )
+
+ArkInventory.Lib.StaticDialog:Register( "PROTECTED_WARBANK_TAB_PURCHASE", {
+	
+	text = "PROTECTED ACTION",
+	hide_on_escape = true,
+	exclusive = true,
+	
+	buttons = {
+		{
+			text = ArkInventory.Localise["OKAY"],
+			on_click = function( self )
+				ArkInventory.Lib.StaticDialog:Dismiss( "PROTECTED_WARBANK_TAB_PURCHASE" )
+			end,
+		},
+	},
+	
+	on_show = function( self, data )
+		
+		local text = "purchasing a warbank tab is now a protected action.\n\nplease disable the bank override via the location menu and then use the default bank interface to purchase the tab.\n\nonce purchased you can re-enable the bank override via the small bag icon at the top right of the default bank interface"
+		
+		self.text:SetText( text )
+		
 	end,
 	
 } )

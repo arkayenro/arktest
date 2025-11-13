@@ -935,8 +935,6 @@ local function helper_UpgradeProfile( profile, profile_name )
 			
 			if id then
 				
-				catset = id
-				
 				if profile.option.category then
 					ArkInventory.Table.Merge( profile.option.category, data.assign )
 				end
@@ -1447,6 +1445,12 @@ function ArkInventory.DatabaseUpgradePostLoad( )
 		helper_CategoryRenumber( "1!433", nil ) -- CONSUMABLE_SCROLL
 		helper_CategoryRenumber( "1!507", nil ) -- TRADEGOODS_MATERIALS
 		helper_CategoryRenumber( "1!510", "1!440" ) -- TRADEGOODS_ENCHANTMENT > SYSTEM_ITEM_ENHANCEMENT
+
+
+		helper_CategoryRenumber( "1!455", "1!471" ) -- SHADOWLANDS - COVENANT - ANIMA > POWER SYSTEM 1
+		helper_CategoryRenumber( "1!459", "1!472" ) -- SHADOWLANDS - COVENANT - CONDUIT > POWER SYSTEM 2
+		helper_CategoryRenumber( "1!460", "1!473" ) -- SHADOWLANDS - COVENANT - OTHER > POWER SYSTEM 3
+		
 		
 		
 		ArkInventory.acedb.global.option.version = upgrade_version
@@ -2346,12 +2350,31 @@ function ArkInventory.DatabaseUpgradePostLoad( )
 			end
 		end
 		
-		
 		ArkInventory.acedb.global.option.version = upgrade_version
 		
 	end
 	
+
+	upgrade_version = 31201.02
+	if ArkInventory.acedb.global.player.version < upgrade_version then
+		
+		ArkInventory.EraseSavedData( nil, ArkInventory.Const.Location.Keyring )
+		ArkInventory.EraseSavedData( nil, ArkInventory.Const.Location.Bank )
+		ArkInventory.EraseSavedData( nil, ArkInventory.Const.Location.Void )
+
+		ArkInventory.acedb.global.player.version = upgrade_version
+
+	end
 	
+	
+	upgrade_version = 31203.01
+	if ArkInventory.acedb.global.player.version < upgrade_version then
+		
+		ArkInventory.EraseSavedData( nil, ArkInventory.Const.Location.Void )
+
+		ArkInventory.acedb.global.player.version = upgrade_version
+
+	end
 	
 	
 	
