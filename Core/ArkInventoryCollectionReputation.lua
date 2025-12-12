@@ -134,8 +134,13 @@ local function FilterActionRestore( )
 end
 
 function ArkInventory.Collection.Reputation.OnHide( )
+
+	if not ArkInventory:IsEnabled( ) then return end
+
+
 	--ArkInventory.OutputDebug( "Reputation.OnHide" )
 	ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_REPUTATION_UPDATE_BUCKET", "FRAME_CLOSED" )
+	
 end
 
 function ArkInventory.Collection.Reputation.IsReady( )

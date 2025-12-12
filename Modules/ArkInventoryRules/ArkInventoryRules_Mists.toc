@@ -1,10 +1,10 @@
-﻿## Interface: 50500
+﻿## Interface: 50502
 
 ## Title: ArkInventory [Pandaria] [Rules]
 ## Notes: Rules for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 31205.02
+## Version: 31205.04
 ## X-ReleaseType: Alpha
 ## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
 

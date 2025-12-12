@@ -2471,7 +2471,8 @@ function ArkInventory.MenuBagOpen( frame )
 									"closeWhenClicked", true,
 									"func", function( )
 										PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
-										StaticPopup_Show( "CONFIRM_BUY_BANK_TAB", nil, nil, { bankType = ArkInventory.ENUM.BANKTYPE.CHARACTER } )
+										--StaticPopup_Show( "CONFIRM_BUY_BANK_TAB", nil, nil, { bankType = ArkInventory.ENUM.BANKTYPE.CHARACTER } )
+										ArkInventory.Lib.StaticDialog:Spawn( "PROTECTED_BANK_TAB_PURCHASE" )
 									end
 								)
 
@@ -2544,7 +2545,7 @@ function ArkInventory.MenuBagOpen( frame )
 								"func", function( )
 									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
 									--StaticPopup_Show( "CONFIRM_BUY_BANK_TAB", nil, nil, { bankType = ArkInventory.ENUM.BANKTYPE.ACCOUNT } )
-									ArkInventory.Lib.StaticDialog:Spawn( "PROTECTED_WARBANK_TAB_PURCHASE" )
+									ArkInventory.Lib.StaticDialog:Spawn( "PROTECTED_BANK_TAB_PURCHASE" )
 								end
 							)
 

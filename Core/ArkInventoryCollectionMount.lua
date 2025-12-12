@@ -1531,7 +1531,12 @@ end
 -- the UI filters have no impact on the mount source so we can safely ignore them
 
 function ArkInventory.Collection.Mount.OnHide( )
+
+	if not ArkInventory:IsEnabled( ) then return end
+
+
 	ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_MOUNT_UPDATE_BUCKET", "FRAME_HIDE" )
+	
 end
 
 function ArkInventory.Collection.Mount.IsReady( )

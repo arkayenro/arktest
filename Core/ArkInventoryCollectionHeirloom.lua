@@ -29,7 +29,12 @@ local collection = {
 -- the UI filters have no impact on the heirloom source so we can safely ignore them
 
 function ArkInventory.Collection.Heirloom.OnHide( )
+
+	if not ArkInventory:IsEnabled( ) then return end
+
+
 	ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_HEIRLOOM_UPDATE_BUCKET", "FRAME_CLOSED" )
+	
 end
 
 function ArkInventory.Collection.Heirloom.IsReady( )

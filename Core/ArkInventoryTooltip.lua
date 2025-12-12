@@ -145,6 +145,7 @@ local function checkAbortShow( tooltip )
 	
 	if not tooltip then return true end
 	if not tooltip.ARKTTD then return true end
+
 	if not ArkInventory:IsEnabled( ) then return true end
 	
 	if not ArkInventory.db.option.tooltip.show then return true end
@@ -442,7 +443,7 @@ function ArkInventory.TooltipSetFromStorageItem( tooltip, loc_id_storage, bag_id
 			
 			return
 			
---		elseif osd[1] == "item" and osd[2] == ArkInventory.Const.BLIZZARD.GLOBAL.PET.CAGE_ITEMID then
+		--elseif osd[1] == "item" and osd[2] == ArkInventory.Const.BLIZZARD.GLOBAL.PET.CAGE_ITEMID then
 			--ArkInventory.Output( "scan caged = ", h )
 			-- old game version, functions will handle rebuilding to battlepet hyperlink
 		end
@@ -796,13 +797,13 @@ function ArkInventory.TooltipCustomBattlepetAddDetail( tooltip, speciesID, h, i 
 end
 
 function ArkInventory.TooltipCustomBattlepetBuild( tooltip, h, i )
-	
-	if not tooltip then return true end
-	if not ArkInventory:IsEnabled( ) then return true end
+
+	if not tooltip then return end
+	if not ArkInventory:IsEnabled( ) then return end
 	if not h and not ( i and i.index ) then return end
 	
---	test = check custom pet tooltip
---	checked ok = 
+	--test = check custom pet tooltip
+	--checked ok = 
 	
 	--ArkInventory.OutputDebug( "TooltipCustomBattlepetBuild: ", h )
 	
@@ -1063,9 +1064,11 @@ end
 
 function ArkInventory.HookBattlePetToolTip_Show( ... )
 	
+	if not ArkInventory:IsEnabled( ) then return end
+	
+	
 	-- BattlePetToolTip_Show(speciesID, level, breedQuality, maxHealth, power, speed, customName)
 	
-	if not ArkInventory:IsEnabled( ) then return end
 	if not ArkInventory.db.option.tooltip.show then return end
 	if not ArkInventory.db.option.tooltip.battlepet.enable then return end
 	
@@ -1946,10 +1949,13 @@ end
 
 function ArkInventory.HookOnTooltipSetUnit( tooltip, ... )
 	
---	this tooltip doesnt normally refresh
+	if not ArkInventory:IsEnabled( ) then return end
+
+
+	--this tooltip doesnt normally refresh
 	
---	test = mouseover your active pet, or a wild battlepet
---	checked ok = 
+	--test = mouseover your active pet, or a wild battlepet
+	--checked ok = 
 	
 	--ArkInventory.Output( "here1" )
 	
@@ -2038,10 +2044,13 @@ end
 
 function ArkInventory.HookTooltipSetCompanionPet( tooltip, ... )
 	
---	this tooltip doesnt normally refresh
+	if not ArkInventory:IsEnabled( ) then return end
+
+
+	--this tooltip doesnt normally refresh
 	
---	test = mouseover a pet in the pet journal
---	checked ok = true
+	--test = mouseover a pet in the pet journal
+	--checked ok = true
 	
 	if not C_PetJournal then return end
 	if not ArkInventory.db.option.tooltip.battlepet.enable then return end
@@ -2094,6 +2103,9 @@ end
 
 function ArkInventory.HookTooltipSetGeneric( fn, tooltip, ... )
 	
+	if not ArkInventory:IsEnabled( ) then return end
+
+
 	local arg1, arg2, arg3, arg4 = ...
 	if type( arg1 ) == "string" then
 		arg1 = string.gsub( arg1, "\124", "\124\124" )
@@ -2250,6 +2262,9 @@ end
 
 function ArkInventory.HookTooltipOnUpdate( tooltip, elapsed )
 	
+	if not ArkInventory:IsEnabled( ) then return end
+
+
 	if checkAbortItemCount( tooltip ) then return end
 	
 	if not tooltip.ARKTTD or not tooltip.ARKTTD.onupdate.timer or not tooltip.ARKTTD.onupdate.fn then return end
@@ -2398,6 +2413,9 @@ end
 
 function ArkInventory.HookTooltipOnEnter( tooltip )
 	
+	if not ArkInventory:IsEnabled( ) then return end
+
+
 --	if tooltip == ItemRefTooltip then
 --		ArkInventory.Output( "OnEnter" )
 --	end
@@ -2415,6 +2433,9 @@ function ArkInventory.HookTooltipOnEnter( tooltip )
 end
 
 function ArkInventory.HookTooltipOnLeave( tooltip )
+	
+	if not ArkInventory:IsEnabled( ) then return end
+
 	
 --	if tooltip == ItemRefTooltip then
 --		ArkInventory.Output( "OnLeave" )
@@ -3177,6 +3198,7 @@ end
 function ArkInventory:EVENT_ARKINV_TOOLTIP_REBUILD_QUEUE_UPDATE_BUCKET( events )
 	
 	if not ArkInventory:IsEnabled( ) then return end
+
 	
 	if ArkInventory.Global.Mode.Combat then
 		return

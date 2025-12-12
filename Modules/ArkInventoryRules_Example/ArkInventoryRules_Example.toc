@@ -1,6 +1,6 @@
 ﻿## License: LGPL v2.1 (this file specifically)
 
-## Interface: 110200
+## Interface: 110207,120001
 
 ## Title: ArkInventory [Rules] Example
 ## Notes: Example rule for ArkInventory

@@ -169,7 +169,12 @@ end
 
 
 function ArkInventory.Collection.Toybox.OnHide( )
+
+	if not ArkInventory:IsEnabled( ) then return end
+
+
 	ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_TOYBOX_UPDATE_BUCKET", "FRAME_CLOSED" )
+	
 end
 
 function ArkInventory.Collection.Toybox.IsReady( )
@@ -195,6 +200,7 @@ function ArkInventory.Collection.Toybox.Summon( index )
 	local obj = ArkInventory.Collection.Toybox.GetToy( index )
 	if obj then
 		--UseToy( obj.item ) -- secure action now, so cant be done
+		ArkInventory.Lib.StaticDialog:Spawn( "PROTECTED_TOY" )
 	end
 end
 

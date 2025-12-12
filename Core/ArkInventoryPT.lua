@@ -408,9 +408,9 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.Consumable.Reputation.BFA.Rajani"] = "173374:2415,173375:2415",
 	["ArkInventory.Consumable.Reputation.BFA.Rustbolt Resistance"] = "168497:2391,208134:2391",
 	["ArkInventory.Consumable.Reputation.BFA.Other"] = "",
-	["ArkInventory.Consumable.Reputation.Legion.Argussian Reach"] = "152959:2170,152960:2170,152961:2170,152954:2170",
+	["ArkInventory.Consumable.Reputation.Legion.Argussian Reach"] = "152959:2170,152960:2170,152961:2170,152954:2170,249788:2170",
 	["ArkInventory.Consumable.Reputation.Legion.Armies of Legionfall"] = "146949:2045,146950:2045,147727:2045,152464:2045,249784:2045",
-	["ArkInventory.Consumable.Reputation.Legion.Army of the Light"] = "152955:2165,152956:2165,152957:2165,152958:2165",
+	["ArkInventory.Consumable.Reputation.Legion.Army of the Light"] = "152955:2165,152956:2165,152957:2165,152958:2165,249780:2165",
 	["ArkInventory.Consumable.Reputation.Legion.Court of Farondis"] = "139023:1900,141340:1900,141989:1900,146937:1900,146943:1900,147410:1900,150927:1900,249787:1900",
 	["ArkInventory.Consumable.Reputation.Legion.Dreamweavers"] = "139021:1883,146936:1883,141339:1883,146942:1883,141988:1883,147411:1883,150926:1883,249786:1883",
 	["ArkInventory.Consumable.Reputation.Legion.Highmountain Tribe"] = "139024:1828,141341:1828,141990:1828,146938:1828,146944:1828,147412:1828,150928:1828,249785:1828",
@@ -580,7 +580,7 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.Skill.Tailoring.PTBase"] = "m,Tradeskill.Mat.ByProfession.Tailoring,TradeskillResultMats.Reverse.Tailoring,ArkInventory.Tradegoods.Cloth",
 	
 
-	["ArkInventory.Armor Token.Timerunning.Legion"] = "253224",
+	["ArkInventory.Armor Token.Timerunning.Legion"] = "253224,253227",
 	["ArkInventory.Armor Token.415.Dreambound.Plate"] = "208890,208894,208901,208902,208909,208910,208916,208919,209835",
 	["ArkInventory.Armor Token.415.Dreambound.Mail"] = "208892,208896,208899,208904,208907,208912,208915,208920,209834",
 	["ArkInventory.Armor Token.415.Dreambound.Leather"] = "208893,208897,208898,208905,208906,208913,208914,208921,209832",

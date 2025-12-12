@@ -126,7 +126,12 @@ end
 
 
 function ArkInventory.Collection.Currency.OnHide( )
+
+	if not ArkInventory:IsEnabled( ) then return end
+
+
 	ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_CURRENCY_UPDATE_BUCKET", "FRAME_CLOSED" )
+	
 end
 
 function ArkInventory.Collection.Currency.IsReady( )

@@ -1690,7 +1690,12 @@ end
 
 
 function ArkInventory.Collection.Pet.OnHide( )
+
+	if not ArkInventory:IsEnabled( ) then return end
+
+
 	ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_PET_UPDATE_BUCKET", "FRAME_CLOSED" )
+	
 end
 
 function ArkInventory.Collection.Pet.IsReady( )

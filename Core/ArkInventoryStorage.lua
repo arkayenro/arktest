@@ -693,8 +693,12 @@ function ArkInventory:EVENT_ARKINV_BACKPACK_TOKEN_UPDATE_BUCKET( ... )
 end
 
 function ArkInventory:EVENT_ARKINV_BACKPACK_TOKEN_UPDATE( ... )
+	
+	if not ArkInventory:IsEnabled( ) then return end
+	
 	local event = ...
 	ArkInventory:SendMessage( "EVENT_ARKINV_BACKPACK_TOKEN_UPDATE_BUCKET", event )
+
 end
 
 function ArkInventory:EVENT_ARKINV_TALENT_CHANGED( ... )
@@ -1328,10 +1332,11 @@ end
 
 function ArkInventory.HookMailSend( ... )
 	
-	--ArkInventory.Output( "HookMailSend( )" )
-	
 	if not ArkInventory:IsEnabled( ) then return end
 	
+	
+	--ArkInventory.Output( "HookMailSend( )" )
+
 	local loc_id = ArkInventory.Const.Location.Mailbox
 	
 	if not ArkInventory.isLocationMonitored( loc_id ) then
@@ -1371,9 +1376,10 @@ end
 
 function ArkInventory.HookMailReturn( index )
 	
-	--ArkInventory.Output( "HookMailReturn( ", index, " )" )
-	
 	if not ArkInventory:IsEnabled( ) then return end
+
+
+	--ArkInventory.Output( "HookMailReturn( ", index, " )" )
 	
 	local loc_id = ArkInventory.Const.Location.Mailbox
 	
@@ -1793,7 +1799,10 @@ function ArkInventory:EVENT_ARKINV_ZONE_CHANGED( ... )
 end
 
 function ArkInventory.HookC_TradeSkillUI_SetTooltipRecipeResultItem( ... )
+	
 	if not ArkInventory:IsEnabled( ) then return end
+
+
 	local recipeID, reagents, recraft, recipeLevel = ...
 	--ArkInventory.Output( "recipe ", recipeID )
 	local info = C_TradeSkillUI.GetRecipeOutputItemData( recipeID, reagents, recraft )
@@ -1802,6 +1811,7 @@ function ArkInventory.HookC_TradeSkillUI_SetTooltipRecipeResultItem( ... )
 		GameTooltip:SetHyperlink( info.hyperlink )
 		--ArkInventory.TooltipAddItemCount( GameTooltip, info.hyperlink )
 	end
+
 end
 
 function ArkInventory:EVENT_ARKINV_ACTIONBAR_UPDATE_USABLE_BUCKET( ... )
