@@ -1,5 +1,9 @@
-﻿# 3.12.05 Alpha 4 (25-NOV-2025)
- - updated - (midnight) toc updated to also include 12.0.0
+﻿# 3.12.05 Alpha 5 (12-DEC-2025)
+ - updated - (midnight) toc updated to 12.0.1
+ - updated - category for some items
+
+# 3.12.05 Alpha 4 (25-NOV-2025)
+ - updated - (midnight) toc updated to include 12.0.0
  - updated - (pandaria) toc updated to 5.5.2
  - updated - category for some items
 
