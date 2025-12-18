@@ -687,7 +687,7 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.Timerunning.Scroll.Helper"] = "217901,217928,217929,217956",
 	["ArkInventory.Timerunning.Scroll.Buff"] = "217607,217608,217605,217606,217730,217731",
 	
-	["ArkInventory.Timerunning.Legion.Infinite Power.Artifactum Sands"] = "245925",
+	["ArkInventory.Timerunning.Legion.Infinite Power.Artifactum Sands"] = "245925,249891",
 	["ArkInventory.Timerunning.Legion.Infinite Power.Memento.Infinte Power"] = "242501,242502,242503,242504,242505,242506,242507,242508,242509,242510,242511,242512,242513,242514,242515,242516,254267",
 	["ArkInventory.Timerunning.Legion.Infinite Power.Memento.XP"] = "246936,246937",
 	

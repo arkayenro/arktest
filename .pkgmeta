@@ -1,7 +1,7 @@
 ﻿package-as: ArkInventory
 
 externals:
-  Externals/Ace3/AceAddon: https://github.com/WoWUIDev/Ace3/tree/master/AceAddon-3.0
+  Externals/Ace3/AceAddon: https://repos.curseforge.com/wow/ace3/trunk/AceAddon-3.0
   Externals/Ace3/AceConsole: https://repos.curseforge.com/wow/ace3/trunk/AceConsole-3.0
   Externals/Ace3/AceGUI: https://repos.curseforge.com/wow/ace3/trunk/AceGUI-3.0
   Externals/Ace3/AceConfig: https://repos.curseforge.com/wow/ace3/trunk/AceConfig-3.0

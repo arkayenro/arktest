@@ -161,6 +161,11 @@ ArkInventory.Const.Category = {
 				id = "SYSTEM_CRAFTING_REAGENT",
 				text = ArkInventory.Localise["CRAFTING_REAGENT"],
 			},
+			[511] = {
+				ClientCheck = ArkInventory.ClientCheck( 110207 ),
+				id = "SYSTEM_HOUSING",
+				text = ArkInventory.Localise["HOUSING"],
+			},
 		},
 		Timerunning = {
 			[463] = {
@@ -850,6 +855,11 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	end
 	
 	
+	-- housing
+	if info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.HOUSING.PARENT then
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_HOUSING" )
+	end
+
 	-- pets
 	process = false
 	if info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.MISC.PARENT and info.itemsubtypeid == ArkInventory.ENUM.ITEM.TYPE.MISC.PET then
@@ -933,7 +943,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA ) then
 			
 			-- type 1 - artifact power
-
+			
 			-- type 2 - essences
 			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.BFA.Heart of Azeroth.Essence" ) then
 				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA, ArkInventory.ENUM.EXPANSION.BFA ) then

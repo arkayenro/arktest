@@ -735,13 +735,13 @@ ArkInventory.ENUM = {
 			},
 			MISC = {
 				PARENT = ( Enum and Enum.ItemClass and Enum.ItemClass.Miscellaneous ) or 15,
-				JUNK = Enum.ItemMiscellaneousSubclass.Junk or 0,
-				REAGENT = Enum.ItemMiscellaneousSubclass.Reagent or 1,
-				PET = Enum.ItemMiscellaneousSubclass.CompanionPet or 2,
-				HOLIDAY = Enum.ItemMiscellaneousSubclass.Holiday or 3,
-				OTHER = Enum.ItemMiscellaneousSubclass.Other or 4,
-				MOUNT = Enum.ItemMiscellaneousSubclass.Mount or 5,
-				MOUNT_EQUIPMENT = Enum.ItemMiscellaneousSubclass.MountEquipment or 6,
+				JUNK = ( Enum and Enum.ItemMiscellaneousSubclass and Enum.ItemMiscellaneousSubclass.Junk ) or 0,
+				REAGENT = ( Enum and Enum.ItemMiscellaneousSubclass and Enum.ItemMiscellaneousSubclass.Reagent ) or 1,
+				PET = ( Enum and Enum.ItemMiscellaneousSubclass and Enum.ItemMiscellaneousSubclass.CompanionPet ) or 2,
+				HOLIDAY = ( Enum and Enum.ItemMiscellaneousSubclass and Enum.ItemMiscellaneousSubclass.Holiday ) or 3,
+				OTHER = ( Enum and Enum.ItemMiscellaneousSubclass and Enum.ItemMiscellaneousSubclass.Other ) or 4,
+				MOUNT = ( Enum and Enum.ItemMiscellaneousSubclass and Enum.ItemMiscellaneousSubclass.Mount ) or 5,
+				MOUNT_EQUIPMENT = ( Enum and Enum.ItemMiscellaneousSubclass and Enum.ItemMiscellaneousSubclass.MountEquipment ) or 6,
 			},
 			GLYPH = {
 				PARENT = ( Enum and Enum.ItemClass and Enum.ItemClass.Glyph ) or 16,
@@ -763,6 +763,15 @@ ArkInventory.ENUM = {
 				PARENT = ( Enum and Enum.ItemClass and Enum.ItemClass.WoWToken ) or 18,
 				WOWTOKEN = 0, -- [174]
 			},
+			HOUSING = {
+				PARENT = ( Enum and Enum.ItemClass and Enum.ItemClass.Housing ) or 20,
+				DECOR = ( Enum and Enum.ItemHousingSubclass and Enum.ItemHousingSubclass.Decor ) or 0,
+				DYE = ( Enum and Enum.ItemHousingSubclass and Enum.ItemHousingSubclass.Dye ) or 1,
+				ROOM = ( Enum and Enum.ItemHousingSubclass and Enum.ItemHousingSubclass.Room ) or 2,
+				ROOMCUSTOMIZATION = ( Enum and Enum.ItemHousingSubclass and Enum.ItemHousingSubclass.RoomCustomization ) or 3,
+				EXTERIORCUSTOMIZATION = ( Enum and Enum.ItemHousingSubclass and Enum.ItemHousingSubclass.ExteriorCustomization ) or 4,
+				SERVICEITEM = ( Enum and Enum.ItemHousingSubclass and Enum.ItemHousingSubclass.ServiceItem ) or 4,
+			}
 		},
 	},
 	LIST = {

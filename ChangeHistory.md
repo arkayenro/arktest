@@ -1,4 +1,7 @@
-﻿# 3.12.05 Alpha 5 (12-DEC-2025)
+﻿# 3.12.05 Alpha 6 (xx-DEC-2025)
+- added - category: system > housing
+
+# 3.12.05 Alpha 5 (12-DEC-2025)
  - updated - (midnight) toc updated to 12.0.1
  - updated - category for some items
 

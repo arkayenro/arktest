@@ -39,7 +39,7 @@ end
 
 function ArkInventory.Tools.GlobalSearch( )
 --[[
- 	local z = "session"
+ 	local z = "housing"
 	ArkInventory.Output( "search=", z )
 	for k, v in pairs (_G) do
 		if type( k ) == "string" and type( v ) == "string" then
