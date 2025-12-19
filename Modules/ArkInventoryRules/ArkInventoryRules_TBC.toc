@@ -1,7 +1,7 @@
-﻿## Interface: 110207,120001
+﻿## Interface: 20505
 
-## Title: ArkInventory [Configuration]
-## Notes: Configuration options for ArkInventory
+## Title: ArkInventory [TBC] [Rules]
+## Notes: Rules for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
 ## Version: 31205.07
@@ -9,7 +9,12 @@
 ## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
 
 ## DefaultState: Enabled
-## LoadOnDemand: 1
+## LoadOnDemand: 0
 ## RequiredDeps: ArkInventory
 
-ArkInventoryConfig.lua
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: delayed
+
+ArkInventoryRules.lua
+
+ArkInventoryRules.xml

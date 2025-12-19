@@ -1,6 +1,6 @@
-﻿## Interface: 110207,120001
+﻿## Interface: 20505
 
-## Title: ArkInventory [Configuration]
+## Title: ArkInventory [TBC] [Configuration]
 ## Notes: Configuration options for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
