@@ -1,6 +1,6 @@
-﻿## Interface: 20504
+﻿## Interface: 20505
 
-## Title: ArkTest [TBC]
+## Title: ArkTest [BCC]
 ## Notes: test mod for packager testing
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com

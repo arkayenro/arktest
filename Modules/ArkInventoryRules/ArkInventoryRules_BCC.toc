@@ -1,6 +1,6 @@
-﻿## Interface: 50502
+﻿## Interface: 20505
 
-## Title: ArkInventory [Pandaria] [Rules]
+## Title: ArkInventory [BCC] [Rules]
 ## Notes: Rules for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com

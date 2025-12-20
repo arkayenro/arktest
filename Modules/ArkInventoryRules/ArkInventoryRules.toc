@@ -4,7 +4,7 @@
 ## Notes: Rules for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 31205.07
+## Version: 31205.08
 ## X-ReleaseType: Alpha
 ## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
 

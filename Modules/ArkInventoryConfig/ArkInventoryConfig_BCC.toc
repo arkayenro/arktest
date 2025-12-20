@@ -1,7 +1,7 @@
-﻿## Interface: 50502
+﻿## Interface: 20505
 
-## Title: ArkInventory [Pandaria] [Rules]
-## Notes: Rules for ArkInventory
+## Title: ArkInventory [BCC] [Configuration]
+## Notes: Configuration options for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
 ## Version: 31205.08
@@ -9,12 +9,7 @@
 ## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
 
 ## DefaultState: Enabled
-## LoadOnDemand: 0
+## LoadOnDemand: 1
 ## RequiredDeps: ArkInventory
 
-## LoadManagers: AddonLoader
-## X-LoadOn-Always: delayed
-
-ArkInventoryRules.lua
-
-ArkInventoryRules.xml
+ArkInventoryConfig.lua

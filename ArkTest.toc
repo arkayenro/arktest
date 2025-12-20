@@ -1,4 +1,4 @@
-## Interface: 110002
+## Interface: 110002,120001
 
 ## Title: ArkTest
 ## Notes: test mod for packager testing
