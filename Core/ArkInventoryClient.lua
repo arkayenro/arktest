@@ -180,6 +180,26 @@ function ArkInventory.CrossClient.GetItemCraftedQuality( ... )
 	end
 end
 
+function ArkInventory.CrossClient.GetItemQuality( ... )
+	return ArkInventory.CrossClient.GetItemReagentQuality( ... ) or ArkInventory.CrossClient.GetItemCraftedQuality( ... )
+end
+
+function ArkInventory.CrossClient.GetItemReagentQualityInfo( ... )
+	if C_TradeSkillUI and C_TradeSkillUI.GetItemReagentQualityInfo then
+		return C_TradeSkillUI.GetItemReagentQualityInfo( ... )
+	end
+end
+
+function ArkInventory.CrossClient.GetItemCraftedQualityInfo( ... )
+	if C_TradeSkillUI and C_TradeSkillUI.GetItemCraftedQualityInfo then
+		return C_TradeSkillUI.GetItemCraftedQualityInfo( ... )
+	end
+end
+
+function ArkInventory.CrossClient.GetItemQualityInfo( ... )
+	return ArkInventory.CrossClient.GetItemReagentQualityInfo( ... ) or ArkInventory.CrossClient.GetItemCraftedQualityInfo( ... )
+end
+
 function ArkInventory.CrossClient.SetSortBagsRightToLeft( ... )
 	if SetSortBagsRightToLeft then
 		return SetSortBagsRightToLeft( ... )
@@ -548,17 +568,21 @@ function ArkInventory.CrossClient.IsFactionParagon( ... )
 	end
 end
 
+function ArkInventory.CrossClient.IsFactionParagonForCurrentPlayer( ... )
+	if C_Reputation and C_Reputation.IsFactionParagonForCurrentPlayer then
+		return C_Reputation.IsFactionParagonForCurrentPlayer( ... )
+	end
+end
+
 function ArkInventory.CrossClient.GetFactionParagonInfo( ... )
 	
+	local r = { }
+	
 	if C_Reputation and C_Reputation.GetFactionParagonInfo then
-		
-		local r = { }
-		
-		r.value, r.threshold, r.rewardQuestID, r.rewardPending, r.tooLowLevel = C_Reputation.GetFactionParagonInfo( ... )
-		
-		return r
-		
+		r.value, r.threshold, r.rewardQuestID, r.rewardPending, r.tooLowLevel, r.storageLevel = C_Reputation.GetFactionParagonInfo( ... )
 	end
+
+	return r
 	
 end
 
@@ -673,12 +697,14 @@ function ArkInventory.CrossClient.EnumerateBagGearFilters( ... )
 end
 
 function ArkInventory.CrossClient.OptionNotAvailableExpansion( check, text )
+	
 	local disabled = not not check
 	local text = text
 	if disabled then
 		text = string.format( "%s\n\n%s%s", text, RED_FONT_COLOR_CODE, ArkInventory.Localise["OPTION_NOT_AVAILABLE_EXPANSION"] )
 	end
 	return disabled, text
+	
 end
 
 function ArkInventory.CrossClient.GetContainerNumSlots( ... )
@@ -688,15 +714,17 @@ function ArkInventory.CrossClient.GetContainerNumSlots( ... )
 	elseif GetContainerNumSlots then
 		return GetContainerNumSlots( ... ) or 0
 	end
-	
+
 end
 
 function ArkInventory.CrossClient.ContainerIDToInventoryID( ... )
+	
 	if C_Container and C_Container.ContainerIDToInventoryID then
 		return C_Container.ContainerIDToInventoryID( ... )
 	elseif ContainerIDToInventoryID then
 		return ContainerIDToInventoryID( ... )
 	end
+
 end
 
 function ArkInventory.CrossClient.GetContainerItemLink( ... )
@@ -889,6 +917,26 @@ function ArkInventory.CrossClient.TransmogCollection_GetItemInfo( ... )
 	end
 end
 
+function ArkInventory.CrossClient.TransmogCollectionGetAppearanceSourceInfo( ... )
+	
+	local r = { }
+	
+	if C_TransmogCollection and C_TransmogCollection.GetAppearanceSourceInfo then
+		
+		local test = C_TransmogCollection.GetAppearanceSourceInfo( ... )
+		if type( test ) == "table" then
+			r = test
+		else
+			r = { }
+			r.categoryID, r.visualID, r.canEnchant, r.icon, r.isCollected, r.itemLink, r.transmogLink, r.unknown1, r.itemSubTypeIndex = C_TransmogCollection.GetAppearanceSourceInfo( ... )
+		end
+
+	end
+	
+	return r
+
+end
+
 function ArkInventory.CrossClient.GetMouseFocus( )
 	if GetMouseFoci then
 		local regions = GetMouseFoci( )
@@ -902,12 +950,10 @@ function ArkInventory.CrossClient.GetMouseFocus( )
 	end
 end
 
-function ArkInventory.CrossClient.IsWarbankInUseByAnotherCharacter( )
-	
+function ArkInventory.CrossClient.IsWarbankLocked( )
 	if C_PlayerInfo and C_PlayerInfo.HasAccountInventoryLock then
 		return not C_PlayerInfo.HasAccountInventoryLock( )
 	end
-	
 end
 
 function ArkInventory.CrossClient.SplitContainerItem( ... )
@@ -996,6 +1042,18 @@ function ArkInventory.CrossClient.TimerunningSeasonID( )
 	
 	if PlayerGetTimerunningSeasonID then
 		r = PlayerGetTimerunningSeasonID( ) or r
+	end
+	
+	return r
+	
+end
+
+function ArkInventory.CrossClient.ClassicSeasonID( )
+	
+	local r = 0
+	
+	if C_Seasons and C_Seasons.GetActiveSeason() then
+		r = C_Seasons.GetActiveSeason() or r
 	end
 	
 	return r
@@ -1295,7 +1353,7 @@ local function helper_MoveCursorItemIntoContainer( blizzard_id, force )
 
 				else
 
-					if blizzard_id == -1 and not ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+					if blizzard_id == -1 and not ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 						
 						ArkInventory.OutputDebug( "PutItemInBank (OLD)" )
 						
@@ -1650,7 +1708,7 @@ end
 
 function ArkInventory.CrossClient.DropItemOnChangerSlot( loc_id_storage, dst_blizzard_id )
 
-	ArkInventory.OutputDebug( "drop item on [", loc_id_storage, "] [", dst_blizzard_id, "]" )
+	ArkInventory.OutputDebug( "drop item on changer slot [", loc_id_storage, "] [", dst_blizzard_id, "]" )
 
 	ArkInventory.Util.Assert( type( loc_id_storage ) == "number", "loc_id_storage is [", type( loc_id_storage ), "], should be [number]" )
 	ArkInventory.Util.Assert( type( dst_blizzard_id ) == "number", "dst_blizzard_id is [", type( dst_blizzard_id ), "], should be [number]" )
@@ -1662,14 +1720,17 @@ function ArkInventory.CrossClient.DropItemOnChangerSlot( loc_id_storage, dst_bli
 			
 			if info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.CONTAINER.PARENT then
 				
+				ArkInventory.OutputDebug( "cursor has container" )
+
 				local map = ArkInventory.Util.MapGetBlizzard( dst_blizzard_id )
-				if map.fixed then
+				if map.static then
 					
-					ArkInventory.OutputDebug( "cursor has container but bag is fixed" )
+					ArkInventory.OutputDebug( "slot is fixed, cannot replace, place inside" )
+					helper_MoveCursorItemIntoContainer( dst_blizzard_id )
 
 				else
 
-					helper_MoveCursorItemIntoContainer( dst_blizzard_id, true )
+					helper_MoveCursorItemIntoContainer( dst_blizzard_id, true ) -- need to force for bag replacement to work
 
 				end
 
@@ -1685,7 +1746,8 @@ function ArkInventory.CrossClient.DropItemOnChangerSlot( loc_id_storage, dst_bli
 
 		end
 
-		ClearCursor( )
+
+		--ClearCursor( ) -- do not use here, cancels boe prompts
 
 	else
 
@@ -1697,22 +1759,20 @@ end
 
 
 function ArkInventory.CrossClient.IsNewItem( ... )
-	
 	if C_NewItems and C_NewItems.IsNewItem then
 		return C_NewItems.IsNewItem( ... )
 	end
-	
 end
 
-function ArkInventory.CrossClient.DepositReagentBank( )
+function ArkInventory.CrossClient.DepositReagentBank( ... )
 	if DepositReagentBank then
-		DepositReagentBank( )
+		DepositReagentBank( ... )
 	end
 end
 
 function ArkInventory.CrossClient.DepositAccountBank( )
 	if C_Bank and C_Bank.AutoDepositItemsIntoBank then
-		C_Bank.AutoDepositItemsIntoBank( ArkInventory.ENUM.BANKTYPE.ACCOUNT )
+		return C_Bank.AutoDepositItemsIntoBank( ArkInventory.ENUM.BANKTYPE.ACCOUNT )
 	end
 end
 
@@ -1794,7 +1854,7 @@ function ArkInventory.CrossClient.EquipmentManager_UnpackLocation( ... )
 
 		local isPlayer, isBank, isBags, isVoid, slot, bag, voidTab, voidSlot
 
-		if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Void].ClientCheck ) then
+		if ArkInventory.Global.Location[ArkInventory.Const.Location.Void].ClientCheck then
 			isPlayer, isBank, isBags, isVoid, slot, bag, voidTab, voidSlot = EquipmentManager_UnpackLocation( ... )
 		else
 			isPlayer, isBank, isBags, slot, bag = EquipmentManager_UnpackLocation( ... )
@@ -1847,7 +1907,39 @@ function ArkInventory.CrossClient.ReagentBankButtonIDToInvSlotID( ... )
 	end
 end
 
+function ArkInventory.CrossClient.issecretvalue( ... )
+	if issecretvalue then
+		return issecretvalue( ... )
+	end
+end
 
+function ArkInventory.CrossClient.ContainerFrameItemButton_OnLoad( frame, loc_id_storage )
+	if ContainerFrameItemButtonMixin then
+		ContainerFrameItemButtonMixin.OnLoad( frame )
+	else
+		if frame.ARK_Data.ItemFrameType == ArkInventory.Const.ItemFrameType.Normal then
+			if loc_id_storage == ArkInventory.Const.Location.Bank and bag_id_storage == 1 then
+				BankFrameItemButton_OnLoad( frame )
+			elseif loc_id_storage == ArkInventory.Const.Location.ReagentBank then
+				ReagentBankFrameItemButton_OnLoad( frame )
+			elseif loc_id_storage == ArkInventory.Const.Location.AccountBank then
+				ContainerFrameItemButton_OnLoad( frame ) -- FIX ME - does account bank have an onload?
+			else
+				ContainerFrameItemButton_OnLoad( frame )
+			end
+		else
+			ContainerFrameItemButton_OnLoad( frame )
+		end
+	end
+end
+
+function ArkInventory.CrossClient.GetCoinIcon( ... )
+	if C_CurrencyInfo and C_CurrencyInfo.GetCoinIcon then
+		return C_CurrencyInfo.GetCoinIcon( ... )
+	elseif GetCoinIcon then
+		return GetCoinIcon( ... )
+	end
+end
 
 
 
@@ -1857,25 +1949,68 @@ end
 local a = string.lower( ArkInventory.CrossClient.GetCVar( "agentuid" ) )
 local p = string.lower( ArkInventory.CrossClient.GetCVar( "portal" ) )
 
-ArkInventory.ENUM.EXPANSION.CURRENT = GetExpansionLevel( )
+-- GetExpansionLevel( ) shows the highest PURCHASED game expansion, not the game client that is running
+-- GetServerExpansionLevel( ) is not available on initial load
 
-if ArkInventory.ENUM.EXPANSION.CURRENT <= ArkInventory.ENUM.EXPANSION.WRATH then
-	ArkInventory.CrossClient.TemplateVersion = 2
+ArkInventory.ENUM.EXPANSION.CURRENT = math.floor(ArkInventory.Const.BLIZZARD.TOC/10000) - 1
+ArkInventory.Const.BLIZZARD.CLIENT.NAME = _G[string.format( "EXPANSION_NAME%s", ArkInventory.ENUM.EXPANSION.CURRENT )] or "???"
+
+
+if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.CLASSIC then
+
+	ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID = ArkInventory.CrossClient.ClassicSeasonID( )
+	
+	if ArkInventory.ClientCheck( 16000, 16999 ) then
+		ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID = ArkInventory.ENUM.CLASSICSEASONID.FOREVER
+	end
+
+	if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID > 0 then
+		local season = ArkInventory.ENUM.CLASSICSEASON[ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID]
+		if season then
+			ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s-%s", ArkInventory.Const.BLIZZARD.CLIENT.NAME, season )
+		else
+			ArkInventory.OutputError( "ClassicSeasonID [", ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID, "] is not configured.  please let the author know." )
+		end
+	end
 end
 
+
+ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID = ArkInventory.CrossClient.TimerunningSeasonID( )
+
+if ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID > 0 then
+
+	local season = ArkInventory.ENUM.TIMERUNNINGSEASON[ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID]
+
+	if season then
+		ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "TimeRunning-%s", _G[string.format( "EXPANSION_NAME%s", season )] )
+	else
+		ArkInventory.OutputError( "TimerunningSeasonID [", ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID, "] is not configured.  please let the author know." )
+	end
+
+end
+
+
 if string.match( a, "alpha" ) then
-	ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s: Alpha", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
+	ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s-Alpha", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
 elseif string.match( a, "beta" ) then
-	ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s: Beta", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
+	ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s-Beta", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
 elseif string.match( a, "ptr" ) or p == "test" then
-	ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s: PTR", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
+	ArkInventory.Const.BLIZZARD.CLIENT.NAME = string.format( "%s-PTR", ArkInventory.Const.BLIZZARD.CLIENT.NAME )
+end
+
+
+
+if ArkInventory.ENUM.EXPANSION.CURRENT <= ArkInventory.ENUM.EXPANSION.WRATH then
+	if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID ~= ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
+		ArkInventory.CrossClient.TemplateVersion = 2
+	end
 end
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID = ArkInventory.CrossClient.TimerunningSeasonID( )
 
-ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO = ArkInventory.ClientCheck( 110200 )
+ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS = ArkInventory.ClientCheck( 110200 )  -- bag vs tab based banks started here
+
 
 if true then
 	
@@ -1888,12 +2023,18 @@ if true then
 	ArkInventory.ENUM.BAG.INDEX.BAG_2 = 2
 	ArkInventory.ENUM.BAG.INDEX.BAG_3 = 3
 	ArkInventory.ENUM.BAG.INDEX.BAG_4 = 4
-	
+
 	ArkInventory.ENUM.BAG.INDEX.KEYRING = -2
 
 	ArkInventory.ENUM.BAG.INDEX.CURRENCY = -4
 
 	ArkInventory.ENUM.BAG.INDEX.BANK = -1
+
+	ArkInventory.Const.BLIZZARD.GLOBAL.BANK.WIDTH = 6
+	ArkInventory.Const.BLIZZARD.GLOBAL.BANK.HEIGHT = 4
+
+	ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS = 6
+
 	ArkInventory.ENUM.BAG.INDEX.BANKBAG_1 = 5
 	ArkInventory.ENUM.BAG.INDEX.BANKBAG_2 = 6
 	ArkInventory.ENUM.BAG.INDEX.BANKBAG_3 = 7
@@ -1901,12 +2042,35 @@ if true then
 	ArkInventory.ENUM.BAG.INDEX.BANKBAG_5 = 9
 	ArkInventory.ENUM.BAG.INDEX.BANKBAG_6 = 10
 
-	ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS = 6
-	ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_SLOTS = 28
 
 
-	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM ) then
+	if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID == ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
+		
+		-- forever has a slightly different layout
 
+		ArkInventory.ENUM.BAG.INDEX.REAGENTBAG = 5
+	
+		ArkInventory.ENUM.BAG.INDEX.BANK = 6
+
+		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.WIDTH = 8
+		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.HEIGHT = 6
+		
+		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS = 8
+
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_1 = 7
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_2 = 8
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_3 = 9
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_4 = 10
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_5 = 11
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_6 = 12
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_7 = 13
+		ArkInventory.ENUM.BAG.INDEX.BANKBAG_8 = 14
+
+	end
+
+
+	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.TBC ) then
+		
 		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS = 7
 		
 		ArkInventory.ENUM.BAG.INDEX.BANKBAG_7 = 11
@@ -1920,6 +2084,7 @@ if true then
 
 	end
 	
+
 	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT ) then
 
 		ArkInventory.ENUM.BAG.INDEX.REAGENTBAG = 5
@@ -1944,15 +2109,15 @@ if true then
 
 	if ArkInventory.ClientCheck( 110200 ) then
 		
+		ArkInventory.ENUM.BAG.INDEX.KEYRING = -1
+
+		ArkInventory.ENUM.BAG.INDEX.BANK = -2
+		
 		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.WIDTH = 14
 		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.HEIGHT = 7
 
 		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS = 6
-		ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_SLOTS = 98
 
-		ArkInventory.ENUM.BAG.INDEX.KEYRING = -1
-
-		ArkInventory.ENUM.BAG.INDEX.BANK = -2
 		ArkInventory.ENUM.BAG.INDEX.BANKBAG_7 = nil
 		
 		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK = -3
@@ -1963,5 +2128,8 @@ if true then
 		ArkInventory.ENUM.BAG.INDEX.ACCOUNTBANK_5 = 16
 		
 	end
+
+
+	ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_SLOTS = ArkInventory.Const.BLIZZARD.GLOBAL.BANK.WIDTH * ArkInventory.Const.BLIZZARD.GLOBAL.BANK.HEIGHT
 
 end

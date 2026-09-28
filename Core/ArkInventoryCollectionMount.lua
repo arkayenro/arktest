@@ -2037,7 +2037,7 @@ local function Scan_Threaded( thread_id )
 	local numOwned = 0
 	local YieldCount = 0
 	
-	--ArkInventory.Output( "Mount: Start Scan @ ", time( ) )
+	ArkInventory.OutputDebug( "Mount: Start Scan @ ", time( ) )
 	
 	if not collection.isInit then
 		ScanInit( )
@@ -2186,7 +2186,7 @@ local function Scan_Threaded( thread_id )
 	
 	ArkInventory.Collection.Mount.ApplyUserCorrections( )
 	
-	--ArkInventory.Output( "Mount: End Scan @ ", time( ), " [", collection.numOwned, "] [", collection.numTotal, "] [", update, "]" )
+	ArkInventory.OutputDebug( "Mount: End Scan @ ", time( ), " [", collection.numOwned, "] [", collection.numTotal, "] [", update, "]" )
 	
 	collection.isReady = true
 	
@@ -2215,26 +2215,30 @@ end
 
 function ArkInventory:EVENT_ARKINV_COLLECTION_MOUNT_UPDATE_BUCKET( events )
 	
-	--ArkInventory.OutputDebug( "MOUNT BUCKET [", events, "]" )
+	ArkInventory.OutputDebug( "MOUNT BUCKET [", events, "]" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
-	if MountJournal:IsVisible( ) then
-		--ArkInventory.Output( "ABORTED (MOUNT JOURNAL IS OPEN)" )
+	local loc_id = ArkInventory.Const.Location.Mount
+
+	if not ArkInventory.isLocationMonitored( loc_id ) then
+		ArkInventory.OutputDebug( "IGNORED (MOUNTS NOT MONITORED)" )
 		return
 	end
 	
-	if not ArkInventory.isLocationMonitored( loc_id ) then
-		--ArkInventory.Output( "IGNORED (MOUNTS NOT MONITORED)" )
+	if MountJournal:IsVisible( ) then
+		ArkInventory.OutputDebug( "IGNORED (MOUNT JOURNAL IS OPEN)" )
 		return
 	end
 	
 	if ArkInventory.Global.Mode.Combat then
+		ArkInventory.OutputDebug( "IGNORED (IN COMBAT)" )
 		ArkInventory.Global.ScanAfterCombat[loc_id] = true
 		return
 	end
 	
 	if ArkInventory.Global.Mode.DragonRace then
+		ArkInventory.OutputDebug( "IGNORED (DRAGON RACING)" )
 		ArkInventory.Global.ScanAfterDragonRace[loc_id] = true
 		return
 	end
@@ -2245,7 +2249,7 @@ function ArkInventory:EVENT_ARKINV_COLLECTION_MOUNT_UPDATE_BUCKET( events )
 		Scan( )
 		collection.isScanning = false
 	else
-		--ArkInventory.Output( "IGNORED (MOUNT JOURNAL BEING SCANNED - WILL RESCAN WHEN DONE)" )
+		ArkInventory.OutputDebug( "IGNORED (MOUNT JOURNAL BEING SCANNED - WILL RESCAN WHEN DONE)" )
 		ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_MOUNT_UPDATE_BUCKET", "RESCAN" )
 	end
 	
@@ -2287,37 +2291,37 @@ function ArkInventory.SetMountMacro( )
 		
 		local codex = ArkInventory.Codex.GetPlayer( )
 		
-		local macrotext = ""
-		macrotext = macrotext .. "/dismount [combat,mounted,noflying]" -- dismount if in combat and mounted and not flying
-		macrotext = macrotext .. "\n/stopmacro [combat]" -- abort if in combat
+		local macrotext = "/run ArkInventory.LDB.Mounts.SetMountState()"
+
+		macrotext = macrotext .. "\n/dismount [combat,mounted,noflying]" -- dismount if in combat and mounted and not flying
 		
+		macrotext = macrotext .. "\n/stopmacro [combat]" -- abort if in combat
+
 		if codex.player.data.info.class == "DRUID" or codex.player.data.info.class == "WARLOCK" or codex.player.data.info.class == "SHAMAN" then
 			macrotext = macrotext .. "\n/cancelform [noform:0]" -- cancel all forms
 		end
 		
-		
-		local usingtravelform = false
 		if codex.player.data.ldb.travelform then
 			
 			if codex.player.data.info.class == "DRUID" then
 				
-				usingtravelform = true
+				local indoors = ArkInventory.CrossClient.GetSpellInfo( 768 ).name -- cat form
+				local outdoors = ArkInventory.CrossClient.GetSpellInfo( 783 ).name -- travel form
+
+				macrotext = macrotext .. "\n/cast [nomounted,indoors] " .. indoors .. "; [nomounted,outdoors]" .. outdoors
+
+			elseif codex.player.data.info.class == "EVOKER" then
 				
-				local cat_form = ArkInventory.CrossClient.GetSpellInfo( 768 ).name
-				local travel_form = ArkInventory.CrossClient.GetSpellInfo( 783 ).name
-				macrotext = macrotext .. "\n/cast [indoors] " .. cat_form .. "; " .. travel_form
+				local outdoors = ArkInventory.CrossClient.GetSpellInfo( 369536 ).name -- soar
 				
-			elseif codex.player.data.info.class == "SHAMAN" then
-				-- shaman ghost wolf?
+				macrotext = macrotext .. "\n/cast [nomounted,outdoors]" .. outdoors
+
 			end
+
+		end
 			
-		end
-		
-		
-		if not usingtravelform then
-			macrotext = macrotext .. "\n/run ArkInventory.LDB.Mounts.GetNext( )"
-		end
-		
+		macrotext = macrotext .. "\n/run ArkInventory.LDB.Mounts.GetNext()"
+
 		--ArkInventory.OutputDebug( macrotext )
 		
 		local btn = ARKINV_MountToggle

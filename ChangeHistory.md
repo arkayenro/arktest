@@ -1,35 +1,29 @@
-﻿# 3.12.05 Alpha 8 (xx-DEC-2025)
-
-# 3.12.05 Alpha 7 (19-DEC-2025)
-- updated - (tbc) toc file added for 2.5.5
-
-# 3.12.05 Alpha 6 (15-DEC-2025)
- - added - category: system > housing
- - updated - (midnight) toc updated to 12.0.1
- - updated - category for some items
- - updated - packager code to handle multiple interface versions in a toc file
-
-# 3.12.05 Alpha 5 (12-DEC-2025)
- - no longer available (packager issues)
-
-# 3.12.05 Alpha 4 (25-NOV-2025)
- - updated - (midnight) toc updated to include 12.0.0
- - updated - (pandaria) toc updated to 5.5.2
- - updated - category for some items
-
-# 3.12.05 Alpha 3 (18-NOV-2025)
- - removed - the ability to purchase character bank tabs as it is a protected function
- - removed - the ability to summon a toy from the toybox location as it is a protected function
- - removed - the ability to use a key from the keyring location as it is a protected function
-
-# 3.12.05 Alpha 2 (12-NOV-2025)
- - added - basic support for the midnight beta
- - removed - the ability to purchase account bank tabs as it is a protected function
-
-# 3.12.05 Alpha 1 (03-NOV-2025)
- - fixed - issue with scrapable rule and empty slots (i think)
- - updated - category for some items
+﻿# 3.12.16 Alpha 7 (xx-SEP-2026)
+ - updated - (forever) toc to 1.60.01
+ - fixed - (forever) mailbox issue with GetCoinIcon
  
+# 3.12.16 Alpha 6 (27-SEP-2026)
+ - fixed - (forever) the bank location should now work properly
+
+# 3.12.16 Alpha 5 (27-SEP-2026)
+ - added - (forever) toc file for 1.60.00
+ - added - (forever) basic support
+
+# 3.12.16 Alpha 4 (26-SEP-2026)
+ - changed - currency tracking - if a cap is reached the text will now be shown in red
+ - fixed - (classic) season/hardcore/forever is now included in the version text
+ - fixed - (classic) issue with forever using the retail api
+
+# 3.12.16 Alpha 3 (22-AUG-2026)
+ - workaround - (retail) issue with guild bank function using IsVisible instead of IsShown
+ - updated - category for some items
+
+# 3.12.16 Alpha 2 (17-AUG-2026)
+ - workaround - guild bank not opening due to PlayerInteractionFrameManager being disabled/removed.  for the moment both the blizzard and arkinventory window will open/close together
+
+# 3.12.16 Alpha 1 (14-AUG-2026)
+ - fixed - (classic) issues due to PlayerInteractionFrameManager being disabled/removed
+
 # known issues post 11.2
  - without reagent or profession bags in the bank a restack wont transfer new stacks of reageants or profession items - potential workaround will be to look for tabs that have been assigned 'reagents' and treat those the same way the reagent bank was previously
 

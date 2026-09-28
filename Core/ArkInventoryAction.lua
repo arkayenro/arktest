@@ -110,7 +110,7 @@ function ArkInventory.Action.Vendor.Check( codex, blizzard_id, slot_id, manual, 
 		local bag = storage.data.location[loc_id_storage].bag[bag_id_storage]
 		local i = bag.slot[slot_id]
 		
-		if i.h then
+		if i and i.h then
 			
 			local info = ArkInventory.GetObjectInfo( i.h )
 			if info.ready and info.id then

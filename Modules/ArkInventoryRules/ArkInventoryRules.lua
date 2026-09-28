@@ -929,7 +929,12 @@ function ArkInventoryRules.System.boolean_outfit( ... )
 		return false
 	end
 	
-	if ArkInventoryRules.Object.loc_id and ArkInventory.Global.Location[ArkInventoryRules.Object.loc_id].isOffline then
+	if not ArkInventoryRules.Object.loc_id then
+		return
+	end
+
+	-- islocked
+	if ArkInventory.Global.Location[ArkInventoryRules.Object.loc_id].isOffline then
 		return false
 	end
 	
@@ -1042,14 +1047,14 @@ function ArkInventoryRules.System.boolean_outfit_itemrack( ... )
 	end
 	
 	
-	local h_rule = ArkInventoryRules.Object.info.osd.h
+	local h_rule = ArkInventoryRules.Object.info.osd.h_rule
 	
 	if ItemRack.AppendRuneID then
 		local runeId = ArkInventoryRules.Object.rune
 		if runeId then
 			h_rule = string.format( "%s:runeid:%s", h_rule, runeId )
 		end
-		--ArkInventory.Output( ArkInventoryRules.Object.h, " / ", h_rule )
+		--ArkInventory.Output( ArkInventoryRules.Object.h_rule, " / ", h_rule )
 	end
 	
 	
@@ -1063,7 +1068,7 @@ function ArkInventoryRules.System.boolean_outfit_itemrack( ... )
 					
 					osd = ArkInventory.ObjectStringDecode( string.format( "item:%s", setitem ) )
 					
-					local h_rule2 = osd.h
+					local h_rule2 = osd.h_rule
 					
 					--ArkInventory.Output( "pos=[", k, "], item=[", setitem, "] [", h_rule, "] [", h_rule2, "]" )
 					

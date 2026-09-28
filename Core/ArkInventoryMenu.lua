@@ -210,7 +210,7 @@ function ArkInventory.MenuMainOpen( frame )
 					end
 				)
 				
-				if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].ClientCheck ) then
+				if ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].ClientCheck then
 					
 					ArkInventory.Lib.Dewdrop:AddLine(
 						"icon", ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].Texture,
@@ -2449,15 +2449,13 @@ function ArkInventory.MenuBagOpen( frame )
 					)
 				end
 				
-				
-				
 				if bag.status == ArkInventory.Const.Bag.Status.Purchase then
 					
-					if not ArkInventory.Global.Location[loc_id].isOffline then
+					if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 						
 						if loc_id_storage == ArkInventory.Const.Location.Bank then
 							
-							if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+							if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 
 								local tabData = C_Bank.FetchNextPurchasableBankTabData( ArkInventory.ENUM.BANKTYPE.CHARACTER )
 								local txt = string.format( "%s %s", ArkInventory.Localise["COSTS_LABEL"], ArkInventory.MoneyText( tabData.tabCost, true ) )
@@ -2520,7 +2518,7 @@ function ArkInventory.MenuBagOpen( frame )
 						if loc_id_storage == ArkInventory.Const.Location.AccountBank then
 							
 							local txt = ""
-							if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+							if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 								local tabData = C_Bank.FetchNextPurchasableBankTabData( ArkInventory.ENUM.BANKTYPE.ACCOUNT )
 								txt = string.format( "%s %s", ArkInventory.Localise["COSTS_LABEL"], ArkInventory.MoneyText( tabData.tabCost, true ) )
 							else
@@ -2528,8 +2526,8 @@ function ArkInventory.MenuBagOpen( frame )
 								txt = string.format( "%s\n\n%s %s", ArkInventory.Localise["ACCOUNT_BANK_TAB_PURCHASE_PROMPT"], ArkInventory.Localise["COSTS_LABEL"], ArkInventory.MoneyText( cost, true ) )
 							end
 
-							if ArkInventory.CrossClient.IsWarbankInUseByAnotherCharacter( ) then
-								txt = string.format("%s\n\n%s", txt, ArkInventory.Localise["ACCOUNT_BANK_LOCKED_PROMPT"] )
+							if ArkInventory.CrossClient.IsWarbankLocked( ) then
+								txt = string.format("%s\n\n%s", txt, ArkInventory.Localise["LOCKED"] )
 							end
 
 							ArkInventory.Lib.Dewdrop:AddLine( )
@@ -2540,7 +2538,7 @@ function ArkInventory.MenuBagOpen( frame )
 								"tooltipText", txt,
 								"closeWhenClicked", true,
 								"disabled", function( )
-									return ArkInventory.CrossClient.IsWarbankInUseByAnotherCharacter( )
+									return ArkInventory.CrossClient.IsWarbankLocked( )
 								end,
 								"func", function( )
 									PlaySound( SOUNDKIT.IG_MAINMENU_OPTION )
@@ -2609,12 +2607,12 @@ function ArkInventory.MenuBagOpen( frame )
 				
 				if bag.status == ArkInventory.Const.Bag.Status.Active or bag.status == ArkInventory.Const.Bag.Status.Empty then
 					
-					if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+					if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 
 						-- character bank bag options
 						if loc_id_storage == ArkInventory.Const.Location.Bank then
 							
-							if not ArkInventory.Global.Location[loc_id].isOffline then
+							if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 								
 								ArkInventory.Lib.Dewdrop:AddLine( )
 								
@@ -2637,7 +2635,7 @@ function ArkInventory.MenuBagOpen( frame )
 					-- account bank bag options
 					if loc_id_storage == ArkInventory.Const.Location.AccountBank then
 						
-						if not ArkInventory.Global.Location[loc_id].isOffline then
+						if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 							
 							ArkInventory.Lib.Dewdrop:AddLine( )
 							
@@ -2662,7 +2660,7 @@ function ArkInventory.MenuBagOpen( frame )
 						
 						if IsGuildLeader( ) then
 							
-							if not ArkInventory.Global.Location[loc_id].isOffline then
+							if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 								
 								ArkInventory.Lib.Dewdrop:AddLine( )
 								
@@ -2726,7 +2724,7 @@ function ArkInventory.MenuBagOpen( frame )
 							end
 						)
 						
-						if not ArkInventory.Global.Location[loc_id].isOffline then
+						if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 							
 							ArkInventory.Lib.Dewdrop:AddLine( )
 							
@@ -2852,7 +2850,7 @@ function ArkInventory.MenuBagOpen( frame )
 								
 							if not me.player.data.panel.bank.combine.all then
 								
-								if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+								if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 
 									local txt = string.format( ArkInventory.Localise["MENU_BAG_PANEL_COMBINE"], ArkInventory.Global.Location[ArkInventory.Const.Location.Bank].Name )
 									ArkInventory.Lib.Dewdrop:AddLine(
@@ -2926,7 +2924,7 @@ function ArkInventory.MenuBagOpen( frame )
 
 						if not isEmpty then
 							
-							if not ArkInventory.Global.Location[loc_id].isOffline then
+							if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 								
 								ArkInventory.Lib.Dewdrop:AddLine( )
 								
@@ -2958,7 +2956,7 @@ function ArkInventory.MenuBagOpen( frame )
 						
 						if loc_id == ArkInventory.Const.Location.Bag then
 							
-							if not ArkInventory.Global.Location[loc_id].isOffline then
+							if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 								
 								ArkInventory.Lib.Dewdrop:AddLine( )
 								
@@ -2978,7 +2976,7 @@ function ArkInventory.MenuBagOpen( frame )
 							
 						end
 						
-						if not ArkInventory.Global.Location[loc_id].isOffline then
+						if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 							
 							ArkInventory.Lib.Dewdrop:AddLine( )
 							
@@ -2996,7 +2994,7 @@ function ArkInventory.MenuBagOpen( frame )
 					-- reagent bank deposit options
 					if DepositReagentBank and loc_id_storage == ArkInventory.Const.Location.ReagentBank then
 						
-						if not ArkInventory.Global.Location[loc_id].isOffline then
+						if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 							
 							ArkInventory.Lib.Dewdrop:AddLine( )
 							
@@ -3017,7 +3015,7 @@ function ArkInventory.MenuBagOpen( frame )
 					-- account bank deposit options
 					if loc_id_storage == ArkInventory.Const.Location.AccountBank then
 						
-						if not ArkInventory.Global.Location[loc_id].isOffline then
+						if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 							
 							ArkInventory.Lib.Dewdrop:AddLine( )
 							
@@ -3056,7 +3054,25 @@ function ArkInventory.MenuBagOpen( frame )
 					end
 					
 				end
+
+				if ArkInventory.Global.Location[loc_id_storage].isLocked then
+					
+					if not ArkInventory.Global.Location[loc_id].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
+						
+						if loc_id_storage == ArkInventory.Const.Location.AccountBank then
+							
+							ArkInventory.Lib.Dewdrop:AddLine( )
+
+							ArkInventory.Lib.Dewdrop:AddLine(
+								"text", ArkInventory.Localise["LOCKED"]
+							)
+
+						end
+						
+					end
 				
+				end
+
 			end
 			
 			if level == 2 and value then
@@ -3335,7 +3351,7 @@ function ArkInventory.MenuSwitchLocation( offset, level, value, frame )
 			
 			local t = ArkInventory.Global.Location
 			for loc_id, loc_data in ArkInventory.spairs( t, function( a, b ) return ( t[a].Name or "" ) < ( t[b].Name or "" ) end ) do
-				if loc_data.canView and ArkInventory.ClientCheck( loc_data.ClientCheck ) then
+				if loc_data.canView and loc_data.ClientCheck then
 					ArkInventory.Lib.Dewdrop:AddLine(
 						"text", loc_data.Name,
 						"tooltipTitle", loc_data.Name,
@@ -3948,7 +3964,7 @@ function ArkInventory.MenuLDBBagsOpen( frame )
 						
 						if not v.hide then
 							
-							if ArkInventory.ClientCheck( v.ClientCheck ) then
+							if v.ClientCheck then
 								
 								ArkInventory.Lib.Dewdrop:AddLine(
 									"text", v.name,
@@ -5007,11 +5023,11 @@ function ArkInventory.MenuLDBMountsEntries( offset, level, value )
 		
 		ArkInventory.Lib.Dewdrop:AddLine( )
 		ArkInventory.Lib.Dewdrop:AddLine(
-			"text", string.format( ArkInventory.Localise["LDB_MOUNTS_TRAVEL_FORM"], ArkInventory.Localise["SPELL_DRUID_TRAVEL_FORM"] ),
-			"tooltipTitle", string.format( ArkInventory.Localise["LDB_MOUNTS_TRAVEL_FORM"], ArkInventory.Localise["SPELL_DRUID_TRAVEL_FORM"] ),
-			"tooltipText", string.format( ArkInventory.Localise["LDB_MOUNTS_TRAVEL_FORM_DESC"], ArkInventory.Localise["SPELL_DRUID_TRAVEL_FORM"] ),
+			"text", string.format( ArkInventory.Localise["LDB_MOUNTS_CLASS_ABILITY"], ArkInventory.Localise["CLASS_ABILITY"] ),
+			"tooltipTitle", string.format( ArkInventory.Localise["LDB_MOUNTS_CLASS_ABILITY"], ArkInventory.Localise["CLASS_ABILITY"] ),
+			"tooltipText", string.format( ArkInventory.Localise["LDB_MOUNTS_CLASS_ABILITY_DESC"], ArkInventory.Localise["CLASS_ABILITY"] ),
 			"checked", codex.player.data.ldb.travelform,
-			"disabled", codex.player.data.info.class ~= "DRUID",
+			"disabled", not (codex.player.data.info.class == "DRUID" or codex.player.data.info.class == "EVOKER"),
 			"func", function( )
 				codex.player.data.ldb.travelform = not codex.player.data.ldb.travelform
 				ArkInventory.SetMountMacro( )
@@ -5639,9 +5655,15 @@ function ArkInventory.MenuRefreshOpen( frame )
 	end
 	
 	
-	local loc_id = frame:GetParent( ):GetParent( ).ARK_Data.loc_id
-	local codex = ArkInventory.Codex.GetLocation( loc_id )
-	
+	local loc_id_window = frame:GetParent( ):GetParent( ).ARK_Data.loc_id
+	local bag_id_window = frame:GetParent( ):GetParent( ).ARK_Data.bag_id
+
+	local codex = ArkInventory.Codex.GetLocation( loc_id_window )
+	local map = ArkInventory.Util.MapGetWindow( loc_id_window, bag_id_window )
+
+	local loc_id_storage = map.loc_id_storage
+	local bag_id_storage = map.bag_id_storage
+
 	
 	ArkInventory.Lib.Dewdrop:Open( frame,
 		"point", helper_DewdropMenuPosition( frame ),
@@ -5668,13 +5690,13 @@ function ArkInventory.MenuRefreshOpen( frame )
 					end
 				)
 				
-				if ArkInventory.db.option.newitemglow.enable and loc_id == ArkInventory.Const.Location.Bag and not ArkInventory.Global.Location[loc_id].isOffline then
+				if ArkInventory.db.option.newitemglow.enable and loc_id_window == ArkInventory.Const.Location.Bag and not ArkInventory.Global.Location[loc_id_window].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
 					ArkInventory.Lib.Dewdrop:AddLine(
 						"text", string.format( "%s: %s", ArkInventory.Localise["NEW_ITEM_GLOW"], ArkInventory.Localise["CLEAR"] ),
 						--"tooltipTitle", ArkInventory.Localise["CONFIG_DESIGN_ITEM_OVERRIDE_NEW_RESET_DESC"],
 						"closeWhenClicked", true,
 						"func", function( )
-							ArkInventory.ClearNewItemGlow( loc_id )
+							ArkInventory.ClearNewItemGlow( loc_id_window )
 						end
 					)
 				end
@@ -5749,7 +5771,7 @@ function ArkInventory.MenuStatusActionOpen( frame )
 					ArkInventory.Lib.Dewdrop:AddLine(
 						"text", DEPOSIT,
 						"closeWhenClicked", true,
-						"disabled", not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].ClientCheck ),
+						"disabled", not ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].ClientCheck,
 						"func", function( )
 							ArkInventory.MoneyAccountBankDeposit( )
 						end
@@ -5759,7 +5781,7 @@ function ArkInventory.MenuStatusActionOpen( frame )
 						"text", WITHDRAW,
 						"tooltipTitle", WITHDRAW,
 						"closeWhenClicked", true,
-						"disabled", not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].ClientCheck ),
+						"disabled", not ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].ClientCheck,
 						"func", function( )
 							ArkInventory.MoneyAccountBankWithdraw( )
 						end

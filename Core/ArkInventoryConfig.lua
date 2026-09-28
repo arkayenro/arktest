@@ -83,17 +83,6 @@ function ArkInventory.ConfigBlizzard( )
 				end
 			end,
 		},
-		debug = {
-			order = 500,
-			name = ArkInventory.Localise["DEBUG"],
-			type = "toggle",
-			get = function( info )
-				return ArkInventory.Global.Debug
-			end,
-			set = function( info, v )
-				ArkInventory.OutputDebugModeSet( not ArkInventory.Global.Debug )
-			end,
-		},
 		
 		-- slash commands
 		

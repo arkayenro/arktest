@@ -227,7 +227,7 @@ local function Scan_Threaded( thread_id )
 	local numOwned = 0
 	local YieldCount = 0
 	
-	--ArkInventory.Output( "Toybox: Start Scan @ ", time( ) )
+	ArkInventory.OutputDebug( "Toybox: Start Scan @ ", time( ) )
 	
 	FilterActionBackup( )
 	FilterActionClear( )
@@ -319,7 +319,7 @@ local function Scan_Threaded( thread_id )
 	collection.numOwned = numOwned
 	collection.numTotal = numTotal
 	
-	--ArkInventory.Output( "Toybox: End Scan @ ", time( ), " [", collection.numOwned, "] [", collection.numTotal, "] [", update, "]" )
+	ArkInventory.OutputDebug( "Toybox: End Scan @ ", time( ), " [", collection.numOwned, "] [", collection.numTotal, "] [", update, "]" )
 	
 	collection.isReady = true
 	
@@ -343,26 +343,30 @@ end
 
 function ArkInventory:EVENT_ARKINV_COLLECTION_TOYBOX_UPDATE_BUCKET( events )
 	
-	--ArkInventory.Output( "TOYBOX BUCKET [", events, "]" )
+	ArkInventory.OutputDebug( "TOYBOX BUCKET [", events, "]" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
+	local loc_id = ArkInventory.Const.Location.Toybox
+
 	if not ArkInventory.isLocationMonitored( loc_id ) then
-		--ArkInventory.Output( "IGNORED (TOYBOX NOT MONITORED)" )
+		ArkInventory.OutputDebug( "IGNORED (TOYBOX NOT MONITORED)" )
 		return
 	end
 	
 	if ToyBox:IsVisible( ) then
-		--ArkInventory.Output( "IGNORED (TOYBOX IS OPEN)" )
+		ArkInventory.OutputDebug( "IGNORED (TOYBOX IS OPEN)" )
 		return
 	end
 	
 	if ArkInventory.Global.Mode.Combat then
+		ArkInventory.OutputDebug( "IGNORED (IN COMBAT)" )
 		ArkInventory.Global.ScanAfterCombat[loc_id] = true
 		return
 	end
 	
 	if ArkInventory.Global.Mode.DragonRace then
+		ArkInventory.OutputDebug( "IGNORED (DRAGON RACING)" )
 		ArkInventory.Global.ScanAfterDragonRace[loc_id] = true
 		return
 	end
@@ -373,7 +377,7 @@ function ArkInventory:EVENT_ARKINV_COLLECTION_TOYBOX_UPDATE_BUCKET( events )
 		Scan( )
 		collection.isScanning = false
 	else
-		--ArkInventory.Output( "IGNORED (TOYBOX BEING SCANNED - WILL RESCAN WHEN DONE)" )
+		ArkInventory.OutputDebug( "IGNORED (TOYBOX BEING SCANNED - WILL RESCAN WHEN DONE)" )
 		ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_TOYBOX_UPDATE_BUCKET", "RESCAN" )
 	end
 	

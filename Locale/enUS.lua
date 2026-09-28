@@ -108,8 +108,8 @@ if not L then return end
 	L["CATEGORY_CONSUMABLE_FLASK"] = "Flask"
 	L["CATEGORY_CONSUMABLE_SCROLL"] = "Scroll"
 	L["CATEGORY_CONSUMABLE_CHAMPION_EQUIPMENT"] = "Champion Equipment"
-	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"] = "Power System (%s)"
-	L["CATEGORY_CONSUMABLE_POWER_SYSTEM_OLD"] = "Power System (Old)"
+	L["CATEGORY_CONSUMABLE_POWER_SYSTEMS"] = "Power Systems"
+	L["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"] = "%1$s (%2$s)"
 	L["CATEGORY_CONSUMABLE_ABILITIES_AND_ACTIONS"] = "Abilities and Actions"
 	
 	L["CATEGORY_TIMERUNNING"] = "Timerunning"
@@ -1055,8 +1055,8 @@ if not L then return end
 	L["LDB_MOUNTS_FLYING_MODE_DRAGON"] = "Dragonriding only"
 	L["LDB_MOUNT_SUMMON"] = "Summon Mount"
 	L["LDB_MOUNTS_NODATA"] = "Unknown / Changed"
-	L["LDB_MOUNTS_TRAVEL_FORM"] = "Use %1$s"
-	L["LDB_MOUNTS_TRAVEL_FORM_DESC"] = "Use %1$s instead of a mount."
+	L["LDB_MOUNTS_CLASS_ABILITY"] = "Use %1$s"
+	L["LDB_MOUNTS_CLASS_ABILITY_DESC"] = "Use %1$s instead of a mount."
 	
 	L["LDB_COMPANION_SUMMON"] = "Summon Pet"
 	L["LDB_COMPANION_MISSING"] = "You seem to have misplaced your selected companion, resetting to random"

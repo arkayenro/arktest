@@ -241,7 +241,7 @@ local function ScanBase( id )
 			-- /dump C_CurrencyInfo.GetBasicCurrencyInfo( 1220 ) order resources (no limits)
 			-- /dump GetCurrencyInfo( 1314 ) order resources (no limits)
 			-- /dump ArkInventory.CrossClient.GetCurrencyInfo( 2032 ) traders tender - account wide
-			
+			-- /dump ArkInventory.CrossClient.GetCurrencyInfo( 3310 )
 				
 				cache[id] = info
 				
@@ -265,8 +265,8 @@ local function ScanBase( id )
 				link = "",
 				name = name,
 				iconFileID = "",
-				maxWeeklyQuantity = 0,
 				maxQuantity = 0,
+				maxWeeklyQuantity = 0,
 				quality = 0,
 			}
 			
@@ -442,7 +442,7 @@ local function Scan_Threaded( thread_id )
 						cache[id].quantityEarnedThisWeek = currencyInfo.quantityEarnedThisWeek
 						update = true
 					end
-					
+
 					if cache[id].discovered ~= currencyInfo.discovered then
 						cache[id].discovered = currencyInfo.discovered
 						update = true
@@ -500,46 +500,47 @@ end
 
 function ArkInventory:EVENT_ARKINV_COLLECTION_CURRENCY_UPDATE_BUCKET( events )
 	
-	--ArkInventory.Output( "CURRENCY BUCKET [", events, "]" )
+	ArkInventory.OutputDebug( "EVENT: CURRENCY_UPDATE_BUCKET [", events, "]" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
 	local loc_id = ArkInventory.Const.Location.Currency
 	
 	if not ArkInventory.isLocationMonitored( loc_id ) then
-		--ArkInventory.Output( "IGNORED (CURRENCY NOT MONITORED)" )
+		ArkInventory.OutputDebug( "IGNORED (CURRENCY NOT MONITORED)" )
 		return
 	end
 	
 	if TokenFrame:IsVisible( ) then
-		--ArkInventory.Output( "IGNORED (CURRENCY FRAME IS OPEN)" )
+		ArkInventory.OutputDebug( "IGNORED (CURRENCY FRAME IS OPEN)" )
 		return
 	end
 	
 	if ArkInventory.Global.Mode.Combat then
+		ArkInventory.OutputDebug( "IGNORED (IN COMBAT)" )
 		ArkInventory.Global.ScanAfterCombat[loc_id] = true
 		return
 	end
 	
 	if ArkInventory.Global.Mode.DragonRace then
+		ArkInventory.OutputDebug( "IGNORED (DRAGON RACING)" )
 		ArkInventory.Global.ScanAfterDragonRace[loc_id] = true
 		return
 	end
 	
+
 	if not collection.isScanning then
 		collection.isScanning = true
-		--ArkInventory.Output( "CURRENCY SCAN" )
 		Scan( )
 		collection.isScanning = false
 	else
-		--ArkInventory.Output( "IGNORED (CURRENCY BEING SCANNED - WILL RESCAN WHEN DONE)" )
+		ArkInventory.OutputDebug( "IGNORED (CURRENCY BEING SCANNED - WILL RESCAN WHEN DONE)" )
 		ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_CURRENCY_UPDATE_BUCKET", "RESCAN" )
 	end
 	
 end
 
 function ArkInventory:EVENT_ARKINV_COLLECTION_CURRENCY_UPDATE( event, ... )
-	-- /run ArkInventory:EVENT_ARKINV_COLLECTION_CURRENCY_UPDATE( "Test" )
 	
 	--ArkInventory.Output( "CURRENCY UPDATE [", event, "]" )
 	

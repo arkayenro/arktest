@@ -213,11 +213,18 @@ ArkInventory.Lib.StaticDialog:Register( "PROTECTED_BANK_TAB_PURCHASE", {
 				ArkInventory.Lib.StaticDialog:Dismiss( "PROTECTED_BANK_TAB_PURCHASE" )
 			end,
 		},
+		{
+			text = ArkInventory.Localise["RELOAD"],
+			on_click = function( self )
+				ArkInventory.db.option.bugfix.banktab = 1
+				ReloadUI()
+			end,
+		},
 	},
 	
 	on_show = function( self, data )
 		
-		local text = "purchasing a bank tab is a protected action that addons can no longer run.\n\nplease disable the bank override via the location menu and then use the default bank interface to purchase the tab.\n\nonce purchased you can re-enable the bank override via the small bag icon at the top right of the default bank interface"
+		local text = "Purchasing bank tabs is a protected action that addons can no longer run.\n\nClick on the Reload button to reload with ArkInventory partially disabled and then use the default bank interface to purchase any bank tabs.\n\nOnce you have made your purchases you can either use /reload, or click on the small green bag icon at the top right of the blizzard bank window, to re-enable ArkInventory."
 		
 		self.text:SetText( text )
 		

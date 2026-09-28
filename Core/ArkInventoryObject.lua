@@ -292,7 +292,7 @@ local function helper_UpdateObjectInfo( info, thread_id )
 			
 			info.ilvl = ArkInventory.CrossClient.GetDetailedItemLevelInfo( info.hs ) or info.ilvl_base
 			info.spell_name, info.spell_id = ArkInventory.CrossClient.GetItemSpell( info.id )
-			info.rank = ArkInventory.CrossClient.GetItemReagentQuality( info.hs ) or ArkInventory.CrossClient.GetItemCraftedQuality( info.hs )
+			info.rank = ArkInventory.CrossClient.GetItemQuality( info.hs )
 			
 			ArkInventory.TooltipSetFromHyperlink( ArkInventory.Global.Tooltip.Scan, info.hs )
 			

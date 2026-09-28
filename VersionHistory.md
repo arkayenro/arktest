@@ -1,7 +1,93 @@
-﻿# 3.12.05 (24-OCT-2025)
- - updated - (classic) toc updated to 1.15.8
- - updated - (retail) toc updated to 11.2.5
- - updated - (pandaria) toc updated to 5.5.1
+﻿# 3.12.16 (13-AUG-2026)
+ - updated - (retail) toc to 12.1.0
+ - fixed - issues due to PlayerInteractionFrameManager being disabled/removed
+
+# 3.12.15 (23-JUL-2026)
+ - updated - (bcc) toc to 2.5.6
+ - updated - (classic) toc to 1.15.9
+ - fixed - issue with mount location not initialising properly
+
+# 3.12.14 (17-JUN-2026)
+ - fixed - https://github.com/arkayenro/arkinventory/issues/2150 issue where bags/bank stop updating after you hearth, portal, enter/leave an instance, etc (anything that generates a loading screen)
+ - fixed - https://github.com/arkayenro/arkinventory/issues/2149 workaround for bank tab purchases
+ - fixed - added TooltipValidateDataFromSetTradeSkillItem
+ - updated - (retail) toc to 12.0.7
+ - updated - (mop) toc to 5.5.4
+
+# 3.12.13 (03-JUN-2026)
+ - https://github.com/arkayenro/arkinventory/issues/2147 - issue with tooltip:GetUnit accessing secure values
+ - updated - category for some items
+
+# 3.12.12 (22-APR-2026)
+ - fixed - https://github.com/arkayenro/arkinventory/issues/2145 issue with replacing bags when it requires accepting a bind prompt
+ - updated - (retail) toc to 12.0.5
+ - updated - category for some items
+
+# 3.12.11 (01-APR-2026)
+ - fixed - https://github.com/arkayenro/arkinventory/issues/2131 issue with profession quality icons for crafting items
+ - fixed - https://github.com/arkayenro/arkinventory/issues/2147 issue with tooltip settext and secret values
+ - updated - category for some items
+
+# 3.12.10 (09-MAR-2026)
+ - fixed - issue with profession quality icons for midnight reagents
+ - changed - default profession quality icon size from 30 to 20 due to new icons
+ - fixed - https://github.com/arkayenro/arkinventory/issues/2117 issue with item rack outfit function
+ - fixed - issue with bankuisync causing the tab purchase popup to appear if you havent purchased any bank tabs/bags
+ - fixed - issue with current expansion level value
+ - fixed - issue generating repuatation standing text
+ - fixed - issue with paragon standing text
+ - fixed - https://github.com/arkayenro/arkinventory/issues/2122 issue with backpack (bag 0) data getting incorrectly erased when the bag location is not set to saved and you hearth/portal
+ - fixed - https://github.com/arkayenro/arkinventory/issues/2120 issue accessing the bank in offline mode after using the warbank distance inhibitor where it would not display the character bank, only the account bank
+ - fixed - issue with some factions showing as paragon instead of renown
+ - fixed - issue with ldb reputation tracking menu tooltip displaying the encoded hyperlink instead of the faction info
+ - changed - when a location is locked its bags will no longer be scanned to preserve the saved data.  if you backup the savedvariables file, before its unlocked and you access that location again, you should have a list of all items that were in there before in the event blizard loses them.
+ - updated - category for some items
+
+# 3.12.09 (15-FEB-2026)
+ - fixed - issues with the scan and rule tooltips generating normal tooltips (which would trigger errors when the right conditions were met) instead of just using the available TooltipInfo data
+ - fixed - issues with class ability mount code for druids and evokers
+ - fixed - issue with issecretvalue() only existing in retail
+ - fixed - issue with cvar changes made in the game options (eg colorblind mode) not being recognised until after a reload
+ - changed - "use travel form" text in mount config/menu options replaced with "use class ability"
+ - added - evoker soar can now be used as a mount (outdoors only) by slecting "use class ability" in the mount config
+ - changed - if you have "use class ability" selected and the spell is unknown, or on cooldown, it will revert to using a standard mount
+ - updated - (retail) toc to 12.0.1
+
+# 3.12.08 (30-JAN-2026)
+ - fixed - issue with how transmog data was being displayed in tooltips
+ - fixed - issue with tooltips when the unit is a secret value
+ - fixed - issue with dewdrop library and item comparison tooltips
+ - fixed - handle C_TransmogCollection.GetAppearanceSourceInfo returning a table of parameters instead of individual parameters
+ - added - (midnight) workaround for money frames leaving behind secret values on tooltips.  replacing them with text instead.  note - this will auto disable with 12.0.1 as it appears to be working there
+
+# 3.12.07 (21-JAN-2026)
+ - fixed - config - general - auto open/close - hide options for unavailable locations
+ - fixed - config - general - restack - hide options for reagent bag in bcc
+ - fixed - config - general - tooltip - hide options for battlepet in bcc
+ - fixed - config - general - hide options for transmog in bcc
+ - fixed - (bcc) issue with transmog data showing on item tooltips
+ - fixed - issue with how the current expansion number was calculated, specifically for people that have not yet purchased the latest expansion
+ - updated - (retail) toc to 12.0.0
+ - updated - (bcc) enabled 7th bank slot
+
+# 3.12.06 (16-JAN-2026)
+ - added - basic support for the midnight beta
+ - added - category: system > housing
+ - updated - (midnight) toc to 12.0.1
+ - updated - (pandaria) toc to 5.5.3
+ - updated - (tbc) toc file added for 2.5.5
+ - updated - category for some items
+ - updated - packager code to handle multiple interface versions in a toc file
+ - removed - the ability to purchase character bank tabs as it is a protected function
+ - removed - the ability to summon a toy from the toybox location as it is a protected function
+ - removed - the ability to use a key from the keyring location as it is a protected function
+ - removed - the ability to purchase account bank tabs as it is a protected function
+ - fixed - issue with scrapable rule and empty slots (i think)
+
+# 3.12.05 (24-OCT-2025)
+ - updated - (classic) toc to 1.15.8
+ - updated - (retail) toc to 11.2.5
+ - updated - (pandaria) toc to 5.5.1
  - updated - category for some items
  - fixed - timerunning scrolls and openable categories should now be visible again
  - added - rule function - `scrapable( )` - only works for items in your own bag
@@ -11,7 +97,7 @@
  - fixed - (timerunning) issue with display code for timerunning characters
  - updated - debug menu line for data ready with more information, eg retry count and dead state
  - deleted - all void storage data now that its no longer in game
- - workaround - bug in bankpanel causing usecontaineritem to access banktype after the bank was closed generating an addon blocked error
+ - workaround - https://github.com/arkayenro/arkinventory/issues/2081 bug in bankpanel causing usecontaineritem to access banktype after the bank was closed generating an addon blocked error
 
 # 3.12.03 (14-AUG-2025)
  - added - config > profiles > bank > general > Reselect tabs - can remember which tab was last selected and will re-select it when the window is re-opened.  can be set to never, per session, or always.
@@ -47,7 +133,7 @@
  - updated - pet data to 11.1.7
  - updated - unuseable and unwearable item tinting options moved to their own tab in the config. added ignore options for item level and already known
  - updated - some lolcalisations based off game constants
- - updated - (retail) toc updated to 11.2.0
+ - updated - (retail) toc to 11.2.0
  - added - (11.2) option to split the bank tabs up into their own panels, the same way as the warbank can be split up if needed.  the isolate/display options will remain but only work when the bank is combined into a single panel
  - added - (classic) - workaround for the current invalid hyperlink format blizzard has set
  - removed - (11.2) locations - reagent bank (internal), void storage
@@ -58,27 +144,27 @@
  - fixed - issue with reputation renown level text
  - updated - packager - can now handle pandaria toc files/values
  - updated - category for some items
- - updated - (retail) toc updated to 11.1.7
+ - updated - (retail) toc to 11.1.7
  - added - (pandaria) toc file for 5.5.0
  - removed - (pandaria) locations - void storage, mount equipment
  - removed - (pandaria) events - PLAYER_TRADE_CURRENCY, LFG_BONUS_FACTION_ID_UPDATED, VOID_STORAGE_OPEN, VOID_STORAGE_CLOSE
 
 # 3.11.06 (03-MAY-2025)
  - fixed - (classic) https://github.com/arkayenro/arkinventory/issues/2053 - issue with tooltips and C_Item.GetItemLearnTransmogSet
- - updated - (retail) toc updated to 11.1.5
+ - updated - (retail) toc to 11.1.5
  - updated - category for some items
 
 # 3.11.05 (09-MAR-2025)
- - updated - (retail) toc updated to 11.1.0
- - updated - (cataclysm) toc updated to 4.4.2
- - updated - (classic) toc updated to 1.15.6
+ - updated - (retail) toc to 11.1.0
+ - updated - (cataclysm) toc to 4.4.2
+ - updated - (classic) toc to 1.15.6
  - updated - mount and pet data
 
 # 3.11.04 (20-FEB-2025)
  - no longer available (packager issues)
 
 # 3.11.03 (26-OCT-2024)
- - updated - (retail) toc updated to 11.0.5
+ - updated - (retail) toc to 11.0.5
  - fixed - issue with restack consolidate
  - workaround - https://github.com/arkayenro/arkinventory/issues/1864 - itemrack
  - added - item menu option in edit mode to ignore an item for all restack purposes
@@ -148,7 +234,7 @@
  - fixed - the stack part of restack should now work at the bank.  the rest is still a work in progress
  - fixed - https://github.com/arkayenro/arkinventory/issues/1961 - the switch character menu was not displaying the "other" realms option when you had characters on two realms
  - fixed - issue with outfit rule (when using the equipment manager, when items are in the bank i think)
- - changed - (classic) toc updated to 11503
+ - udpated - (classic) toc to 11503
  - fixed - issue with some Enums (BagSlotFlags in this case) not existing or having different values across different clients
  - changed - searching no longer hides the mismatched items and will now use the item context fading
  - fixed - issue with vault when you had no access to any of the tabs
@@ -223,7 +309,7 @@
  - added - timerunner identifier icon next to character names (will need to login to each timerunning character to update its status)
  - changed - (war within) C_Spell.IsSpellUsable( ) replaces IsUsableSpell( )
  - added - (war within) account bank access - account bank gold is not supported yet
- - changed - (retail) toc updated to 110002
+ - updated - (retail) toc to 110002
  - changed - bag changer slots will now only show the first purchasable slot instead of all of them.  no config option to disable this yet.
  - added - https://github.com/arkayenro/arkinventory/issues/1901 - handle multiple ids when manually adding items to a custom category
  - fixed - (retail) API change from C_Item.GetItemIcon to C_Item.GetItemIconByID
@@ -277,7 +363,7 @@
  - fixed - issue with LibDialog (bumped version to 10 - source has not been updated yet)
  - fixed - https://github.com/arkayenro/arkinventory/issues/1887 - issue with centered bar label text
  - fixed - (cataclysm) issue with restack not using profession bags (it defaults to the reagent bank which doesnt exist yet)
- - changed - (retail) toc updated to 100207
+ - updated - (retail) toc to 100207
  - updated - callbackhandler library
  - updated - category for some items
  - added - config options for stack compression to select whether to compress empty slots, non-stackable items, or stackable items
@@ -288,7 +374,7 @@
  - fixed - https://github.com/arkayenro/arkinventory/issues/1880 - issue with CONTAINER_SLOTS in most non english languages using a conditional format, as well as being reversed, which breaks the matching and the value capture
  - changed - (cataclysm) enabled mounts location
  - changed - (cataclysm) enabled toys location
- - updated - (cataclysm) toc updated to 40400
+ - updated - (cataclysm) toc to 40400
  - added - ability to disable the text for each bag type in the status bar - config > design > window > style > status > empty slot
  - added - ability to disable the text for each bag type in the ldb object text - right click > ldb > display
 
@@ -309,7 +395,7 @@
  - fixed - typo on the LDB pet object
  - changed - (cata beta) disabling void storage temporarily as it has not been implemented which is causing equipment manager outfit rules to not work properly.
  - changed - broke apart the onenter and updatetooltip code for item frames to reduce resource usage
- - changed - (classic) toc updated to 11502
+ - updated - (classic) toc to 11502
  - added - individual item charges will now display in the item level text, total will not
  - added - rule function `category( )`
  - updated - category for some items
@@ -326,8 +412,8 @@
  - fixed - https://github.com/arkayenro/arkinventory/issues/1871 - updated object code to handle any new INVTYPE values better
 
 # 3.10.26 (20-MAR-2024)
- - changed - (retail) toc updated to 100206
- - changed - (classic) toc updated to 11501
+ - updated - (retail) toc to 100206
+ - updated - (classic) toc to 11501
  - fixed - https://github.com/arkayenro/arkinventory/issues/1871 - issue with INVTYPE_NON_EQUIP_IGNORE
 
 # 3.10.25 (07-MAR-2024)
@@ -342,7 +428,7 @@
  - updated - category for some items
 
 # 3.10.23 (20-JAN-2024)
- - changed - (retail) toc updated to 100205
+ - updated - (retail) toc to 100205
  - fixed - should now ignore red text for old equip bonus
  - fixed - https://github.com/arkayenro/arkinventory/issues/1852 - issue with nil reputation cache
  - fixed - expansion names/id should now properly display in the debug menu
@@ -362,13 +448,13 @@
  - updated - category for some items
  - updated - (wrath) currency window should now work properly
  - fixed - issue with mount selection in non dragonriding zones
- - updated - (classic) toc updated to 11500
+ - updated - (classic) toc to 11500
  - workaround - added weakauras as an optional dependency to force it to load before arkinventory so it doesnt take an extra 1-3 seconds to load
  - fixed - (classic) https://github.com/arkayenro/arkinventory/issues/1841 - added support for EngravingFrame, and auto open/close config options
  - fixed - (wrath) enabled mount location for testing and forgot to remove it.
 
 # 3.10.19 (25-NOV-2023)
- - changed - (retail) toc updated to 100200
+ - updated - (retail) toc to 100200
  - fixed - issue with dropdown for ldb reputation object (its seeing a reputation header with no name - so is the blizzard character reputation tab)
  - workaround - https://github.com/arkayenro/arkinventory/issues/1833 - issue enabling another currency on the backpack (should now allow up to 10)
  - changed - cosmetic items you already know will now be seen as junk
@@ -386,25 +472,25 @@
  - fixed - https://github.com/arkayenro/arkinventory/issues/1822 - code issue with secure hooks when they dont exist in the game client
 
 # 3.10.17 (02-SEP-2023)
- - changed - (retail) toc updated to 100105
- - changed - (wrath) toc updated to 30402
- - changed - (classic) toc updated to 11404
+ - updated - (retail) toc to 100105
+ - updated - (wrath) toc to 30402
+ - updated - (classic) toc to 11404
  - fixed - https://github.com/arkayenro/arkinventory/issues/1805 - code issue with HookOpenAllBags from GearManagerDialogPopup
  - fixed - https://github.com/arkayenro/arkinventory/issues/1814 - (classic) default bank windows opening due to `PlayerInteractionFrameManager` being added to classic
 
 # 3.10.16 (08-MAY-2023)
  - fixed - https://github.com/arkayenro/arkinventory/issues/1787 - issue handling a null tooltipinfo
  - updated - categorised some items
- - changed - (retail) toc updated to 100100
+ - updated - (retail) toc to 100100
 
 # 3.10.15 (12-FEB-2023)
- - changed - (retail) toc updated to 100007
+ - updated - (retail) toc to 100007
  - removed - event for WEAR_EQUIPMENT_SET
  
 # 3.10.14 (20-JAN-2023)
  - fixed - rule function `itemstat( )`
  - fixed - (wrath) default bank and vault windows opening due to `PlayerInteractionFrameManager` being added to wrath
- - changed - (wrath) toc updated to 30401
+ - updated - (wrath) toc to 30401
  - added - rule function `itemstatactive( )`
  - fixed - issue with grey item transmog detection code
 
@@ -509,7 +595,7 @@
  - no longer available
  
 # 3.10.05 (16-NOV-2022)
- - changed - (retail) toc updated to 100002
+ - updated - (retail) toc to 100002
  - fixed - issue with bucket events that get renamed
  - fixed - map ids for some old zone mounts
  - added - zone restrictions for mounts so they dont get called when in the wrong zone
@@ -639,16 +725,16 @@
 # 3.09.68 (08-SEP-2022)
  - fixed - issue with WOW_PROJECT_ID getting a new client value for wrath (WOW_PROJECT_WRATH_CLASSIC)
  - fixed - https://github.com/arkayenro/arkinventory/issues/1575 - issue with toybox filters not being restored to their original values after a scan
- - changed - (retail) toc updated to 90207
+ - updated - (retail) toc to 90207
  - updated - recategorised some items
  - added - wrath toc file
 
 # 3.09.67 (05-JUN-2022)
  - updated - recategorised some items
  - fixed - parts of the LDB object wouldnt always update on first load (waiting for currencies and rep to become ready)
- - changed - (tbc) toc updated to 20504
- - changed - (classic) toc updated to 11403
- - changed - (retail) toc updated to 90205
+ - updated - (tbc) toc to 20504
+ - updated - (classic) toc to 11403
+ - updated - (retail) toc to 90205
 
 # 3.09.66 (18-MAR-2022)
  - fixed - mythic keystone data never being ready causing constant resorting
@@ -669,9 +755,9 @@
  - fixed - issue with LibDialog-1.0 (temporarily until the author fixes it)
  - fixed - (tbc) issue with splitting stacks in the guild bank
  - added - wago project id
- - changed - (tbc) toc updated to 20503
- - changed - (classic) toc updated to 11402
- - changed - (retail) toc updated to 90200
+ - updated - (tbc) toc to 20503
+ - updated - (classic) toc to 11402
+ - updated - (retail) toc to 90200
  - changed - renamed mainline toc files because curse cant handle them and rejects the upload
  - note - contains new folder structure - do NOT upgrade while the game is running
 
@@ -698,7 +784,7 @@
  - fixed - issue with item count array being erased while in the middle of building
  - fixed - issue with sell junk items destroy code.  you can only destroy one item/stack per keypress
  - fixed - typo in the soulbound equip junk code that was causing it to never do the check
- - changed - toc updated to 90105
+ - updated - toc to 90105
  - changed - updated workaround for the issue with bank bag slot id values to use the `GetFirstBagBankSlotIndex( )` function if available
  - changed - already known for junk purposes should now apply to all items
  - removed - no longer listen for action bar events
@@ -781,7 +867,7 @@
 
 # 3.09.52 (10-JUL-2021)
  - fixed - (tbc) keyring: the item count is being retrieved as there are now stackable keys
- - changed - toc updated to 90100
+ - updated - toc to 90100
  - changed - flying mounts should work once shadowlands flying is learnt
  - changed - collection scanning will now yield more often to reduce lag
  - changed - exportable internal data structures are now tagged with a unique guid to allow for updates when importing instead of creating an entirely new set of objects
@@ -814,7 +900,7 @@
  - added - config > settings > designs > item > border > alpha - sets an alpha value for item borders
  - added - config > settings > designs > item > border > coloured borders - allows you to colour the border texture (disable if you use an already coloured texture)
  - added - config > settings > designs > item > border > colour - allows you to set the border colour for each slot type (typically for empty slots)
- - changed - toc updated to 90005
+ - updated - toc to 90005
  - changed - config > settings > designs > item > empty slot > colour - these colour options now only apply to the empty slot background
  - changed - the default border colour is now the bag border colour - this colour is used when quality border colours are not enabled, and when the item quality is below the quality cutoff value
  - updated - client detection code (burning crusade beta)
@@ -839,7 +925,7 @@
  - disabled - the delete option for junk selling has been disabled due to blizzard protecting the DeleteCursorItem function
  
 # 3.09.45 (22-NOV-2020)
- - changed - toc updated to 90002
+ - updated - toc to 90002
  - added - category: system > equipment (party loot) - only works in the bag, and when its online
  - added - category: system > equipment (refundable) - only works in the bag, and when its online
  - changed - new items category options moved underneath an override tab along with the new party loot and refundable category options
@@ -1083,7 +1169,7 @@
  - fixed - (retail) item counts are now back on auction item tooltips
 
 # 3.09.13 (20-JAN-2020)
- - changed - toc updated to 80300
+ - updated - toc to 80300
  - fixed - issue with menu library with dual/large resolution monitors
  - changed - config > settings > design and config > settings > profiles updated to make them a bit easier to use
  - added - truncated bar names will display the full bar name when you mouseover them
@@ -1144,7 +1230,7 @@
  - added - support for 80300 auction house api (you must open the auctions tab for it to scan at the moment)
 
 # 3.09.03 (04-OCT-2019)
- - changed - toc updated to 80205
+ - updated - toc to 80205
  - fixed - item categorisation - runecloth (as cloth, not reputation)
  - fixed - item categorisation - tradegoods > cooking
  - fixed - issue with C_Reputation.GetFactionParagonInfo returning nil values
@@ -1200,7 +1286,7 @@
  - fixed - issue with menu library and 8.2 setpoint
  
 # 3.08.25 (26-JUN-2019)
- - changed - toc updated to 80200
+ - updated - toc to 80200
  
 # 3.08.24 (17-APR-2019)
  - fixed - issue with mailbox scanning not always running when it should
@@ -1270,7 +1356,7 @@
  - fixed - issue with splitting stacks in the guild bank
  
 # 3.08.16 (14-DEC-2018)
- - changed - toc updated to 80100
+ - updated - toc to 80100
  
 # 3.08.15 (04-OCT-2018)
  - fixed - issue with custom tooltips that dont have comparison tooltips configured
@@ -1459,7 +1545,7 @@
  - note - there may be random debug output still active
  
 # 3.08.00 r717-alpha (25-APR-2018)
- - changed - toc updated to 80000
+ - updated - toc to 80000
  - fixed - minor issues for BFA
  - fixed - should error and disable if run on the live servers
  - changed - pet and mount LDB objects now have a static icon
@@ -1528,7 +1614,7 @@
  - fixed - erasing account data (pets, toys, mounts, heirlooms) will now cause an immediate rescan like it does for other player locations
  
 # 3.07.35 (30-AUG-2017)
- - changed - toc updated to 70300
+ - updated - toc to 70300
 
 # 3.07.34 (30-AUG-2017)
  - fixed - calls to `PlaySound( )`
@@ -1589,7 +1675,7 @@
  - added - option to set the base item size (before scaling) under config > settings > styles / layouts > (id) > items > style > items
  
 # 3.07.25 (29-MAR-2017)
- - changed - toc updated to 70200
+ - updated - toc to 70200
  - added - keystone object class to stop error message (still needs work to integrate fully)
  
 # 3.07.24 (24-MAR-2017)
@@ -1634,7 +1720,7 @@
  - fixed - issue with tackle container slots not being recognised properly
  
  3.07.17 (26-OCT-2016)
- - changed - toc updated to 70100
+ - updated - toc to 70100
  - workaround - issue with increased item level due to GetItemInfo returning a slightly different hyperlink than the one passed in (only seems to impact artifacts).  presumably blizzard will fix it at some point
 
 # 3.07.16 (21-OCT-2016)
@@ -1922,7 +2008,7 @@
  - added - item family value to debug menu for bag slots
  - added - option to use druid travel forms instead of mounts (warning, the dismount in flight option is not useable with travel form, you will always cancel travel form by pressing the summon mount keybind, if youre in flight form just press it again before you hit the ground and you'll be fine.)
  - changed - search window moved to its own load on demand module
- - changed - toc updated to 70000 (legion compatible)
+ - updated - toc to 70000 (legion compatible)
 
 # 3.05.12 (23-NOV-2015)
  - fixed - issue with aborting a restack when leaving bank/vault
@@ -1967,7 +2053,7 @@
  - fixed - embeds for no-lib download
  
 # 3.05.02 (25-JUN-2015)
- - changed - toc updated to 60200
+ - updated - toc to 60200
  
 # 3.05.01 (xx-JUN-2015) Beta 4
  - fixed - restack code
@@ -2228,7 +2314,7 @@
  - fixed - re-enabled threading in combat
 
 # 3.03.26 (06-MAR-2013)
- - changed - toc updated
+ - updated - toc
  - fixed - void storage item tooltips now include item counts
  - fixed - issue with toc file for rules (addonloader)
  - fixed - issue with toc file for example rule (addonloader)
@@ -2262,7 +2348,7 @@
  - fixed - issue where pets and mounts submenus were showing up under the action menu
 
 # 3.03.21 (28-NOV-2012)
- - changed - toc updated to 50100
+ - updated - toc to 50100
  - fixed - issue with item tracking object not updating
  - fixed - issue with battlepet opponent detail output not linking all your pets
  - fixed - issue with normaltexture going green
@@ -2448,7 +2534,7 @@
  - fixed - menu library issue where menus were always expanding in size until they went off the screen
  
 # 3.02.84 (30-NOV-2011)
- - changed - TOC updated to 40300
+ - updated - toc to 40300
  - changed - void storage icon
  - fixed - void storage online/offline status
  - added - slash command `/ai summon pet`
@@ -2472,7 +2558,7 @@
 
 # 3.02.80 (29-JUN-2011)
  - fixed - bug in erase code
- - changed - TOC updated to 40200
+ - updated - toc to 40200
  - added - bound to battle.net account now treated as soulbound
  - removed - keyring
 
@@ -2481,7 +2567,7 @@
  
 # 3.02.78 (28-APR-2011)
  - workaround - Open All Bags keybinding calls ToggleAllBags, ToggleAllBags is now hooked and calls OpenAllBags instead
- - changed - TOC updated to 40100
+ - updated - toc to 40100
  - changed - OpenAllBags now works properly
 
 # 3.02.77 (26-FEB-2011)
@@ -2661,7 +2747,7 @@
  - note - all item data will be cleared, you will need to log in to each toon to update its data
  - note - due to changes in the way tokens are being handled by blizzard you can no longer get item counts in tooltips for them off the character pane
  - note - ldb water mounts will not be summoned in vashj'ir when youre on the sea floor (youre not swimming), you must jump off to begin swimming for them to work properly.
- - changed - toc updated to 40000 (you will need to enable out of date mods on live servers for AI to load)
+ - updated - toc to 40000 (you will need to enable out of date mods on live servers for AI to load)
  - changed - remaining references to this replaced with self
  - changed - internal rule variable name ArkInventoryRules.Item changed to ArkInventoryRules.Object (all custom rules will need to make the same change)
  - changed - currency tracking ldb object name changed
@@ -3157,7 +3243,7 @@
  - fixed - font style for new item indicators
  - fixed - issue with bar labels being placed incorrectly
  - fixed - search frame, focus is now set to filter field
- - changed - toc updated to 20400
+ - updated - toc to 20400
  - changed - (restack and) compress uses the new blizzard api to figure out if an item can go in a profession bag
  - added - rule function bag( bag_number )
  - added - rule function vpo( copper ) - vendor price over ( copper ) a specific copper amount (per current stack size)

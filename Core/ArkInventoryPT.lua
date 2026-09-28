@@ -55,6 +55,8 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.System.Pet.PTBase"] = "m,Misc.Minipet,ArkInventory.Consumable.Pet",
 	
 	-- <itemID>:<spellID>
+	["ArkInventory.System.Mount.Parts.Echo of Aln'sharan"] = "255826",
+
 	["ArkInventory.System.Mount.Parts.Thrayir Eyes of the Siren"] = "232571:471562,232572:471562,232605:471562,232573:471562,232571:471562,232569:471562,234327:471562,232570:471562,234328:471562",
 	["ArkInventory.System.Mount.Parts.Alunira"] = "224025",
 	["ArkInventory.System.Mount.Parts.Mimiron's Jumpjets"] = "208984:424082,209781:424082,209055:424082",
@@ -83,6 +85,7 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.System.Mount.Other"] = "21213,187054,203708",
 	["ArkInventory.System.Mount.PTBase"] = "m,Misc.Mount",
 	
+	["ArkInventory.System.Key.Midnight"] = "275048",
 	["ArkInventory.System.Key.TWW"] = "229899",
 	["ArkInventory.System.Key.Dragonflight"] = "202196",
 	["ArkInventory.System.Key.Shadowlands"] = "170463,186718,186731,186984,187612,187613,187614,190198",
@@ -91,6 +94,11 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.System.Key.Other"] = "159826",
 	["ArkInventory.System.Key.PTBase"] = "m,Misc.Key",
 	
+	["ArkInventory.System.Quest.Midnight.Ossified Relic"] = "274422",
+	["ArkInventory.System.Quest.Midnight.Ofi the Sly"] = "276117,276124,276126",
+	["ArkInventory.System.Quest.Midnight.Gift of the Cycle"] = "256882,257024,257054",
+	["ArkInventory.System.Quest.Midnight.Other"] = "245937",
+
 	["ArkInventory.System.Quest.TWW.Radiant Echo"] = "220520",
 	["ArkInventory.System.Quest.TWW.Hallowfall"] = "206350,226021",
 	["ArkInventory.System.Quest.Dragonflight.Secrets of Azeroth"] = "",
@@ -143,22 +151,49 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.System.Heirloom.Dragonflight.PrePatch"] = "199836,199837,199838,199839",
 	
 	
-	-- used for both item to currency mappings (itemid:currencyid), and just knowing what items are currencies
+	-- used for both item to currency mappings (itemid:currencyid), and just knowing what items are used as a currency
 	["ArkInventory.System.Currency.Timerunning.Bronze"] = "224461",
 	["ArkInventory.System.Currency.Timerunning.Legion.Other"] = "242370,253304,253305,253306",
+	
+	["ArkInventory.System.Currency.Midnight.Season 2.Corrosive Soul"] = "273000",
 
+	["ArkInventory.System.Currency.Midnight.Season 2.Crest.Adventurer"] = "269856:3442",
+	["ArkInventory.System.Currency.Midnight.Season 2.Crest.Veteran"] = "269859:3443,269867:3443",
+	["ArkInventory.System.Currency.Midnight.Season 2.Crest.Champion"] = "269857:3444,269864:3444,280734:3444",
+	["ArkInventory.System.Currency.Midnight.Season 2.Crest.Heroic"] = "269858:3445,269865:3445,280732:3445",
+	--["ArkInventory.System.Currency.Midnight.Season 2.Crest.Mythic"] = "",
+
+	["ArkInventory.System.Currency.Midnight.Season 1.Crest.Adventurer"] = "263976:3383",
+	["ArkInventory.System.Currency.Midnight.Season 1.Crest.Veteran"] = "246754:3341,263977:3341,274071:3341",
+	["ArkInventory.System.Currency.Midnight.Season 1.Crest.Champion"] = "246751:3343,246755:3343,274070:3343",
+	["ArkInventory.System.Currency.Midnight.Season 1.Crest.Heroic"] = "246752:3345,246756:3345,274069:3345",
+	--["ArkInventory.System.Currency.Midnight.Season 1.Crest.Mythic"] = ":3347",
+
+	["ArkInventory.System.Currency.Midnight.Dark Particle"] = "267051",
+	["ArkInventory.System.Currency.Midnight.Unalloyed Abundance"] = "252608",
+	["ArkInventory.System.Currency.Midnight.Voidlight Mari"] = "260427:3316,260439:3316",
+	["ArkInventory.System.Currency.Midnight.Stormarion Core"] = "246951",
+
+	["ArkInventory.System.Currency.TWW.Crest.Ethereal.Gilded"] = "240929:3290",
+	["ArkInventory.System.Currency.TWW.Crest.Ethereal.Runed"] = "240930:3288",
+	["ArkInventory.System.Currency.TWW.Crest.Ethereal.Carved"] = "240927:3286,240931:3286",
+	["ArkInventory.System.Currency.TWW.Crest.Ethereal.Weathered"] = "240928:3284",
 	["ArkInventory.System.Currency.TWW.Undermine.Miscellaneous Mechanica"] = "234741",
 	["ArkInventory.System.Currency.TWW.Undermine.Puzzling Cartel Chip"] = "237502",
 	["ArkInventory.System.Currency.TWW.Mereldar Derby Mark"] = "226392:3055",
-	["ArkInventory.System.Currency.TWW.Crest.Undermine.Weathered"] = "231267:3107",
+	--["ArkInventory.System.Currency.TWW.Crest.Undermine.Gilded"] = ":3114",
+	--["ArkInventory.System.Currency.TWW.Crest.Undermine.Runed"] = ":3109",
 	["ArkInventory.System.Currency.TWW.Crest.Undermine.Carved"] = "231269:3108",
+	["ArkInventory.System.Currency.TWW.Crest.Undermine.Weathered"] = "231267:3107",
 	["ArkInventory.System.Currency.TWW.Valorstone.Season 2"] = "236953:3008",
-	["ArkInventory.System.Currency.TWW.Crest.Harbinger.Weathered"] = "221268:2914",
+	--["ArkInventory.System.Currency.TWW.Crest.Harbinger.Gilded"] = ":2917",
 	["ArkInventory.System.Currency.TWW.Crest.Harbinger.Carved"] = "221373:2915",
-	["ArkInventory.System.Currency.TWW.Crest.Harbinger.Runed"] = "", -- 2916
+	["ArkInventory.System.Currency.TWW.Crest.Harbinger.Weathered"] = "221268:2914",
+	--["ArkInventory.System.Currency.TWW.Crest.Harbinger.Runed"] = ":2916",
 	["ArkInventory.System.Currency.TWW.Valorstone.Season 1"] = "221269:3008",
 	["ArkInventory.System.Currency.TWW.Other"] = "212493,220769,223951,224642,238920",
 	["ArkInventory.System.Currency.TWW.Sizzling Cinderpollen"] = "225557",
+
 	["ArkInventory.System.Currency.Dragonflight.Bullion"] = "213089",
 	["ArkInventory.System.Currency.Dragonflight.Void-Touched Curio"] = "206046",
 	["ArkInventory.System.Currency.Dragonflight.Plunderstorm"] = "217397", 
@@ -184,24 +219,34 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.System.Currency.Dragonflight.Dreamsurge"] = "207026,210254,224297",
 	["ArkInventory.System.Currency.Dragonflight.Tier.Season 3"] = "210947,207235",
 	["ArkInventory.System.Currency.Dragonflight.Other"] = "209837,210770,211376,217242,217243",
+
 	["ArkInventory.System.Currency.Shadowlands.Anima"] = "181368:1813,181377:1813,181477:1813,181478:1813,181479:1813,181540:1813,181541:1813,181544:1813,181545:1813,181546:1813,181547:1813,181548:1813,181549:1813,181550:1813,181551:1813,181552:1813,181642:1813,181643:1813,181644:1813,181645:1813,181646:1813,181647:1813,181648:1813,181649:1813,181650:1813,183723:1813,183727:1813,181743:1813,181744:1813,181745:1813,183964:1813,184146:1813,184147:1813,184148:1813,184149:1813,184150:1813,184151:1813,184152:1813,184286:1813,184293:1813,184294:1813,184305:1813,184306:1813,184307:1813,184315:1813,184360:1813,184362:1813,184363:1813,184371:1813,184373:1813,184374:1813,184378:1813,184379:1813,184380:1813,184381:1813,184382:1813,184383:1813,184384:1813,184385:1813,184386:1813,184387:1813,184388:1813,184389:1813,184519:1813,184763:1813,184764:1813,184765:1813,184766:1813,184767:1813,184768:1813,184769:1813,184770:1813,184771:1813,184772:1813,184773:1813,184774:1813,184775:1813,184776:1813,184777:1813,186200:1813,186201:1813,186202:1813,186204:1813,186205:1813,186206:1813,187175:1813,187347:1813,187349:1813,188198:1813",
 	["ArkInventory.System.Currency.Shadowlands.Stygia"] = "178040:1767,187351:1767",
 	["ArkInventory.System.Currency.Shadowlands.Other"] = "184304,190189",
+
 	["ArkInventory.System.Currency.BFA.PVP"] = "168802",
 	["ArkInventory.System.Currency.BFA.Other"] = "",
+
 	["ArkInventory.System.Currency.Legion.Ancient Mana"] = "139786:1155,139890:1155,140236:1155,140240:1155,140242:1155,140243:1155,140235:1155,140239:1155,140245:1155,140246:1155,140248:1155,140390:1155,140399:1155,140401:1155,140402:1155,140403:1155,140406:1155,140949:1155,141655:1155",
+
 	["ArkInventory.System.Currency.Draenor.Oil"] = "128316:1101",
 	["ArkInventory.System.Currency.Draenor.Garrison.Resources"] = "107645:824,116131:824,119416:824,128313:824",
 	["ArkInventory.System.Currency.Draenor.Garrison.Decoration"] = "128658",
 	["ArkInventory.System.Currency.Draenor.Garrison.War Mill"] = "113821,113823",
 	["ArkInventory.System.Currency.Draenor.Other"] = "113681:HordeScraps,117397:NatsLuckyCoin,117491:OgreWaystone",
+
 	["ArkInventory.System.Currency.Pandaria.Other"] = "",
+
 	["ArkInventory.System.Currency.Cataclysm.Other"] = "",
+
 	["ArkInventory.System.Currency.Northrend.Other"] = "124099:BlackfangClaws",
+
 	["ArkInventory.System.Currency.Outland.The Aldor"] = "29735",
 	["ArkInventory.System.Currency.Outland.The Scryers"] = "29736",
 	["ArkInventory.System.Currency.Outland.Haala"] = "26044,26045",
+
 	["ArkInventory.System.Currency.Classic.Other"] = "",
+	
 	["ArkInventory.System.Currency.PVP"] = "137642",
 	["ArkInventory.System.Currency.Event.Love Is In The Air"] = "49927",
 	["ArkInventory.System.Currency.Event.Lunar Festival"] = "21100",
@@ -209,6 +254,7 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.System.Currency.Other"] = "22523:InsigniaOfTheDawn,122618:MisprintedDraenicCoin",
 	
 	-- openable items
+	["ArkInventory.System.Openable.Midnight"] = "268297",
 	["ArkInventory.System.Openable.TWW"] = "225249",
 	["ArkInventory.System.Openable.Timerunning.Pandaria"] = "m,ArkInventory.Timerunning.Pandaria.Asynchronized Gems,ArkInventory.Timerunning.Pandaria.Infinite Treasure,ArkInventory.Timerunning.Pandaria.Bronze Cache,ArkInventory.Timerunning.Pandaria.Threads",
 	["ArkInventory.System.Openable.Timerunning.Legion"] = "m,ArkInventory.Timerunning.Legion.Infinite Power",
@@ -344,10 +390,14 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.Consumable.Explosives"] = "m,Misc.Explosives.Engineering,Misc.Explosives.Other",
 	["ArkInventory.Consumable.Explosives and Devices"] = "m,ArkInventory.Consumable.Explosives,ArkInventory.Consumable.Devices",
 	
+	
+	["ArkInventory.Consumable.Treasure.Midnight.Harandar.Crystallized Resin Fragment"] = "260531",
+
 	["ArkInventory.Consumable.Treasure.TWW.Hallowfall.Croaker"] = "211474",
 	["ArkInventory.Consumable.Treasure.TWW.The Ringing Deeps.Dusty Prospectors Chest"] = "223880,223881,223882,223878,223879",
 	["ArkInventory.Consumable.Treasure.TWW.Hallowfall.Adventurer.Deathtide"] = "220122,220123,220124",
 	["ArkInventory.Consumable.Treasure.TWW.Azj-Kahet.Weaving Supplies"] = "223901,223902,223903",
+
 	["ArkInventory.Consumable.Treasure.Dragonflight.Other"] = "191294,191304,194540,198843,198852,198854,199061,199062,199065,199066,199067,199068,200738",
 	["ArkInventory.Consumable.Treasure.Dragonflight.Forbidden Reach.Scrolls"] = "202667,202668,202669,202670",
 	
@@ -509,8 +559,15 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	
 	
 	
-	["ArkInventory.Skill.Alchemy.TWW.Knowledge"] = "224024,225234,225235,226265,226266,226267,226268,226269,226270,226271,226272,228773,228724",
-	["ArkInventory.Skill.Alchemy.Dragonflight.Knowledge"] = "193891,193897,194697,198519,198599,198608,198653,198663,198685,198697,198710,198712,198963,198964,200974,201003,201270,201281,201706,210185",
+	["ArkInventory.Skill.Alchemy.Midnight.Knowledge.Base"] = "245755:3150,246320:3150,246321:3150,255828:3150,259188:3150,259189:3150,263454:3150",
+	["ArkInventory.Skill.Alchemy.Midnight.Knowledge.Treasure"] = "238532:3150,238533:3150,238534:3150,238535:3150,238536:3150,238537:3150,238538:3150,238539:3150",
+	["ArkInventory.Skill.Alchemy.Midnight.Knowledge.Book"] = "262645:3150",
+	["ArkInventory.Skill.Alchemy.TWW.Knowledge.Base"] = "225234,225235,222546,228773,228724,228725",
+	["ArkInventory.Skill.Alchemy.TWW.Knowledge.Treasure"] = "226265,226266,226267,226268,226269,226270,226271,226272",
+	["ArkInventory.Skill.Alchemy.TWW.Knowledge.Book"] = "224024,224645,232499,235865,227409,227420,227431",
+	["ArkInventory.Skill.Alchemy.Dragonflight.Knowledge.Base"] = "193891,193897,194697,198608,198963,198964,201706",
+	["ArkInventory.Skill.Alchemy.Dragonflight.Knowledge.Treasure"] = "198599,198653,198663,198685,198697,198710,198712,201003,210185",
+	["ArkInventory.Skill.Alchemy.Dragonflight.Knowledge.Book"] = "198519,200974,201270,201281",
 	["ArkInventory.Skill.Alchemy.BFA"] = "168143,168144,168145,168146",
 	["ArkInventory.Skill.Alchemy.Legion"] = "124444,137595,137596,137597",
 	["ArkInventory.Skill.Alchemy.Draenor"] = "108996,113295",
@@ -526,59 +583,117 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.Skill.Archaeology.Restored"] = "87399",
 	["ArkInventory.Skill.Archaeology.Tool"] = "87549",
 	["ArkInventory.Skill.Archaeology.PTBase"] = "m,Tradeskill.Mat.ByProfession.Archaeology,Tradeskill.Mat.ByType.Keystone",
-	["ArkInventory.Skill.Blacksmithing.TWW.Knowledge"] = "226276,226277,226278,226279,226280,226281,226282,226283",
+	["ArkInventory.Skill.Blacksmithing.Midnight.Knowledge.Base"] = "245763:3151,246322:3151,246323:3151,255829:3151,259190:3151,259191:3151,263455:3151",
+	["ArkInventory.Skill.Blacksmithing.Midnight.Knowledge.Treasure"] = "238540:3151,238541:3151,238542:3151,238543:3151,238544:3151,238545:3151,238546:3151,238547:3151",
+	["ArkInventory.Skill.Blacksmithing.Midnight.Knowledge.Book"] = "262644:3151",
+	["ArkInventory.Skill.Blacksmithing.TWW.Knowledge.Base"] = "225233,225232,228726,228727,228774",
+	["ArkInventory.Skill.Blacksmithing.TWW.Knowledge.Treasure"] = "226276,226277,226278,226279,226280,226281,226282,226283",
+	["ArkInventory.Skill.Blacksmithing.TWW.Knowledge.Book"] = "224038,224647,227429,235864,222554,232500,227418,227407",
 	["ArkInventory.Skill.Blacksmithing.Dragonflight.Knowledge"] = "192131,192132,192130,198454,198518,198606,198965,198966,200972,201004,201005,201006,201007,201008,201009,201010,201011,201268,201279,201708",
 	["ArkInventory.Skill.Blacksmithing.Legion"] = "124444",
 	["ArkInventory.Skill.Blacksmithing.Draenor"] = "118720",
 	["ArkInventory.Skill.Blacksmithing.PTBase"] = "m,Tradeskill.Tool.Blacksmithing,Tradeskill.Mat.ByProfession.Blacksmithing,TradeskillResultMats.Reverse.Blacksmithing",
 	["ArkInventory.Skill.Cooking.Other"] = "86425,86468",
 	["ArkInventory.Skill.Cooking.PTBase"] = "m,Tradeskill.Tool.Cooking,ArkInventory.Tradegoods.Cooking",
-	["ArkInventory.Skill.Enchanting.TWW.Knowledge"] = "225230,225231,226284,226285,226286,226287,226288,226289,226290,226291,227659,227661",
+	["ArkInventory.Skill.Enchanting.Midnight.Knowledge.Base"] = "245759:3152,246324:3152,246325:3152,255830:3152,259192:3152,259193:3152,263464:3152,267655:3152,267653:3152,267654:3152",
+	["ArkInventory.Skill.Enchanting.Midnight.Knowledge.Treasure"] = "238548:3152,238549:3152,238550:3152,238551:3152,238552:3152,238553:3152,238554:3152,238555:3152",
+	["ArkInventory.Skill.Enchanting.Midnight.Knowledge.Book"] = "257600:3152,250445:3152",
+	["ArkInventory.Skill.Enchanting.TWW.Knowledge.Base"] = "222550,225230,225231,227659,227661,227662,228729,228728,227667",
+	["ArkInventory.Skill.Enchanting.TWW.Knowledge.Treasure"] = "226284,226285,226286,226287,226288,226289,226290,226291",
+	["ArkInventory.Skill.Enchanting.TWW.Knowledge.Book"] = "224050,224652,227411,235863,227422,232501,227433",
 	["ArkInventory.Skill.Enchanting.Dragonflight.Knowledge"] = "193900,193901,194702,198520,198610,198675,198689,198967,198968,200976,201012,201013,201272,201283,201356,201709",
 	["ArkInventory.Skill.Enchanting.Dragonflight.Disenchant"] = "198799,198800,200939,200940,200941,200942,200943,200945,200946,200947,201357,201358,201359,204990,204999,205001,205213,210228,210231,210234",
 	["ArkInventory.Skill.Enchanting.BFA.Iwens Enchanting Rod"] = "168125,168126,168127",
 	["ArkInventory.Skill.Enchanting.Shadowlands"] = "190336",
 	["ArkInventory.Skill.Enchanting.Legion"] = "124444",
 	["ArkInventory.Skill.Enchanting.PTBase"] = "m,Tradeskill.Tool.Enchanting,Tradeskill.Mat.ByProfession.Enchanting,TradeskillResultMats.Reverse.Enchanting",
-	["ArkInventory.Skill.Engineering.TWW.Knowledge"] = "225228,225229,226292,226293,226294,226295,226296,226297,226298,226299",
+	["ArkInventory.Skill.Engineering.Midnight.Knowledge.Base"] = "245809:3153,246326:3153,246327:3153,248485:3153,255831:3153,259194:3153,259195:3153,263456:3153",
+	["ArkInventory.Skill.Engineering.Midnight.Knowledge.Treasure"] = "238556:3153,238557:3153,238558:3153,238559:3153,238560:3153,238561:3153,238562:3153,238563:3153",
+	["ArkInventory.Skill.Engineering.Midnight.Knowledge.Book"] = "262646:3153",
+	["ArkInventory.Skill.Engineering.TWW.Knowledge.Base"] = "225228,225229,228731,222621,228775,228730",
+	["ArkInventory.Skill.Engineering.TWW.Knowledge.Treasure"] = "226292,226293,226294,226295,226296,226297,226298,226299",
+	["ArkInventory.Skill.Engineering.TWW.Knowledge.Book"] = "224052,224653,227434,235862,227412,227423,232507",
 	["ArkInventory.Skill.Engineering.Dragonflight.Knowledge"] = "193902,193903,198510,198521,198611,198789,198969,198970,200977,201014,201273,201284,201710",
 	["ArkInventory.Skill.Engineering.Legion"] = "124444",
 	["ArkInventory.Skill.Engineering.PTBase"] = "m,Tradeskill.Tool.Engineering,Tradeskill.Mat.ByProfession.Engineering,TradeskillResultMats.Reverse.Engineering",
 	["ArkInventory.Skill.First Aid.Other"] = "113478",
 	["ArkInventory.Skill.First Aid.PTBase"] = "m,Tradeskill.Mat.ByProfession.First Aid,TradeskillResultMats.Reverse.First Aid",
-	["ArkInventory.Skill.Fishing.TWW.Knowledge"] = "224752,225770,225771",
+	["ArkInventory.Skill.Fishing.Midnight.Bloom Swarm"] = "243302,243342",
+	["ArkInventory.Skill.Fishing.Midnight.Glimmerline"] = "262797,262798",
+	["ArkInventory.Skill.Fishing.Midnight.Bloomline"] = "262792,262793",
+	["ArkInventory.Skill.Fishing.Midnight.Book"] = "254875,255157,262649,262787",
+	["ArkInventory.Skill.Fishing.Midnight.Other"] = "243343",
+	["ArkInventory.Skill.Fishing.TWW.Book"] = "224752,225770,225771",
 	["ArkInventory.Skill.Fishing.Dragonflight.Iskaara"] = "194510,200080,200081,200082,200083,200084,200085,200086",
 	["ArkInventory.Skill.Fishing.Bait.Shadowlands"] = "173038,173039,173040,173041,173042,173043,180168,187712",
 	["ArkInventory.Skill.Fishing.Bait.Draenor"] = "110274,110289,110290,110291,110292,110293,110294,128229",
 	["ArkInventory.Skill.Fishing.Bait.Legion"] = "133704,133706,133713,133715,133795,139175",
 	["ArkInventory.Skill.Fishing.PTBase"] = "m,Tradeskill.Tool.Fishing,Tradeskill.Mat.ByType.Fish",
-	["ArkInventory.Skill.Herbalism.TWW.Knowledge"] = "224023,224264,224265,224817,224835,226300,226301,226302,226303,226304,226305,226306,226307",
+	["ArkInventory.Skill.Herbalism.Midnight.Knowledge.Base"] = "238465:3154,238466:3154,238467:3154,245761:3154,255832:3154,263462:3154",
+	["ArkInventory.Skill.Herbalism.Midnight.Knowledge.Treasure"] = "238468:3154,238469:3154,238470:3154,238471:3154,238472:3154,238473:3154,238474:3154,238475:3154",
+	["ArkInventory.Skill.Herbalism.Midnight.Knowledge.Book"] = "250443:3154,258410:3154",
+	["ArkInventory.Skill.Herbalism.Midnight.Seeds"] = "237497,237498,237499,237500",
+	["ArkInventory.Skill.Herbalism.Midnight.Mulch"] = "238387,238388,238389",
+	["ArkInventory.Skill.Herbalism.TWW.Knowledge.Base"] = "222552,224264,224265,224817,224835",
+	["ArkInventory.Skill.Herbalism.TWW.Knowledge.Treasure"] = "226300,226301,226302,226303,226304,226305,226306,226307,238570,238565,238564,238568,238566,238569,238567,238571",
+	["ArkInventory.Skill.Herbalism.TWW.Knowledge.Book"] = "224023,224656,227415,232503,235861,227426,227437",
 	["ArkInventory.Skill.Herbalism.TWW.Seeds"] = "214561,214595,214597,214605",
 	["ArkInventory.Skill.Herbalism.Dragonflight.Knowledge"] = "194041,194054,194055,194061,194080,194081,194704,198522,199115,200677,200678,200980,201276,201287,201705,201717,202014,204228",
 	["ArkInventory.Skill.Herbalism.Dragonflight.Seeds"] = "200506,200507,200508,200509",
 	["ArkInventory.Skill.Herbalism.PTBase"] = "m,ArkInventory.Tradegoods.Herbalism",
-	["ArkInventory.Skill.Inscription.TWW.Knowledge"] = "225226,225227,226308,226309,226310,226311,226312,226313,226314,226315",
+	["ArkInventory.Skill.Inscription.Midnight.Knowledge.Base"] = "245757:3155,246328:3155,246329:3155,255833:3155,259196:3155,259197:3155,263457:3155",
+	["ArkInventory.Skill.Inscription.Midnight.Knowledge.Treasure"] = "238572:3155,238573:3155,238574:3155,238575:3155,238576:3155,238577:3155,238578:3155,238579:3155",
+	["ArkInventory.Skill.Inscription.Midnight.Knowledge.Book"] = "258411:3155",
+	["ArkInventory.Skill.Inscription.TWW.Knowledge.Base"] = "222548,225226,225227,228733,228776,228732",
+	["ArkInventory.Skill.Inscription.TWW.Knowledge.Treasure"] = "226308,226309,226310,226311,226312,226313,226314,226315",
+	["ArkInventory.Skill.Inscription.TWW.Knowledge.Book"] = "227430,224654,235860,224053,227408,232508,227419",
 	["ArkInventory.Skill.Inscription.Dragonflight.Knowledge"] = "193904,193905,194699,198523,198607,198659,198669,198686,198693,198703,198704,198971,198972,200973,201015,201269,201280,201711",
 	["ArkInventory.Skill.Inscription.BFA"] = "158186,158205",
 	["ArkInventory.Skill.Inscription.Other"] = "39354",
 	["ArkInventory.Skill.Inscription.PTBase"] = "m,Tradeskill.Tool.Inscription,Tradeskill.Mat.ByProfession.Inscription,TradeskillResultMats.Reverse.Inscription,ArkInventory.Tradegoods.Herbalism",
-	["ArkInventory.Skill.Jewelcrafting.TWW.Knowledge"] = "225224,225225,226316,226317,226318,226319,226320,226321,226322,226323",
+	["ArkInventory.Skill.Jewelcrafting.Midnight.Knowledge.Base"] = "245760:3156,246330:3156,246331:3156,255834:3156,259198:3156,259199:3156,263458:3156",
+	["ArkInventory.Skill.Jewelcrafting.Midnight.Knowledge.Treasure"] = "238580:3156,238581:3156,238582:3156,238583:3156,238584:3156,238585:3156,238586:3156,238587:3156",
+	["ArkInventory.Skill.Jewelcrafting.Midnight.Knowledge.Book"] = "257599:3156",
+	["ArkInventory.Skill.Jewelcrafting.TWW.Knowledge.Base"] = "225224,225225,222551,228734,228735,228777",
+	["ArkInventory.Skill.Jewelcrafting.TWW.Knowledge.Treasure"] = "226316,226317,226318,226319,226320,226321,226322,226323",
+	["ArkInventory.Skill.Jewelcrafting.TWW.Knowledge.Book"] = "224054,224655,232504,235859,227435,227424,227413",
 	["ArkInventory.Skill.Jewelcrafting.Dragonflight.Knowledge"] = "193907,193909,194703,198524,198612,198656,198660,198664,198670,198682,198687,198973,198974,200978,201016,201017,201274,201285,201712",
 	["ArkInventory.Skill.Jewelcrafting.Legion"] = "124444",
 	["ArkInventory.Skill.Jewelcrafting.PTBase"] = "m,Tradeskill.Tool.Jewelcrafting,Tradeskill.Gem,Tradeskill.Mat.ByProfession.Jewelcrafting,TradeskillResultMats.Reverse.Jewelcrafting,ArkInventory.Mat.ByType.Ore.Prospectable",
-	["ArkInventory.Skill.Leatherworking.TWW.Knowledge"] = "226324,226325,226326,226327,226328,226329,226330,226331",
+	["ArkInventory.Skill.Leatherworking.Midnight.Knowledge.Base"] = "245758:3157,246332:3157,246333:3157,255835:3157,259200:3157,259201:3157,263459:3157",
+	["ArkInventory.Skill.Leatherworking.Midnight.Knowledge.Treasure"] = "238588:3157,238589:3157,238590:3157,238591:3157,238592:3157,238593:3157,238594:3157,238595:3157",
+	["ArkInventory.Skill.Leatherworking.Midnight.Knowledge.Book"] = "250922:3157",
+	["ArkInventory.Skill.Leatherworking.TWW.Knowledge.Base"] = "222549,228737,225223,228736,228778",
+	["ArkInventory.Skill.Leatherworking.TWW.Knowledge.Treasure"] = "226324,226325,226326,226327,226329,226328,226331,226330",
+	["ArkInventory.Skill.Leatherworking.TWW.Knowledge.Book"] = "224056,224658,227414,227425,227436,232505,235858",
 	["ArkInventory.Skill.Leatherworking.Dragonflight.Knowledge"] = "193910,193913,194700,198525,198613,198658,198667,198683,198690,198696,198711,198975,198976,200979,201018,201275,201286,201713",
 	["ArkInventory.Skill.Leatherworking.PTBase"] = "m,Tradeskill.Mat.ByProfession.Leatherworking,TradeskillResultMats.Reverse.Leatherworking,ArkInventory.Skill.Skinning,ArkInventory.Tradegoods.Leather",
-	["ArkInventory.Skill.Mining.TWW.Knowledge"] = "224055,224583,224584,224818,224838,226332,226333,226334,226335,226336,226337,226338,226339",
+	["ArkInventory.Skill.Mining.Midnight.Knowledge.Base"] = "237496:3158,237506:3158,237507:3158,245762:3158,255836:3158,263463:3158",
+	["ArkInventory.Skill.Mining.Midnight.Knowledge.Treasure"] = "238596:3158,238597:3158,238598:3158,238599:3158,238600:3158,238601:3158,238602:3158,238603:3158",
+	["ArkInventory.Skill.Mining.Midnight.Knowledge.Book"] = "250924:3158,250444:3158",
+	["ArkInventory.Skill.Mining.TWW.Knowledge.Base"] = "224583,224584,224818,224838,222553",
+	["ArkInventory.Skill.Mining.TWW.Knowledge.Treasure"] = "226332,226333,226334,226335,226336,226337,226338,226339",
+	["ArkInventory.Skill.Mining.TWW.Knowledge.Book"] = "227416,227427,227438,224651,224055,232509,235857",
 	["ArkInventory.Skill.Mining.Dragonflight.Knowledge"] = "194039,194062,194063,194064,194078,194079,194708,198526,199122,200981,201277,201288,201300,201301,201700,201716,202011",
 	["ArkInventory.Skill.Mining.PTBase"] = "m,Tradeskill.Tool.Mining,TradeskillResultMats.Reverse.Smelting,TradeskillResultMats.Forward.Smelting,ArkInventory.Tradegoods.Metal and Stone",
-	["ArkInventory.Skill.Skinning.TWW.Knowledge"] = "224780,224781,224782,225222,226340,226341,226342,226343,226344,226345,226346,226347",
-	["ArkInventory.Skill.Skinning.Dragonflight.Knowledge"] = "194040,194066,194067,194068,194076,194077,198527,198837,198841,199128,200982,201023,201278,201289,201714,201718,202016",
+	["ArkInventory.Skill.Skinning.Midnight.Knowledge.Base"] = "238625:3159,238626:3159,238627:3159,245828:3159,255837:3159,263461:3159",
+	["ArkInventory.Skill.Skinning.Midnight.Knowledge.Treasure"] = "238628:3159,238629:3159,238630:3159,238631:3159,238632:3159,238633:3159,238634:3159,238635:3159",
+	["ArkInventory.Skill.Skinning.Midnight.Knowledge.Book"] = "250360:3159,250923:3159",
+	["ArkInventory.Skill.Skinning.TWW.Knowledge.Base"] = "222649,224780,224781,224782,225222",
+	["ArkInventory.Skill.Skinning.TWW.Knowledge.Treasure"] = "226340,226341,226342,226343,226344,226345,226346,226347,238609,238606,238611,238605,238610,238604,238608,238607",
+	["ArkInventory.Skill.Skinning.TWW.Knowledge.Book"] = "227417,227428,227439,224007,224657,232506,235856",
+	["ArkInventory.Skill.Skinning.Dragonflight.Knowledge"] = "194040,194066,194067,194068,194076,194077,198527,198837,198841,199128,200982,201023,201278,201289,201714,201718",
 	["ArkInventory.Skill.Skinning.PTBase"] = "m,Tradeskill.Tool.Skinning,ArkInventory.Tradegoods.Leather",
-	["ArkInventory.Skill.Tailoring.TWW.Knowledge"] = "225220,225221,226348,226349,226350,226351,226352,226353,226354,226355",
+	["ArkInventory.Skill.Tailoring.Midnight.Knowledge.Base"] = "245756:3160,246334:3160,246335:3160,255838:3160,259202:3160,259203:3160,263460:3160",
+	["ArkInventory.Skill.Tailoring.Midnight.Knowledge.Treasure"] = "238612:3160,238613:3160,238614:3160,238615:3160,238616:3160,238617:3160,238618:3160,238619:3160",
+	["ArkInventory.Skill.Tailoring.Midnight.Knowledge.Book"] = "257601:3160",
+	["ArkInventory.Skill.Tailoring.TWW.Knowledge.Base"] = "225220,225221,224807,228738,222547,228779,228739",
+	["ArkInventory.Skill.Tailoring.TWW.Knowledge.Treasure"] = "226348,226349,226351,226350,226352,226353,226354,226355",
+	["ArkInventory.Skill.Tailoring.TWW.Knowledge.Book"] = "227410,227421,227432,224036,224648,232502,235855",
 	["ArkInventory.Skill.Tailoring.Dragonflight.Knowledge"] = "193898,193899,194698,198528,198609,198662,198680,198684,198692,198699,198702,198977,198978,200975,201019,201020,201271,201282,201715,210461",
 	["ArkInventory.Skill.Tailoring.PTBase"] = "m,Tradeskill.Mat.ByProfession.Tailoring,TradeskillResultMats.Reverse.Tailoring,ArkInventory.Tradegoods.Cloth",
-	
+
+	["ArkInventory.Armor Token.Midnight.Venom Cursed Fragment"] = "279382",
 
 	["ArkInventory.Armor Token.Timerunning.Legion"] = "253224,253227",
 	["ArkInventory.Armor Token.415.Dreambound.Plate"] = "208890,208894,208901,208902,208909,208910,208916,208919,209835",
@@ -768,8 +883,30 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	-- items with charges
 	["ArkInventory.Internal.ItemsWithCharges.Dragonflight.Shovels"] = "191294,191304",
 	
+
+	-- power items - midnight
+	["ArkInventory.Consumable.Power.Midnight.Knowledge"] = "m,ArkInventory.Skill.Alchemy.Midnight.Knowledge,ArkInventory.Skill.Blacksmithing.Midnight.Knowledge,ArkInventory.Skill.Enchanting.Midnight.Knowledge,ArkInventory.Skill.Engineering.Midnight.Knowledge,ArkInventory.Skill.Fishing.Midnight.Knowledge,ArkInventory.Skill.Herbalism.Midnight.Knowledge,ArkInventory.Skill.Inscription.Midnight.Knowledge,ArkInventory.Skill.Jewelcrafting.Midnight.Knowledge,ArkInventory.Skill.Leatherworking.Midnight.Knowledge,ArkInventory.Skill.Mining.Midnight.Knowledge,ArkInventory.Skill.Skinning.Midnight.Knowledge,ArkInventory.Skill.Tailoring.Midnight.Knowledge",
+	
+	["ArkInventory.Consumable.Power.Midnight.Delves.Season 2.Bounty"] = "274374",
+	["ArkInventory.Consumable.Power.Midnight.Delves.Season 2.Curio.Combat"] = "249219,249223,271132",
+	["ArkInventory.Consumable.Power.Midnight.Delves.Season 2.Curio.Utility"] = "249227,249228,271130",
+	
+
+	["ArkInventory.Consumable.Power.Midnight.AtulUtek.Vaults"] = "280003,280006",
+
+	["ArkInventory.Consumable.Power.Midnight.Delves.Season 1.Bounty"] = "252415",
+	["ArkInventory.Consumable.Power.Midnight.Delves.Season 1.Curio.Combat"] = "249219,249220,249221,249222,249223,257683,257755",
+	["ArkInventory.Consumable.Power.Midnight.Delves.Season 1.Curio.Utility"] = "249224,249225,249226,249227,249228,257768,257866",
+	["ArkInventory.Consumable.Power.Midnight.Delves.Season 1.Gravestone"] = "262964",
+	["ArkInventory.Consumable.Power.Midnight.Delves.Season 1.Beacon"] = "253342",
+	["ArkInventory.Consumable.Power.Midnight.Ascendant.Season 1"] = "268650,268552",
+
+	["ArkInventory.Consumable.Power.Midnight.Prey.Disarmed Trap"] = "255825",
+	["ArkInventory.Consumable.Power.Midnight.Prey.Afflicted Soul"] = "276547",
+	
+
 	-- power items - war within
-	["ArkInventory.Consumable.Power.TWW.Knowledge.Base"] = "m,ArkInventory.Skill.Alchemy.TWW.Knowledge,ArkInventory.Skill.Blacksmithing.TWW.Knowledge,ArkInventory.Skill.Enchanting.TWW.Knowledge,ArkInventory.Skill.Enchanting.TWW.Disenchant,ArkInventory.Skill.Engineering.TWW.Knowledge,ArkInventory.Skill.Fishing.TWW.Knowledge,ArkInventory.Skill.Herbalism.TWW.Knowledge,ArkInventory.Skill.Herbalism.TWW.Other,ArkInventory.Skill.Inscription.TWW.Knowledge,ArkInventory.Skill.Jewelcrafting.TWW.Knowledge,ArkInventory.Skill.Leatherworking.TWW.Knowledge,ArkInventory.Skill.Mining.TWW.Knowledge,ArkInventory.Skill.Skinning.TWW.Knowledge,ArkInventory.Skill.Tailoring.TWW.Knowledge",
+	["ArkInventory.Consumable.Power.TWW.Knowledge"] = "m,ArkInventory.Skill.Alchemy.TWW.Knowledge,ArkInventory.Skill.Blacksmithing.TWW.Knowledge,ArkInventory.Skill.Enchanting.TWW.Knowledge,ArkInventory.Skill.Engineering.TWW.Knowledge,ArkInventory.Skill.Fishing.TWW.Knowledge,ArkInventory.Skill.Herbalism.TWW.Knowledge,ArkInventory.Skill.Inscription.TWW.Knowledge,ArkInventory.Skill.Jewelcrafting.TWW.Knowledge,ArkInventory.Skill.Leatherworking.TWW.Knowledge,ArkInventory.Skill.Mining.TWW.Knowledge,ArkInventory.Skill.Skinning.TWW.Knowledge,ArkInventory.Skill.Tailoring.TWW.Knowledge",
 	["ArkInventory.Consumable.Power.TWW.Delves.Season 3.Coffer Key Shard"] = "245653",
 	["ArkInventory.Consumable.Power.TWW.Delves.Season 3.Bounty"] = "248142",
 	["ArkInventory.Consumable.Power.TWW.Delves.Season 2.Titan Memory Card"] = "244311",
@@ -784,7 +921,7 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.Consumable.Power.TWW.Delves.Schematic.Gob-Trotter"] = "230216,230217,230218,230219,230220",
 	["ArkInventory.Consumable.Power.TWW.Delves.Schematic.Dirigible"] = "224768,224769,224770,224771,224960,224979,224980,224981,224982",
 	["ArkInventory.Consumable.Power.TWW.Other.Siren Isle"] = "229365",
-	["ArkInventory.Consumable.Power.TWW.Other.Radiant Echo"] = "235897",
+	["ArkInventory.Consumable.Power.TWW.Other.Radiant Echo"] = "235897,246771",
 	["ArkInventory.Consumable.Power.TWW.Undermine.Drive.Paint"] = "235388,235389,235390,235391",
 	["ArkInventory.Consumable.Power.TWW.Undermine.Drive.Engine"] = "232982,232981",
 	["ArkInventory.Consumable.Power.TWW.Undermine.Drive.Wheels"] = "232985,232986",
@@ -806,7 +943,7 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.Consumable.Power.Shadowlands.Conduit.Boost.Random"] = "187216:226,187148:252",
 	["ArkInventory.Consumable.Power.Shadowlands.Conduit.Boost.All"] = "190184:200,190640:226,190956:239",
 	
-	-- BFA
+	-- power items - bfa
 	["ArkInventory.Consumable.Power.BFA.Tinkering"] = "166846,166970,166971,167562,168327,168262,168832,169610",
 	
 	["ArkInventory.Consumable.Power.BFA.Heart of Azeroth.Essence.Vision of Perfection"] = "168842,168843,168844,168845,169774",
@@ -823,6 +960,9 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.Consumable.Power.BFA.Heart of Azeroth.Essence.Spirit of Preservation"] = "168436,168439,168440,168816",
 
 	["ArkInventory.Consumable.Power.Firelands"] = "71617",
+
+
+	["ArkInventory.Consumable.Power.Knowledge"] = "m,ArkInventory.Consumable.Power.Dragonflight.Knowledge,ArkInventory.Consumable.Power.TWW.Knowledge,ArkInventory.Consumable.Power.Midnight.Knowledge",
 
 	["ArkInventory.Consumable.Event.TWW.Dastardly Duos"] = "235665,237384,237385,237774",
 

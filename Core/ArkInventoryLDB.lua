@@ -12,7 +12,9 @@ ArkInventory.LDB = {
 	Loaded = false
 }
 
-local ldb = { }
+local ldb = {
+	MountState = { }
+}
 
 
 function ArkInventory.LDB.Update( )
@@ -59,7 +61,7 @@ function ArkInventory.LDB.Update( )
 		
 		
 		ArkInventory.LDB.Tracking_Bronze = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s_%s", ArkInventory.Const.Program.Name, "Tracking", "Bronze" ), {
-			type = ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID > 0 and ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Currency].ClientCheck ) and "data source" or "hidden",
+			type = ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID > 0 and ArkInventory.Global.Location[ArkInventory.Const.Location.Currency].ClientCheck and "data source" or "hidden",
 			text = ArkInventory.Localise["LOADING"],
 		} )
 		
@@ -69,7 +71,7 @@ function ArkInventory.LDB.Update( )
 		
 		
 		ArkInventory.LDB.Tracking_Reputation = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s_%s", ArkInventory.Const.Program.Name, "Tracking", "Reputation" ), {
-			type = ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Reputation].ClientCheck ) and "data source" or "hidden",
+			type = ArkInventory.Global.Location[ArkInventory.Const.Location.Reputation].ClientCheck and "data source" or "hidden",
 			text = ArkInventory.Localise["LOADING"],
 		} )
 		
@@ -89,7 +91,7 @@ function ArkInventory.LDB.Update( )
 		
 		
 		ArkInventory.LDB.Pets = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s", ArkInventory.Const.Program.Name, "Pets" ), {
-			type = ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Pet].ClientCheck ) and "data source" or "hidden",
+			type = ArkInventory.Global.Location[ArkInventory.Const.Location.Pet].ClientCheck and "data source" or "hidden",
 			text = ArkInventory.Localise["LOADING"],
 		} )
 		
@@ -99,16 +101,16 @@ function ArkInventory.LDB.Update( )
 		
 		
 		ArkInventory.LDB.Mounts = ArkInventory.Lib.DataBroker:NewDataObject( string.format( "%s_%s", ArkInventory.Const.Program.Name, "Mounts" ), {
-			type = ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].ClientCheck ) and "data source" or "hidden",
+			type = ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].ClientCheck and "data source" or "hidden",
 			text = ArkInventory.Localise["LOADING"],
 		} )
 		
 		ArkInventory.LDB.Mounts.Update = ldb.Mounts.Update
 		ArkInventory.LDB.Mounts.OnClick = ldb.Mounts.OnClick
 		ArkInventory.LDB.Mounts.OnTooltipShow = ldb.Mounts.OnTooltipShow
+		ArkInventory.LDB.Mounts.SetMountState = ldb.Mounts.SetMountState
 		ArkInventory.LDB.Mounts.GetNext = ldb.Mounts.GetNext
-		
-		
+		ArkInventory.LDB.Mounts.GetNext_Threaded = ldb.Mounts.GetNext_Threaded
 		
 		ArkInventory.LDB.Loaded = true
 		
@@ -198,7 +200,15 @@ ldb.Tracking_Currency = {
 						
 						local data = object.data
 						if data and codex.player.data.ldb.tracking.currency.watched[data.id] then
-							hasText = string.format( "%s |T%s:0|t %s", hasText or "", data.iconFileID, FormatLargeNumber( data.quantity ) )
+							
+							local quantity = FormatLargeNumber( data.quantity )
+
+							if ( data.maxQuantity > 0 and data.quantity == data.maxQuantity ) or ( data.maxWeeklyQuantity > 0 and data.quantityEarnedThisWeek == data.maxWeeklyQuantity ) then
+								quantity = string.format( "%s%s%s", RED_FONT_COLOR_CODE, quantity, FONT_COLOR_CODE_CLOSE )
+							end
+
+							hasText = string.format( "%s |T%s:0|t %s", hasText or "", data.iconFileID, quantity )
+
 						end
 						
 					end
@@ -250,17 +260,29 @@ ldb.Tracking_Currency = {
 							
 							if codex.player.data.ldb.tracking.currency.tracked[data.id] then
 								
-								local txt = FormatLargeNumber( data.quantity )
-								
+								local quantity = FormatLargeNumber( data.quantity )
+
 								if data.maxQuantity > 0 then
-									txt = string.format( "%s/%s", FormatLargeNumber( data.quantity ), FormatLargeNumber( data.maxQuantity ) )
+									quantity = string.format( "%s/%s", FormatLargeNumber( data.quantity ), FormatLargeNumber( data.maxQuantity ) )
+								end
+
+								if ( data.maxQuantity > 0 and data.quantity == data.maxQuantity ) or ( data.maxWeeklyQuantity > 0 and data.quantityEarnedThisWeek == data.maxWeeklyQuantity ) then
+									quantity = string.format( "%s%s%s", RED_FONT_COLOR_CODE, quantity, FONT_COLOR_CODE_CLOSE )
 								end
 								
-								self:AddDoubleLine( data.name, txt, 1, 1, 1, 1, 1, 1 )
+								self:AddDoubleLine( data.name, quantity, 1, 1, 1, 1, 1, 1 )
 								
-								if data.canEarnPerWeek and data.quantityEarnedThisWeek and data.quantityEarnedThisWeek > 0 then
-									txt = string.format( "%s/%s", FormatLargeNumber( data.quantityEarnedThisWeek ), FormatLargeNumber( data.canEarnPerWeek ) )
-									self:AddDoubleLine( string.format( "  * %s", ArkInventory.Localise["WEEKLY"] ), txt, 1, 1, 1, 1, 1, 1 )
+
+								if ( data.maxWeeklyQuantity > 0 ) then
+									
+									quantity = string.format( "%s/%s", FormatLargeNumber( data.quantityEarnedThisWeek ), FormatLargeNumber( data.maxWeeklyQuantity ) )
+
+									if ( data.maxQuantity > 0 and data.quantity == data.maxQuantity ) or ( data.maxWeeklyQuantity > 0 and data.quantityEarnedThisWeek == data.maxWeeklyQuantity ) then
+										quantity = string.format( "%s%s%s", RED_FONT_COLOR_CODE, quantity, FONT_COLOR_CODE_CLOSE )
+									end
+
+									self:AddDoubleLine( string.format( "  * %s", ArkInventory.Localise["WEEKLY"] ), quantity, 1, 1, 1, 1, 1, 1 )
+
 								end
 							
 							end
@@ -921,12 +943,12 @@ ldb.Mounts = {
 					return "u"
 				end
 				
-	--			ArkInventory.OutputDebug( "fallback - check surface" )
-	--			if ArkInventory.Collection.Mount.GetCount( "s" ) > 0 then
-	--				ArkInventory.OutputDebug( "fallback - using surface" )
-	--				ldb.Mounts.companionUpdate( ArkInventory.Collection.Mount.GetUsable( "s" ) )
-	--				return "s"
-	--			end
+				--ArkInventory.OutputDebug( "fallback - check surface" )
+				--if ArkInventory.Collection.Mount.GetCount( "s" ) > 0 then
+					--ArkInventory.OutputDebug( "fallback - using surface" )
+					--ldb.Mounts.companionUpdate( ArkInventory.Collection.Mount.GetUsable( "s" ) )
+					--return "s"
+				--end
 				
 			else
 				
@@ -941,12 +963,12 @@ ldb.Mounts = {
 			if IsSwimming( ) then
 				
 				if not forceAlternative then
-	--				ArkInventory.OutputDebug( "primary - check surface" )
-	--				if ArkInventory.Collection.Mount.GetCount( "s" ) > 0 then
-	--					ArkInventory.OutputDebug( "primary - using surface" )
-	--					ldb.Mounts.companionUpdate( ArkInventory.Collection.Mount.GetUsable( "s" ) )
-	--					return "s"
-	--				end
+					--ArkInventory.OutputDebug( "primary - check surface" )
+					--if ArkInventory.Collection.Mount.GetCount( "s" ) > 0 then
+						--ArkInventory.OutputDebug( "primary - using surface" )
+						--ldb.Mounts.companionUpdate( ArkInventory.Collection.Mount.GetUsable( "s" ) )
+						--return "s"
+					--end
 				else
 					ArkInventory.OutputDebug( "ignore surface, force flying (or land if you cant fly here)" )
 					if ArkInventory.Collection.Mount.isFlyable( ) then
@@ -985,10 +1007,10 @@ ldb.Mounts = {
 			
 			local codex = ArkInventory.Codex.GetPlayer( )
 			
-	--		if codex.player.data.ldb.mounts.type.l.usesurface and ArkInventory.Collection.Mount.GetCount( "s" ) > 0 then
-	--			ArkInventory.OutputDebug( "primary - adding surface" )
-	--			ldb.Mounts.companionUpdate( ArkInventory.Collection.Mount.GetUsable( "s" ) )
-	--		end
+			--if codex.player.data.ldb.mounts.type.l.usesurface and ArkInventory.Collection.Mount.GetCount( "s" ) > 0 then
+				--ArkInventory.OutputDebug( "primary - adding surface" )
+				--ldb.Mounts.companionUpdate( ArkInventory.Collection.Mount.GetUsable( "s" ) )
+			--end
 			
 			if codex.player.data.ldb.mounts.type.l.useflying and ArkInventory.Collection.Mount.GetCount( "a" ) > 0 then
 				ArkInventory.OutputDebug( "primary - adding flying" )
@@ -1018,11 +1040,11 @@ ldb.Mounts = {
 			return "l"
 		end
 		
-	--	if ArkInventory.Collection.Mount.GetCount( "s" ) > 0 then
-	--		ArkInventory.OutputDebug( "fallback - using surface" )
-	--		ldb.Mounts.companionUpdate( ArkInventory.Collection.Mount.GetUsable( "s" ) )
-	--		return "s"
-	--	end
+		--if ArkInventory.Collection.Mount.GetCount( "s" ) > 0 then
+			--ArkInventory.OutputDebug( "fallback - using surface" )
+			--ldb.Mounts.companionUpdate( ArkInventory.Collection.Mount.GetUsable( "s" ) )
+			--return "s"
+		--end
 		
 		if ArkInventory.Collection.Mount.GetCount( "a" ) > 0 then
 			ArkInventory.OutputDebug( "fallback - using flying" )
@@ -1038,12 +1060,59 @@ ldb.Mounts = {
 		
 	end,
 	
+	SetMountState = function( )
+		
+		local codex = ArkInventory.Codex.GetPlayer( )
+		
+		ldb.MountState.wasShapeShifted = GetShapeshiftFormID( )
+		ldb.MountState.wasMounted = IsMounted( )
+		ldb.MountState.wasFlying = IsFlying( )
+		ldb.MountState.usedClassAbility = false
+
+		if codex.player.data.ldb.travelform then
+			if codex.player.data.info.class == "DRUID" then
+
+				ldb.MountState.usedClassAbility = true
+
+				local form = ldb.MountState.wasShapeShifted
+
+				if ( form == 4 ) or ( IsIndoors( ) and form == 1 ) or ( IsOutdoors( ) and ( form == 29 or form == 27 ) ) then
+					ldb.MountState.wasMounted = true
+				end
+
+			elseif codex.player.data.info.class == "EVOKER" then
+				
+				ldb.MountState.usedClassAbility = true
+
+			end
+		end
+
+		ArkInventory.OutputDebug( "----- mount state -----" )
+		ArkInventory.OutputDebug( "shapeshifted = ", ldb.MountState.wasShapeShifted )
+		ArkInventory.OutputDebug( "mounted = ", ldb.MountState.wasMounted )
+		ArkInventory.OutputDebug( "flying = ", ldb.MountState.wasFlying )
+		ArkInventory.OutputDebug( "use class ability = ", ldb.MountState.usedClassAbility )
+
+	end,
+
 	GetNext = function( )
+		
+		local thread_id = ArkInventory.Global.Thread.Format.SummonMount
+
+		local thread_func = function( )
+			ArkInventory.LDB.Mounts.GetNext_Threaded( thread_id )
+		end
+		
+		ArkInventory.ThreadStart( thread_id, thread_func )
+
+	end,
+
+	GetNext_Threaded = function( thread_id )
 		
 		ArkInventory.OutputDebug( "----- get next mount -----" )
 		
 		ArkInventory.SetMountMacro( )
-		
+
 		local c, r = ArkInventory.CheckPlayerHasControl( )
 		if not c then
 			-- you cant mount while you are not in control
@@ -1051,14 +1120,85 @@ ldb.Mounts = {
 			return
 		end
 		
+		local codex = ArkInventory.Codex.GetPlayer( )
+
+		if ldb.MountState.wasMounted then
+
+			ArkInventory.OutputDebug( "dismount in progress, ignoring")
+
+			if IsFlying( ) then
+				if not codex.player.data.ldb.mounts.type.a.dismount then
+					ArkInventory.OutputWarning( ArkInventory.Localise["LDB_MOUNTS_FLYING_DISMOUNT_WARNING"] )
+					return
+				end
+			end
+			
+			ArkInventory.Collection.Mount.Dismiss( )
+			
+			return
+
+		end
+
+
+		if ldb.MountState.usedClassAbility then
+
+			ArkInventory.OutputDebug( "checking class ability for ", codex.player.data.info.class )
+
+			if codex.player.data.info.class == "DRUID" then
+				
+				-- need to give the game enough time to actually shapeshift
+				ArkInventory.OutputDebug( "wait for shapeshift state to update" )
+				ArkInventory.ThreadYield( thread_id, true, 200 )
+
+				ArkInventory.OutputDebug( "check for shapeshift" )
+				local shapeshift = GetShapeshiftFormID( )
+				if shapeshift then
+					ArkInventory.OutputDebug( "shapeshift =", shapeshift, "]" )
+					return
+				end
+
+			elseif codex.player.data.info.class == "EVOKER" then
+
+				-- soar is equivalent to mounting plus a skyward assent or a certain amount of height, its not a shapeshift
+				-- if you touch the ground you are auto dismounted so its possible this might fail if theres not enough height to launch and you hit the ground again
+
+				ArkInventory.OutputDebug( "wait for cast to start" )
+				ArkInventory.ThreadYield( thread_id, true, 200 )
+
+				ArkInventory.OutputDebug( "wait for cast to end" )
+				while true do
+
+					if not UnitCastingInfo( "player" ) then
+						break
+					end
+
+					ArkInventory.ThreadYield( thread_id, true, 50 )
+
+				end
+
+				ArkInventory.OutputDebug( "wait for mount state to update" )
+				ArkInventory.ThreadYield( thread_id, true, 500 )
+
+				ArkInventory.OutputDebug( "check for mount" )
+				if IsMounted( ) then
+					return
+				end
+
+			end
+
+			ArkInventory.OutputDebug( "class ability has failed, calling normal mount" )
+
+		end
+
+
 		if IsIndoors( ) then
 			-- you shouldnt be able to mount here at all
 			ArkInventory.Output( ArkInventory.Localise["LDB_MOUNTS_FAIL_NOT_ALLOWED"] )
 			return
 		end
 		
-		local codex = ArkInventory.Codex.GetPlayer( )
-		
+
+
 		if IsMounted( ) then
 			
 			if IsFlying( ) then

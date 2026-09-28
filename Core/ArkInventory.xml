@@ -292,9 +292,8 @@
       </Layer>
       <Layer level="OVERLAY" textureSubLevel="4">
         <Texture parentKey="ArkIconProfessionRank" name="$parentArkIconProfessionRank" hidden="true" >
-          <Size x="12" y="12" />
           <Anchors>
-            <Anchor point="TOPLEFT" x="0" y="0" />
+            <Anchor point="TOPLEFT" />
           </Anchors>
         </Texture>
         <FontString parentKey="ArkIconProfessionRankText" name="$parentArkIconProfessionRankText" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
@@ -411,9 +410,8 @@
       </Layer>
       <Layer level="OVERLAY" textureSubLevel="4">
         <Texture parentKey="ArkIconProfessionRank" name="$parentArkIconProfessionRank" hidden="true" >
-          <Size x="12" y="12" />
           <Anchors>
-            <Anchor point="TOPLEFT" x="0" y="0" />
+            <Anchor point="TOPLEFT" />
           </Anchors>
         </Texture>
         <FontString parentKey="ArkIconProfessionRankText" name="$parentArkIconProfessionRankText" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
@@ -2058,16 +2056,18 @@
         ArkInventory.GameTooltipHide( )
       </OnLeave>
       <OnClick>
-        local loc_id = string.match( self:GetName( ), "^" .. ArkInventory.Const.Frame.Main.Name .. "(%d+)" )
-        loc_id = tonumber( loc_id )
-        if not ArkInventory.Global.Location[loc_id].isOffline then
+        local loc_id_window = tonumber( string.match( self:GetName( ), "^" .. ArkInventory.Const.Frame.Main.Name .. "(%d+)" ) )
+        local map = ArkInventory.Util.MapGetWindow( loc_id_window, 1 )
+        local loc_id_storage = map.loc_id_storage
+        if not ArkInventory.Global.Location[loc_id_window].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
           MoneyInputFrame_OpenPopup( self:GetParent( ) )
         end
       </OnClick>
       <OnHide>
-        local loc_id = string.match( self:GetName( ), "^" .. ArkInventory.Const.Frame.Main.Name .. "(%d+)" )
-        loc_id = tonumber( loc_id )
-        if not ArkInventory.Global.Location[loc_id].isOffline then
+        local loc_id_window = tonumber( string.match( self:GetName( ), "^" .. ArkInventory.Const.Frame.Main.Name .. "(%d+)" ) )
+        local map = ArkInventory.Util.MapGetWindow( loc_id_window, 1 )
+        local loc_id_storage = map.loc_id_storage
+        if not ArkInventory.Global.Location[loc_id_window].isOffline and not ArkInventory.Global.Location[loc_id_storage].isLocked then
           MoneyInputFrame_ClosePopup( )
         end
       </OnHide>
@@ -2122,12 +2122,21 @@
     <Scripts>
       <OnEnter>
         local loc_id = self:GetID( )
-        local text = string.format( ArkInventory.Localise["CONFIG_CONTROL_WITH_ARKINV"], ArkInventory.Const.Program.Name, ArkInventory.Global.Location[loc_id].Name )
+        local text = ""
+        if ArkInventory.db.option.bugfix.banktab == 0 then
+          text = string.format( ArkInventory.Localise["CONFIG_CONTROL_WITH_ARKINV"], ArkInventory.Const.Program.Name, ArkInventory.Global.Location[loc_id].Name )
+        else
+          text = "Reload the User Interface to restore full ArkInventory functionality"
+        end
         ArkInventory.GameTooltipSetText( self, text )
       </OnEnter>
       <OnClick>
-        local loc_id = self:GetID( )
-        ArkInventory.LocationOverrideSet( loc_id, true )
+        if ArkInventory.db.option.bugfix.banktab == 0 then
+          local loc_id = self:GetID( )
+          ArkInventory.LocationOverrideSet( loc_id, true )
+        else
+          ReloadUI()
+        end
       </OnClick>
     </Scripts>
   </Button>

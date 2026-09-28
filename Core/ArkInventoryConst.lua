@@ -412,24 +412,6 @@ function ArkInventory.OutputError( ... )
 	return ArkInventory.Output( RED_FONT_COLOR_CODE, "ERROR> ", ... )
 end
 
-function ArkInventory.OutputDebugModeSet( value )
-	
-	if ArkInventory.Global.Debug ~= value then
-		
-		local state = ArkInventory.Localise["ENABLED"]
-		if not value then
-			state = ArkInventory.Localise["DISABLED"]
-		end
-		
-		ArkInventory.Global.Debug = value
-		
-		ArkInventory.Output( "debug mode is now ", state )
-		
-	end
-	
-end
-
-
 
 ArkInventory.ENUM = {
 	ACTION = {
@@ -529,8 +511,7 @@ ArkInventory.ENUM = {
 		VERTICAL = 2,
 	},
 	EXPANSION = {
-		CURRENT = nil, -- set elsewhere,
-		
+		CURRENT = nil, -- -- set in ArkInventoryClient.lua
 		MIDNIGHT = 11,
 		WARWITHIN = 10,
 		DRAGONFLIGHT = 9,
@@ -785,6 +766,13 @@ ArkInventory.ENUM = {
 			DELETED = 2,
 		},
 	},
+	REPUTATION = {
+		TYPE = {
+			STANDARD = 1,
+			FRIEND = 2,
+			RENOWN = 3,
+		},
+	},
 	RESTACK = {
 		ORDER = { -- do not change these values unless you fix them in the upgrade code
 			NORMAL = 1,
@@ -798,18 +786,29 @@ ArkInventory.ENUM = {
 		ONOPEN = 2,
 		MANUAL = 3,
 	},
-	TIMERUNNINGSEASON = {  -- id = expansion
-		[1] = LE_EXPANSION_MISTS_OF_PANDARIA or 4,
-		[2] = LE_EXPANSION_LEGION or 6,
+	TAB_RESELECT = {
+		NEVER = 0,
+		SESSION = 1,
+		ALWAYS = 2,
+	},
+
+	CLASSICSEASONID = {
+		DISCOVERY = 2,
+		HARDCORE = 3,
+		FOREVER = 60,
+	},
+	CLASSICSEASON = { -- id = name
+		[2] = SEASON_OF_MASTERY_REALM_TYPE,
+		[3] = GUILD_PLAYSTYLE_HARDCORE,
+		[60] = "Forever",
 	},
 	TIMERUNNINGSEASONID = {
 		PANDARIA = 1,
 		LEGION = 2,
 	},
-	TAB_RESELECT = {
-		NEVER = 0,
-		SESSION = 1,
-		ALWAYS = 2,
+	TIMERUNNINGSEASON = {  -- id = expansion
+		[1] = LE_EXPANSION_MISTS_OF_PANDARIA or 4,
+		[2] = LE_EXPANSION_LEGION or 6,
 	},
 }
 
@@ -823,15 +822,15 @@ ArkInventory.Const = { -- constants
 	
 	BLIZZARD = {
 		
---		/dump ArkInventory.Const.BLIZZARD.TOC
+		--/dump ArkInventory.Const.BLIZZARD.TOC
 		TOC = select( 4, GetBuildInfo( ) ) or 0,
 		
 		CLIENT = {
-			ID = nil,
-			NAME = _G[string.format( "EXPANSION_NAME%s", GetExpansionLevel( ) )],
-			EXPANSION = { },
-			TIMERUNNINGSEASONID = 0,
-			ELEVEN_POINT_TWO = false, -- calculated in ArkInventory.Client
+			NAME = "", -- set in ArkInventoryClient.lua
+			EXPANSION = { }, -- set in ArkInventoryClient.lua
+			CLASSICSEASONID = 0, -- set in ArkInventoryClient.lua
+			TIMERUNNINGSEASONID = 0, -- set in ArkInventoryClient.lua
+			BANK_USES_TABS = false, -- set in ArkInventoryClient.lua
 		},
 		
 		GLOBAL = {
@@ -847,21 +846,36 @@ ArkInventory.Const = { -- constants
 				},
 			},
 			PROFESSIONRANK = {
-				COLOR = {
-					[0] = { r = 255 / 255, g = 255 / 255, b = 255 / 255 },
-					[1] = { r = 165 / 255, g =  66 / 255, b =   0 / 255 },
-					[2] = { r = 255 / 255, g = 255 / 255, b = 255 / 255 },
-					[3] = { r = 255 / 255, g = 230 / 255, b =   0 / 255 },
-					[4] = { r = 120 / 255, g = 255 / 255, b = 210 / 255 },
-					[5] = { r = 255 / 255, g =  94 / 255, b =  40 / 255 },
+				INFO = {
+					["Professions-Icon-Quality-Tier1"] = {
+						COLOR = { r = 165 / 255, g = 66 / 255, b = 0 / 255 },
+						TEXTURE = [[Interface\AddOns\ArkInventory\Images\Profession-Rank-Exp9-Tier1.tga]],
+					},
+					["Professions-Icon-Quality-Tier2"] = {
+						COLOR = { r = 255 / 255, g = 255 / 255, b = 255 / 255 },
+						TEXTURE = [[Interface\AddOns\ArkInventory\Images\Profession-Rank-Exp9-Tier2.tga]],
+					},
+					["Professions-Icon-Quality-Tier3"] = {
+						COLOR = { r = 255 / 255, g = 230 / 255, b =   0 / 255 },
+						TEXTURE = [[Interface\AddOns\ArkInventory\Images\Profession-Rank-Exp9-Tier3.tga]],
+					},
+					["Professions-Icon-Quality-Tier4"] = {
+						COLOR = { r = 120 / 255, g = 255 / 255, b = 210 / 255 },
+						TEXTURE = [[Interface\AddOns\ArkInventory\Images\Profession-Rank-Exp9-Tier4.tga]],
+					},
+					["Professions-Icon-Quality-Tier5"] = {
+						COLOR = { r = 255 / 255, g =  94 / 255, b =  40 / 255 },
+						TEXTURE = [[Interface\AddOns\ArkInventory\Images\Profession-Rank-Exp9-Tier5.tga]],
+					},
+					["Professions-Icon-Quality-12-Tier1"] = {
+						COLOR = { r = 255 / 255, g = 255 / 255, b = 255 / 255 },
+						TEXTURE = [[Interface\AddOns\ArkInventory\Images\Profession-Rank-Exp11-Tier1.tga]],
+					},
+					["Professions-Icon-Quality-12-Tier2"] = {
+						COLOR = { r = 255 / 255, g = 94 / 255, b = 40 / 255 },
+						TEXTURE = [[Interface\AddOns\ArkInventory\Images\Profession-Rank-Exp11-Tier2.tga]],
+					},
 				},
-				OFFSET = {
-					[1] = { x = -3, y = -2 },
-					[2] = { x = 0, y = -3 },
-					[3] = { x = -1, y = -2 },
-					[4] = { x = -3, y = -1 },
-					[5] = { x = -3, y = -2 },
-				}
 			},
 			CONTAINER = {
 				SLOTSIZE = 37,
@@ -897,8 +911,10 @@ ArkInventory.Const = { -- constants
 				NUM_BAGS = 0, -- calculated further down
 			},
 			BANK = {
-				NUM_BAGS = NUM_BANKBAGSLOTS,
-				NUM_SLOTS = NUM_BANKGENERIC_SLOTS,
+				WIDTH = 6, -- set in ArkInventoryClient.lua
+				HEIGHT = 4, -- set in ArkInventoryClient.lua
+				NUM_BAGS = 6, -- set in ArkInventoryClient.lua
+				NUM_SLOTS = 0, -- set in ArkInventoryClient.lua
 			},
 			REAGENTBANK = {
 				WIDTH = 14,
@@ -1626,6 +1642,7 @@ ArkInventory.Const = { -- constants
 		Type = {
 			EmptySlot = "arkinventory-icons-emptyslot",
 			Transmog = "arkinventory-icons-transmog",
+			ProfessionRank = "arkinventory-icons-professionranks"
 		},
 		Name = {
 			None = "None",

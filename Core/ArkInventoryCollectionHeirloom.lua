@@ -58,7 +58,7 @@ local function Scan_Threaded( thread_id )
 	local numTotal = 0
 	local numOwned = 0
 	
-	--ArkInventory.Output( "Heirloom: Start Scan @ ", time( ) )
+	ArkInventory.OutputDebug( "Heirloom: Start Scan @ ", time( ) )
 	
 	local c = collection.cache
 	
@@ -144,7 +144,7 @@ local function Scan_Threaded( thread_id )
 	collection.numOwned = numOwned
 	collection.numTotal = numTotal
 	
-	--ArkInventory.Output( "Heirloom: End Scan @ ", time( ), " [", collection.numOwned, "] [", collection.numTotal, "] [", update, "]" )
+	ArkInventory.OutputDebug( "Heirloom: End Scan @ ", time( ), " [", collection.numOwned, "] [", collection.numTotal, "] [", update, "]" )
 	
 	collection.isReady = true
 	
@@ -169,26 +169,30 @@ end
 
 function ArkInventory:EVENT_ARKINV_COLLECTION_HEIRLOOM_UPDATE_BUCKET( events )
 	
-	--ArkInventory.Output( "HEIRLOOM BUCKET [", events, "]" )
+	ArkInventory.OutputDebug( "HEIRLOOM BUCKET [", events, "]" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
+	local loc_id = ArkInventory.Const.Location.Heirloom
+
 	if not ArkInventory.isLocationMonitored( loc_id ) then
-		--ArkInventory.Output( "IGNORED (HEIRLOOMS NOT MONITORED)" )
+		ArkInventory.OutputDebug( "IGNORED (HEIRLOOMS NOT MONITORED)" )
 		return
 	end
 	
 	if HeirloomsJournal:IsVisible( ) then
-		--ArkInventory.Output( "ABORTED (HEIRLOOMS FRAME IS OPEN)" )
+		ArkInventory.OutputDebug( "ABORTED (HEIRLOOMS FRAME IS OPEN)" )
 		return
 	end
 	
 	if ArkInventory.Global.Mode.Combat then
+		ArkInventory.OutputDebug( "IGNORED (IN COMBAT)" )
 		ArkInventory.Global.ScanAfterCombat[loc_id] = true
 		return
 	end
 	
 	if ArkInventory.Global.Mode.DragonRace then
+		ArkInventory.OutputDebug( "IGNORED (DRAGON RACING)" )
 		ArkInventory.Global.ScanAfterDragonRace[loc_id] = true
 		return
 	end
@@ -199,7 +203,7 @@ function ArkInventory:EVENT_ARKINV_COLLECTION_HEIRLOOM_UPDATE_BUCKET( events )
 		Scan( )
 		collection.isScanning = false
 	else
-		--ArkInventory.Output( "IGNORED (HEIRLOOM JOURNAL BEING SCANNED - WILL RESCAN WHEN DONE)" )
+		ArkInventory.OutputDebug( "IGNORED (HEIRLOOM JOURNAL BEING SCANNED - WILL RESCAN WHEN DONE)" )
 		ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_HEIRLOOM_UPDATE_BUCKET", "RESCAN" )
 	end
 	

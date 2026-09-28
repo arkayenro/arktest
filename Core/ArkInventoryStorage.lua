@@ -288,18 +288,28 @@ end
 
 function ArkInventory:EVENT_ARKINV_PLAYER_ENTER( ... )
 	
-	local event, arg1, arg2 = ...
-	ArkInventory.OutputDebug( "EVENT: ", event, ", ", arg1, ", ", arg2 )
+	local event, isInitialLogin, isReloadingUi = ...
+	ArkInventory.OutputDebug( "EVENT: ", event, ", ", isInitialLogin, ", ", isReloadingUi )
 	
 	ArkInventory.Global.Mode.World = true
 	
-	--table.insert( ArkInventory.db.debug, "world - enter" )
-	
+	-- this is here in case they are lost during a loading screen transition, it will force them to be re-registered
+	ArkInventory:UnregisterAllBuckets()
+
+	for name, timer in pairs( ArkInventory.db.option.updatetimer ) do
+		if ArkInventory[name] then
+			local value = ( timer.custom and timer.value ) or timer.default
+			ArkInventory.OutputDebug( "RegisterBucketMessage( ", name, ", ", value, " )" )
+			ArkInventory:RegisterBucketMessage( name, value )
+		else
+			ArkInventory.OutputDebug( "RegisterBucketMessage failed as a function named ", name, " does not exist, clearing data" )
+			ArkInventory.db.option.updatetimer[name] = nil
+		end
+	end
+
 	ArkInventory.PlayerInfoSet( )
 	
 	ArkInventory.SetMountMacro( )
-	
-	--ArkInventory.ScanLocationWindow( )
 	
 end
 
@@ -308,26 +318,29 @@ function ArkInventory:EVENT_ARKINV_PLAYER_LEAVE( ... )
 	local event = ...
 	ArkInventory.OutputDebug( "EVENT: ", event )
 	
-	--table.insert( ArkInventory.db.debug, "world - leave" )
-	
 	ArkInventory.Global.Mode.World = false
+	
+	ArkInventory.OutputDebug( "reload=[", ArkInventory.Global.Mode.UI.Reload, "]  logout=[", ArkInventory.Global.Mode.UI.Logout, "]" )
 	
 	ArkInventory.Frame_Main_Hide( )
 	
-	ArkInventory.PlayerInfoSet( )
-	
-	ArkInventory.ScanAuctionExpire( )
-	
-	local player_id = ArkInventory.PlayerIDSelf( )
-	for loc_id, loc_data in pairs( ArkInventory.Global.Location ) do
-		if loc_data.isMapped and loc_data.canView then
-			if not ArkInventory.isLocationSaved( loc_id ) then
-				--ArkInventory.Output( "erasing ", loc_id, " ", loc_data.Name )
-				ArkInventory.EraseSavedData( player_id, loc_id, true )
+	if ArkInventory.Global.Mode.UI.Reload or ArkInventory.Global.Mode.UI.Logout then
+
+		ArkInventory.PlayerInfoSet( )
+
+		ArkInventory.ScanAuctionExpire( )
+
+		local player_id = ArkInventory.PlayerIDSelf( )
+		for loc_id, loc_data in pairs( ArkInventory.Global.Location ) do
+			if loc_data.isMapped and loc_data.canView then
+				if not ArkInventory.isLocationSaved( loc_id ) then
+					ArkInventory.EraseSavedData( player_id, loc_id, true )
+				end
 			end
 		end
+
 	end
-	
+
 end
 
 function ArkInventory:EVENT_ARKINV_PLAYER_MONEY_BUCKET( ... )
@@ -530,8 +543,13 @@ function ArkInventory:EVENT_ARKINV_BAG_UPDATE_BUCKET( bucket )
 end
 
 function ArkInventory:EVENT_ARKINV_BAG_UPDATE( ... )
+	
 	local event, arg1 = ...
+	
+	--ArkInventory.OutputDebug( "EVENT: ", event, "(", arg1, ")" )
+	
 	ArkInventory:SendMessage( "EVENT_ARKINV_BAG_UPDATE_BUCKET", arg1 )
+
 end
 
 function ArkInventory:EVENT_ARKINV_BAG_OPEN_BUCKET( bucket )
@@ -575,6 +593,8 @@ end
 
 function ArkInventory:EVENT_ARKINV_BAG_UPDATE_DELAYED( ... )
 	local event = ...
+	ArkInventory.OutputDebug( "EVENT: ", event )
+	--ArkInventory.ScanLocationWindow( ArkInventory.Const.Location.Bag )
 	ArkInventory:SendMessage( "EVENT_ARKINV_ACTION_USE_BUCKET", event )
 end
 
@@ -726,6 +746,15 @@ function ArkInventory:EVENT_ARKINV_ADDON_LOADED( ... )
 			ArkInventoryRules.HookItemRackOptions( )
 		end
 		
+		if arg1 == "Blizzard_Collections" then
+			ArkInventory:EVENT_ARKINV_COLLECTION_PET_UPDATE_BUCKET( "ONLOAD" )
+			ArkInventory:EVENT_ARKINV_COLLECTION_MOUNT_UPDATE_BUCKET( "ONLOAD" )
+			ArkInventory:EVENT_ARKINV_COLLECTION_TOYBOX_UPDATE_BUCKET( "ONLOAD" )
+			ArkInventory:EVENT_ARKINV_COLLECTION_HEIRLOOM_UPDATE_BUCKET( "ONLOAD" )
+			ArkInventory:EVENT_ARKINV_COLLECTION_CURRENCY_UPDATE_BUCKET( "ONLOAD" )
+			ArkInventory:EVENT_ARKINV_COLLECTION_REPUTATION_UPDATE_BUCKET( "ONLOAD" )
+		end
+
 	end
 	
 end
@@ -733,7 +762,7 @@ end
 function ArkInventory:EVENT_ARKINV_BANK_ENTER( ... )
 	
 	local event = ...
-	ArkInventory.OutputDebug( "EVENT: BANK_ENTER ", event )
+	ArkInventory.OutputDebug( "EVENT: BANK_ENTER [", event, "]" )
 	
 	ArkInventory.Global.Mode.Bank = true
 	
@@ -754,12 +783,19 @@ function ArkInventory:EVENT_ARKINV_BANK_ENTER( ... )
 	
 	ItemButtonUtil.TriggerEvent( ItemButtonUtil.Event.ItemContextChanged )
 	
-	return true
-	
 end
 
 function ArkInventory:EVENT_ARKINV_ACCOUNTBANK_ENTER( ... )
+	
+	local event = ...
+	ArkInventory.OutputDebug( "EVENT: ACCOUNTBANK_ENTER via ", event )
+	
 	ArkInventory.Global.Mode.AccountBank = true
+
+	ArkInventory.Global.Location[ArkInventory.Const.Location.Bank].isLocked = true
+
+	ArkInventory:EVENT_ARKINV_BANK_ENTER( ... )
+
 end
 
 function ArkInventory:EVENT_ARKINV_BANK_LEAVE_BUCKET( bucket )
@@ -803,28 +839,48 @@ function ArkInventory:EVENT_ARKINV_BANK_LEAVE_BUCKET( bucket )
 end
 
 function ArkInventory:EVENT_ARKINV_BANK_LEAVE( ... )
+	
 	local event = ...
 	--ArkInventory.Output( "EVENT: BANK_LEAVE ", event )
+	
 	ArkInventory:SendMessage( "EVENT_ARKINV_BANK_LEAVE_BUCKET", event )
+
 end
 
 function ArkInventory:EVENT_ARKINV_ACCOUNTBANK_LEAVE( ... )
+	
+	local event = ...
+	ArkInventory.OutputDebug( "EVENT: ACCOUNTBANK_LEAVE via ", event )
+	
 	ArkInventory.Global.Mode.AccountBank = false
+
+	ArkInventory.Global.Location[ArkInventory.Const.Location.Bank].isLocked = nil
+
+	ArkInventory:EVENT_ARKINV_BANK_LEAVE( ... )
+
 end
 
 function ArkInventory:EVENT_ARKINV_BANK_UPDATE( ... )
 	
 	local event, arg1 = ...
-	ArkInventory.OutputDebug( "EVENT: ", event, ", ", arg1 )
+	ArkInventory.OutputDebug( "EVENT: ", event, "(", arg1, ")" )
 	
-	local count = ArkInventory.CrossClient.GetContainerNumSlots( ArkInventory.ENUM.BAG.INDEX.BANK )
-	if arg1 <= count then
-		-- bank item was changed
-		ArkInventory:SendMessage( "EVENT_ARKINV_BAG_UPDATE_BUCKET", ArkInventory.ENUM.BAG.INDEX.BANK )
+	if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID == ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
+
+		ArkInventory:SendMessage( "EVENT_ARKINV_BAG_UPDATE_BUCKET", ArkInventory.ENUM.BAG.INDEX.BANK - 1 + arg1 )
+
 	else
-		-- bank bag was changed
-		-- warning classic has 24 slots but still indexes the bags from 28, use GetFirstBagBankSlotIndex to find out where to offset from
-		ArkInventory:SendMessage( "EVENT_ARKINV_BAG_UPDATE_BUCKET", arg1 - ArkInventory.CrossClient.GetFirstBagBankSlotIndex( ) + ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS )
+
+		local count = ArkInventory.CrossClient.GetContainerNumSlots( ArkInventory.ENUM.BAG.INDEX.BANK )
+		if arg1 <= count then
+			-- bank item was changed
+			ArkInventory:SendMessage( "EVENT_ARKINV_BAG_UPDATE_BUCKET", ArkInventory.ENUM.BAG.INDEX.BANK )
+		else
+			-- bank bag was changed
+			-- warning classic has 24 slots but still indexes the bags from 28, use GetFirstBagBankSlotIndex to find out where to offset from
+			ArkInventory:SendMessage( "EVENT_ARKINV_BAG_UPDATE_BUCKET", arg1 - ArkInventory.CrossClient.GetFirstBagBankSlotIndex( ) + ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS )
+		end
+
 	end
 	
 end
@@ -857,6 +913,7 @@ function ArkInventory:EVENT_ARKINV_BANK_TAB( ... )
 end
 
 function ArkInventory:EVENT_ARKINV_REAGENTBANK_UPDATE( ... )
+	ArkInventory.OutputDebug( "EVENT: ", event, "(", arg1, ")" )
 	ArkInventory:SendMessage( "EVENT_ARKINV_BAG_UPDATE_BUCKET", ArkInventory.ENUM.BAG.INDEX.REAGENTBANK )
 end
 
@@ -901,7 +958,7 @@ end
 function ArkInventory:EVENT_ARKINV_VAULT_ENTER( ... )
 	
 	local event = ...
-	ArkInventory.OutputDebug( "EVENT: VAULT_ENTER ", event )
+	ArkInventory.OutputDebug( "EVENT: VAULT_ENTER [", event, "]" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
@@ -930,12 +987,14 @@ function ArkInventory:EVENT_ARKINV_VAULT_ENTER( ... )
 	
 	ItemButtonUtil.TriggerEvent( ItemButtonUtil.Event.ItemContextChanged )
 	
+	return true
+
 end
 
 function ArkInventory:EVENT_ARKINV_VAULT_LEAVE_BUCKET( ... )
 	
-	local event = ...
-	ArkInventory.OutputDebug( "EVENT: VAULT_LEAVE ", event )
+	local events = ...
+	ArkInventory.OutputDebug( "EVENT: VAULT_LEAVE [", events, "]" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
@@ -973,8 +1032,8 @@ end
 
 function ArkInventory:EVENT_ARKINV_VAULT_UPDATE_BUCKET( ... )
 	
-	local event = ...
-	ArkInventory.OutputDebug( "EVENT: ", event )
+	local events = ...
+	ArkInventory.OutputDebug( "EVENT: VAULT_UPDATE [", events, "]" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
@@ -1038,7 +1097,7 @@ end
 function ArkInventory:EVENT_ARKINV_VAULT_LOCK( ... )
 	
 	local event, arg1 = ...
-	ArkInventory.OutputDebug( "EVENT: ", event, ", ", arg1 )
+	ArkInventory.OutputDebug( "EVENT: ", event, " [", arg1, "]" )
 	
 	local loc_id = ArkInventory.Const.Location.Vault
 	local bag_id = GetCurrentGuildBankTab( )
@@ -1102,11 +1161,11 @@ end
 
 function ArkInventory:EVENT_ARKINV_VOID_ENTER( ... )
 	
-	if not ArkInventory:IsEnabled( ) then return end
-	
 	local event = ...
 	ArkInventory.OutputDebug( "EVENT: VOID_ENTER - ", event )
 	
+	if not ArkInventory:IsEnabled( ) then return end
+
 	ArkInventory.Global.Mode.Void = true
 	
 	local loc_id_window = ArkInventory.Const.Location.Void
@@ -1127,11 +1186,11 @@ end
 
 function ArkInventory:EVENT_ARKINV_VOID_LEAVE( ... )
 	
-	if not ArkInventory:IsEnabled( ) then return end
-	
 	local event = ...
 	ArkInventory.OutputDebug( "EVENT: VOID_LEAVE - ", event )
 	
+	if not ArkInventory:IsEnabled( ) then return end
+
 	ArkInventory.Global.Mode.Void = false
 	
 	local loc_id_window = ArkInventory.Const.Location.Void
@@ -1183,7 +1242,7 @@ end
 function ArkInventory:EVENT_ARKINV_PLAYER_EQUIPMENT_CHANGED( ... )
 	
 	local event, arg1, arg2 = ...
-	ArkInventory.OutputDebug( "EVENT: ", event, " [", arg1, "] [", arg2, "]" )
+	ArkInventory.OutputDebug( "EVENT: ", event, "(", arg1, ",", arg2, ")" )
 	
 	-- arg1 is in the inventory slot id
 	-- arg2 is true if left empty, false if filled - we dont care about this one
@@ -1773,13 +1832,11 @@ end
 function ArkInventory:EVENT_ARKINV_CVAR_UPDATE( ... )
 	
 	local event, arg1, arg2 = ...
-	--ArkInventory.OutputDebug( "EVENT: ", event, ", ", arg1, ", ", arg2 )
+	--ArkInventory.Output( "EVENT: ", event, "( ", arg1, ", ", arg2, " )" )
 	
-	if arg1 == "USE_COLORBLIND_MODE" then
-		--ArkInventory.OutputDebug( "cvar = ",  )
-		--ArkInventory.Global.Mode.ColourBlind = ( arg2 == "1" )
+	if arg1 == "USE_COLORBLIND_MODE" or arg1 == "colorblindMode" then
 		ArkInventory.Global.Mode.ColourBlind = ArkInventory.CrossClient.GetCVarBool( "colorblindMode" )
-		--ArkInventory.OutputDebug( "mode = ", ArkInventory.Global.Mode.ColourBlind )
+		--ArkInventory.Output( "mode = ", ArkInventory.Global.Mode.ColourBlind )
 		ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 		ArkInventory.LDB.Money:Update( )
 	end
@@ -2507,6 +2564,7 @@ function ArkInventory.ScanBag_Threaded( blizzard_id, thread_id, rescan )
 	
 	local map = ArkInventory.Util.MapGetBlizzard( blizzard_id )
 	
+	
 	local loc_id_window = map.loc_id_window
 	local bag_id_window = map.bag_id_window
 	
@@ -2521,8 +2579,10 @@ function ArkInventory.ScanBag_Threaded( blizzard_id, thread_id, rescan )
 	local codex = ArkInventory.Codex.GetPlayer( loc_id_storage )
 	local bag = codex.player.data.location[loc_id_storage].bag[bag_id_storage]
 	
+	ArkInventory.Global.Location[loc_id_storage].isLocked = nil
 	
-	local count = 0
+	local count = map.static or ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
+	
 	local empty = 0
 	local texture = nil
 	local name = nil
@@ -2530,8 +2590,6 @@ function ArkInventory.ScanBag_Threaded( blizzard_id, thread_id, rescan )
 	local h = nil
 	local quality = ArkInventory.ENUM.ITEM.QUALITY.POOR
 	local df = 0
-	
-	count = ArkInventory.CrossClient.GetContainerNumSlots( blizzard_id )
 	
 	if loc_id_window == ArkInventory.Const.Location.Bag then
 		
@@ -2600,27 +2658,41 @@ function ArkInventory.ScanBag_Threaded( blizzard_id, thread_id, rescan )
 		
 		if loc_id_storage == ArkInventory.Const.Location.Bank then
 			
-			if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+			if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 				
-				local tabData = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.CHARACTER )[map.tab_id]
-				if tabData then
+				-- tab based bank
+
+				if ArkInventory.Global.Mode.AccountBank then
 					
-					count = ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_SLOTS
-					texture = tabData.icon or ArkInventory.Global.Location[loc_id_storage].Texture or ArkInventory.Global.Location[loc_id_storage].Texture
-					name = tabData.name
-					status = ArkInventory.Const.Bag.Status.Active
-					df = tabData.depositFlags
-					
+					-- warbank distance inhibitor is active, lock out bank bags
+
+					ArkInventory.Global.Location[loc_id_storage].isLocked = true
+
 				else
-					
-					count = 0
-					texture = ArkInventory.Const.Texture.Empty.Bag
-					status = ArkInventory.Const.Bag.Status.Purchase
-					df = 0
+
+					local tabData = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.CHARACTER )[map.tab_id]
+					if tabData then
+						
+						count = ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_SLOTS
+						texture = tabData.icon or ArkInventory.Global.Location[loc_id_storage].Texture or ArkInventory.Global.Location[loc_id_storage].Texture
+						name = tabData.name
+						status = ArkInventory.Const.Bag.Status.Active
+						df = tabData.depositFlags
+						
+					else
+						
+						count = 0
+						texture = ArkInventory.Const.Texture.Empty.Bag
+						status = ArkInventory.Const.Bag.Status.Purchase
+						df = 0
+
+					end
 
 				end
 				
 			else
+
+				-- bag based bank
 
 				if bag_id_storage == 1 then
 					
@@ -2631,7 +2703,15 @@ function ArkInventory.ScanBag_Threaded( blizzard_id, thread_id, rescan )
 					
 				else
 					
-					if bag_id_storage > ( GetNumBankSlots( ) + 1 ) then
+
+					local num_purchased = 0
+					if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID == ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
+						num_purchased = C_Bank.FetchNumPurchasedBankTabs( ArkInventory.ENUM.BANKTYPE.CHARACTER ) or 0
+					else
+						num_purchased = GetNumBankSlots( ) + 1
+					end
+
+					if bag_id_storage > num_purchased then
 						
 						texture = ArkInventory.Const.Texture.Empty.Bag
 						status = ArkInventory.Const.Bag.Status.Purchase
@@ -2686,20 +2766,30 @@ function ArkInventory.ScanBag_Threaded( blizzard_id, thread_id, rescan )
 		
 		if loc_id_storage == ArkInventory.Const.Location.AccountBank then
 			
-			local tabData = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.ACCOUNT )[map.tab_id]
-			if tabData then
+			local lockedReason = C_Bank.FetchBankLockedReason( ArkInventory.ENUM.BANKTYPE.ACCOUNT ) or 0
+			if lockedReason ~= 0 or ArkInventory.CrossClient.IsWarbankLocked( ) then
 				
-				texture = tabData.icon or ArkInventory.Global.Location[loc_id_storage].Texture or ArkInventory.Global.Location[loc_id_storage].Texture
-				name = tabData.name
-				status = ArkInventory.Const.Bag.Status.Active
-				df = tabData.depositFlags
-
+				-- account bank is not available, lock out account bank bags
+				ArkInventory.Global.Location[loc_id_storage].isLocked = true
+			
 			else
-				
-				count = 0
-				texture = ArkInventory.Const.Texture.Empty.Bag
-				status = ArkInventory.Const.Bag.Status.Purchase
-				df = 0
+
+				local tabData = C_Bank.FetchPurchasedBankTabData( ArkInventory.ENUM.BANKTYPE.ACCOUNT )[map.tab_id]
+				if tabData then
+					
+					texture = tabData.icon or ArkInventory.Global.Location[loc_id_storage].Texture or ArkInventory.Global.Location[loc_id_storage].Texture
+					name = tabData.name
+					status = ArkInventory.Const.Bag.Status.Active
+					df = tabData.depositFlags
+
+				else
+					
+					count = 0
+					texture = ArkInventory.Const.Texture.Empty.Bag
+					status = ArkInventory.Const.Bag.Status.Purchase
+					df = 0
+
+				end
 
 			end
 			
@@ -2707,8 +2797,14 @@ function ArkInventory.ScanBag_Threaded( blizzard_id, thread_id, rescan )
 		
 	end
 	
+
+	if ArkInventory.Global.Location[loc_id_storage].isLocked then
+		ArkInventory.OutputDebug( "aborted: location [", loc_id_storage, "] is locked, blizzard_id=[", blizzard_id, "]" )
+		return
+	end
+
 	
-	--ArkInventory.Output( "scanning bag [", blizzard_id, "]  scan [", loc_id_storage, "].[", bag_id_storage, "]  location [", loc_id_window, "] [", bag_id_window, "] [", ArkInventory.Global.Location[loc_id_storage].Name, "]  size [", count, "]" )
+	ArkInventory.OutputDebug( "scanning: blizzard=[", blizzard_id, "]  storage=[", loc_id_storage, "].[", bag_id_storage, "]  window=[", loc_id_window, "].[", bag_id_window, "]  name=[", ArkInventory.Global.Location[loc_id_storage].Name, "]  size=[", count, "]" )
 	
 	local ready = true
 	local update_changer = false
@@ -2723,19 +2819,22 @@ function ArkInventory.ScanBag_Threaded( blizzard_id, thread_id, rescan )
 	local old_bag_status = bag.status
 	
 	bag.type = ArkInventory.BagType( blizzard_id )
-	--ArkInventory.Output( "blizzard_id [", blizzard_id, "], loc_id [", loc_id_storage, "], bag_id [", bag_id_storage, "] type [", bag.type, "]" )
-	bag.count = count
+	ArkInventory.OutputDebug( "scanning: type=[", bag.type, "]  h=[", h, "]  texture=[", texture, "]  status=[", status, "]" )
 	bag.h = h
 	bag.status = status
+
 	if texture ~= bag.texture then
 		bag.texture = texture
 		update_changer = true
 		--ArkInventory.Output( "update changer" )
 	end
+	
 	bag.name = name
 	bag.empty = empty
 	bag.q = quality
-	bag.df = df
+	bag.df = df -- deposit flags
+	bag.count = count
+
 	
 	if old_bag_type ~= bag.type or old_bag_count ~= bag.count or ArkInventory.ObjectIDCount( old_bag_link ) ~= ArkInventory.ObjectIDCount( bag.h ) or old_bag_status ~= bag.status then
 		--ArkInventory.OutputWarning( "ScanBag_Threaded - Recalculate" )
@@ -2758,7 +2857,7 @@ function ArkInventory.ScanBag_Threaded( blizzard_id, thread_id, rescan )
 				slot_id = slot_id,
 			}
 			
-			if loc_id_storage == ArkInventory.Const.Location.Bank and ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+			if loc_id_storage == ArkInventory.Const.Location.Bank and ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 				local fw = ArkInventory.Const.BLIZZARD.GLOBAL.BANK.WIDTH
 				local fh = ArkInventory.Const.BLIZZARD.GLOBAL.BANK.HEIGHT
 				if fw and fh then
@@ -3579,7 +3678,7 @@ function ArkInventory.ScanMailbox_Threaded( blizzard_id, thread_id, rescan )
 			i.msg_id = index
 			i.att_id = nil
 			i.money = count
-			i.texture = GetCoinIcon( count )
+			i.texture = ArkInventory.CrossClient.GetCoinIcon( count )
 			
 			if changed_item then
 				
@@ -5727,10 +5826,13 @@ function ArkInventory.ScanCleanup( player, loc_id_storage, bag_id_storage, bag )
 	
 	local num_slots = #bag.slot
 	
-	--ArkInventory.Output( "cleanup: loc=", loc_id_storage, ", bag=", bag_id_storage, ", count=", num_slots, " / ", bag.count )
+	
 	
 	-- remove unwanted slots
 	if num_slots > bag.count then
+
+		ArkInventory.OutputDebug( "cleanup: storage=[", loc_id_storage, "].[", bag_id_storage, "]  total=[", num_slots, "]  actual=[", bag.count, "]" )
+
 		for slot_id = bag.count + 1, num_slots do
 			
 			if bag.slot[slot_id] and bag.slot[slot_id].h then
@@ -5742,6 +5844,7 @@ function ArkInventory.ScanCleanup( player, loc_id_storage, bag_id_storage, bag )
 			bag.slot[slot_id] = nil
 			
 		end
+		
 	end
 	
 	-- recalculate total slots

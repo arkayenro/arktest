@@ -34,6 +34,8 @@ function ArkInventory.Util.MapAddBag( info )
 	
 	-- bag_id_window = internal window bag id
 	-- bag_id_storage = internal storage bag id
+
+	-- static = null or the number of slots
 	
 	
 --[[
@@ -67,6 +69,7 @@ function ArkInventory.Util.MapAddBag( info )
 	
 	ArkInventory.Util.Assert( type( info ) == "table", "info is [", type( info ), "], should be [table]" )
 	
+	--ArkInventory.Output( "MapAddBag = ", info )
 	
 	local blizzard_id = info.blizzard_id
 	
@@ -84,10 +87,8 @@ function ArkInventory.Util.MapAddBag( info )
 	ArkInventory.Util.Assert( type( loc_id_storage ) == "number", "loc_id_storage in map table is [", type( loc_id_storage ), "], should be [number]" )
 	ArkInventory.Util.Assert( ArkInventory.Global.Location[loc_id_storage], "ArkInventory.Global.Location[", loc_id_storage, "] is not mapped" )
 	
-	
-	
-	
-	if info.fixed then
+
+	if info.static then
 		info.texture = info.texture or ArkInventory.Global.Location[loc_id_storage].Texture or ArkInventory.Global.Location[loc_id_window].Texture
 	end
 	
@@ -98,7 +99,7 @@ function ArkInventory.Util.MapAddBag( info )
 	end
 	
 	
-	if ArkInventory.ClientCheck( ArkInventory.Global.Location[loc_id_storage].ClientCheck ) then
+	if ArkInventory.Global.Location[loc_id_storage].ClientCheck then
 		
 		--ArkInventory.Output( "added bag for storage [", blizzard_id, " ", ArkInventory.Global.Location[loc_id_storage].Name, "]" )
 		
@@ -111,10 +112,8 @@ function ArkInventory.Util.MapAddBag( info )
 		ArkInventory.Global.Location[loc_id_window].drawState = ArkInventory.Global.Location[loc_id_window].drawState or ArkInventory.Const.Window.Draw.Init
 		
 		
-		
 		-- add bag to blizzard table
 		Map.Blizzard[blizzard_id] = info
-		
 		
 		
 		-- init storage table
@@ -126,10 +125,8 @@ function ArkInventory.Util.MapAddBag( info )
 		Map.Storage[loc_id_storage].Bag[bag_id_storage] = info
 		
 		
-		
 		-- set parent window
 		Map.Storage[loc_id_storage].Parent = loc_id_window
-		
 		
 		
 		-- init window table
@@ -137,7 +134,6 @@ function ArkInventory.Util.MapAddBag( info )
 		
 		-- link child storage location
 		Map.Window[loc_id_window].Children[loc_id_storage] = true --Map.Storage[loc_id_storage]
-		
 		
 		
 		if not info.hidden then
@@ -400,7 +396,7 @@ function ArkInventory.Util.CheckZeroSizeBag( count, blizzard_id )
 		
 		if ArkInventory.db.option.bugfix.zerosizebag.alert then
 			local loc_id, bag_id = ArkInventory.Util.getStorageIdFromBlizzardBagId( blizzard_id )
-			ArkInventory.OutputWarning( "Aborted scan of blizzard bag [", blizzard_id, "], location [", loc_id, " / ", ArkInventory.Global.Location[loc_id].Name, "], bag [", bag_id, "], size returned was ", count, ", rescan has been scheduled for 5 seconds.  This warning can be disabled in the config menu" )
+			ArkInventory.OutputWarning( "Aborted scan of blizzard bag [", blizzard_id, "], location [", loc_id, " / ", ArkInventory.Global.Location[loc_id].Name, "], bag [", bag_id, "], size returned was ", count, ", rescan has been scheduled for 2 seconds.  This warning can be disabled in the config menu" )
 		end
 		
 		ArkInventory:SendMessage( "EVENT_ARKINV_BAG_RESCAN_BUCKET", blizzard_id )
@@ -464,7 +460,7 @@ function ArkInventory.Util.setWindowActiveMap( loc_id_window, map )
 	local bag_id_window = 1
 	map = map or ArkInventory.Global.Location[loc_id_window].active_map
 
-	if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO and loc_id_window == ArkInventory.Const.Location.Bank then
+	if loc_id_window == ArkInventory.Const.Location.Bank and ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 
 		local me = ArkInventory.Codex.GetPlayer( )
 
@@ -603,31 +599,37 @@ function ArkInventory.Util.setBankPanelLayout( )
 	
 end
 
-function ArkInventory.Util.syncBlizzardBankUI( map, loc_id_storage, blizzard_id )
+function ArkInventory.Util.syncBlizzardBankUI( map, blizzard_id )
 	
-	--ArkInventory.OutputDebug( "syncBlizzardBankUI [", map, "] [", loc_id_storage, "] [", blizzard_id, "]" )
+	ArkInventory.OutputDebug( "syncBlizzardBankUI [", map, "] [", blizzard_id, "]" )
 	
+	ArkInventory.Util.Assert( map, "map is nil" )
+
 	-- sync the default bank frame tabs up to the current arkinventory frame tabs when clicked
 	
-	local loc_id_window = ArkInventory.Const.Location.Bank
+	local loc_id_window = map.loc_id_window
+	local loc_id_storage = map.loc_id_storage
 		
-	if ArkInventory.Global.Location[loc_id_window].isOffline then
+	if ArkInventory.Global.Location[loc_id_window].isOffline or ArkInventory.Global.Location[loc_id_storage].isLocked then
 		ArkInventory.OutputDebug( "offline - ignoring changer sync" )
 		return
 	end
-	
-	local map = map or ArkInventory.Util.getWindowActiveMap( loc_id_window )
-	local loc_id_storage = loc_id_storage or map.loc_id_storage
+
+	-- make sure the selected tab/slot is not purchasable, otherwise this will try to buy it
+	local codex = ArkInventory.Codex.GetPlayer( loc_id_storage )
+	local bag_id_storage = map.bag_id_storage
+	local bag = codex.player.data.location[loc_id_storage].bag[bag_id_storage]
+	if bag.status == ArkInventory.Const.Bag.Status.Purchase then
+		ArkInventory.OutputDebug( "not purchased - ignoring changer sync" )
+		return
+	end
+
 	local blizzard_id = blizzard_id or map.blizzard_id
-	
 	ArkInventory.OutputDebug( "sync blizard bank frame to [", loc_id_storage, "] [", blizzard_id, "]" )
 	
-	if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+	if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 
 		if BankFrame and BankPanel then
-
---			local blizzard_TabID = BankFrame:GetTab( )
---			local blizzard_PanelID = BankPanel:GetSelectedTabID( )
 
 			local tabID
 			if loc_id_storage == ArkInventory.Const.Location.Bank then
@@ -639,12 +641,10 @@ function ArkInventory.Util.syncBlizzardBankUI( map, loc_id_storage, blizzard_id 
 				return
 			end
 			
---			ArkInventory.OutputDebug( "updating blizzard bank tab to [", tabID, "]" )
+			--ArkInventory.OutputDebug( "set blizzard bank tab to [", tabID, "]" )
 			BankFrame:SetTab( tabID )
-			--TabSystemOwnerMixin.SetTab( BankFrame, tabID )
-			--BankFrame:UpdateWidthForSelectedTab( )
 
---			ArkInventory.OutputDebug( "updating blizzard panel tab to [", blizzard_id, "]" )
+			--ArkInventory.OutputDebug( "set blizzard panel tab to [", blizzard_id, "]" )
 			BankPanel:SelectTab( blizzard_id )
 
 		end
@@ -701,4 +701,39 @@ end
 function ArkInventory.Util.getMovedItemBlock( blizzard_id, slot_id )
 	initMovedItemBlock( blizzard_id, slot_id )
 	return ArkInventory.Global.MovedItemBlock[blizzard_id][slot_id]
+end
+
+function ArkInventory.GenerateAnchorInfo( anchor_current, anchor_default, anchor_offset_x, anchor_offset_y )
+	
+	-- offsets are based around BOTTOMLEFT
+
+	local anchor = anchor_current or ArkInventory.ENUM.ANCHOR.DEFAULT
+	if anchor == ArkInventory.ENUM.ANCHOR.DEFAULT then
+		anchor = anchor_default or ArkInventory.ENUM.ANCHOR.CENTER
+	end
+
+	local anchor_offset_x = anchor_offset_x or 0
+	local anchor_offset_y = anchor_offset_y or 0
+
+	local offset_x = 0
+	local offset_y = 0
+
+	if anchor == ArkInventory.ENUM.ANCHOR.TOPLEFT or anchor == ArkInventory.ENUM.ANCHOR.TOP or anchor == ArkInventory.ENUM.ANCHOR.TOPRIGHT then
+		offset_y = ( 0 - 1) * anchor_offset_y
+	end
+
+	if anchor == ArkInventory.ENUM.ANCHOR.TOPRIGHT or anchor == ArkInventory.ENUM.ANCHOR.RIGHT or anchor == ArkInventory.ENUM.ANCHOR.BOTTOMRIGHT then
+		offset_x = anchor_offset_x
+	end
+
+	if anchor == ArkInventory.ENUM.ANCHOR.BOTTOMLEFT or anchor == ArkInventory.ENUM.ANCHOR.BOTTOM or anchor == ArkInventory.ENUM.ANCHOR.BOTTOMRIGHT then
+		offset_y = anchor_offset_y
+	end
+
+	if anchor == ArkInventory.ENUM.ANCHOR.TOPLEFT or anchor == ArkInventory.ENUM.ANCHOR.LEFT or anchor == ArkInventory.ENUM.ANCHOR.BOTTOMLEFT then
+		offset_x = ( 0 - 1 ) * anchor_offset_x
+	end
+
+	return anchor, offset_x, offset_y
+
 end

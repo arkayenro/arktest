@@ -1,5 +1,5 @@
 *3.01.11 (09-MAR-2025)*
- - updated - toc updated to 11.1.0
+ - updated - toc to 11.1.0
 
 *3.01.10 (29-OCT-2020)*
  - fixed - removed frame names for levels and buttons to avoid potential conflicts
@@ -14,10 +14,10 @@
  - fixed - issue with dual monitor code
 
 *3.01.06 (16-JAN-2020)*
- - changed - toc updated to 80300
+ - updated - toc to 80300
  - changed - menu timeout increased from 3 to 5 seconds
  - fixed - issue with global mouse event handler
 
 *3.01.05 (27-JUN-2019)*
- - changed - toc updated to 80200
+ - updated - toc to 80200
  - fixed - issue with button recycling and 8.2 setpoint

@@ -1,6 +1,6 @@
-﻿## Interface: 50504
+﻿## Interface: 16001
 
-## Title: ArkInventory [Pandaria] [Configuration]
+## Title: ArkInventory [Classic-Forever] [Configuration]
 ## Notes: Configuration options for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com

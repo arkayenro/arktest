@@ -424,7 +424,6 @@ function ArkInventory.MoneyFrame_UpdateMoney( moneyFrame )
 		
 		if moneyAmount then
 			ArkInventory.MoneyFrame_Update( moneyFrame:GetName( ), moneyAmount, true )
-			--ArkInventory.MoneyFrame_Update( moneyFrame, moneyAmount )
 		end
 		
 		if moneyFrame.hasPickup == 1 then

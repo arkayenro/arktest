@@ -178,7 +178,7 @@ function ArkInventory.Collection.Reputation.LevelText( ... )
 		return "empty request for data"  -- !!!fix me
 	end
 	
---[[
+	--[[
 	*nn* = name
 	*st* = standing text
 	*bv* = bar value
@@ -190,7 +190,7 @@ function ArkInventory.Collection.Reputation.LevelText( ... )
 	*rm* = rank max
 	*pv* = paragon value (+N)
 	*pr* = paragon reward icon
-]]--
+	]]--
 	
 	local object = ArkInventory.Collection.Reputation.GetByID( id )
 	if not object then
@@ -209,6 +209,8 @@ function ArkInventory.Collection.Reputation.LevelText( ... )
 	rankValue = rankValue or object.rankValue or 0
 	rankMax = rankMax or object.rankMax or 0
 	
+	--ArkInventory.Output("object=",object)
+
 	local name = object.name or ArkInventory.Localise["UNKNOWN"]
 	local rewardIcon = string.format( "|T%s:0|t", [[Interface\ICONS\INV_Misc_Coin_01]] ) -- [[Interface\MINIMAP\TRACKING\Banker]]
 	local result = string.lower( style or ArkInventory.Const.Reputation.Style.OneLine )
@@ -500,7 +502,7 @@ local function Scan_Threaded( thread_id )
 	local numOwned = 0
 	local YieldCount = 0
 	
-	--ArkInventory.Output( "Reputation: Start Scan @ ", time( ) )
+	ArkInventory.OutputDebug( "Reputation: Start Scan @ ", time( ) )
 	
 	if not collection.isInit then
 		ScanInit( thread_id )
@@ -676,32 +678,49 @@ local function Scan_Threaded( thread_id )
 						local paragonLevel = 0
 						local paragonRewardPending = 0
 						
-						local isMajorFaction = ArkInventory.CrossClient.IsMajorFaction( id )
-						if isMajorFaction then
+
+						local ReputationType = ArkInventory.ENUM.REPUTATION.TYPE.STANDARD
+						if ArkInventory.CrossClient.IsMajorFaction( id ) then
+							ReputationType = ArkInventory.ENUM.REPUTATION.TYPE.RENOWN
+						elseif ArkInventory.CrossClient.GetFriendshipReputation( id ) then
+							ReputationType = ArkInventory.ENUM.REPUTATION.TYPE.FRIEND
+						end
+
+						--if id == 2673 then
+							--ArkInventory.Output("rt=",ReputationType)
+							--ArkInventory.Output("info=",factionInfo)
+						--end
+
+						if ReputationType == ArkInventory.ENUM.REPUTATION.TYPE.RENOWN then
 							
+							--ArkInventory.Output( id, " = ", factionInfo.name, " = renown" )
+
 							-- renown factions (numeric based rank levels)
 							
 							--ArkInventory.OutputDebug( id, " = ", factionInfo.name, " = renown" )
 							
-							local factionInfo = ArkInventory.CrossClient.GetMajorFactionData( id )
-							if factionInfo then
-								barMax = factionInfo.renownLevelThreshold
+							local info = ArkInventory.CrossClient.GetMajorFactionData( id )
+							if info then
+								barMax = info.renownLevelThreshold
 								isCapped = ArkInventory.CrossClient.HasMaximumRenown( id )
-								barValue = isCapped and factionInfo.renownLevelThreshold or factionInfo.renownReputationEarned or 0
-								standingText = string.format( RENOWN_LEVEL_LABEL, factionInfo.renownLevel )
+								barValue = isCapped and info.renownLevelThreshold or info.renownReputationEarned or 0
+								standingText = string.format( RENOWN_LEVEL_LABEL, info.renownLevel )
 								isCapped = isCapped and 1 or 0
-								rankValue = factionInfo.renownLevel
+								rankValue = info.renownLevel
 								rankMax = #ArkInventory.CrossClient.GetRenownLevels( id )
 							end
 							
-						else
-							
-							-- 2526 winterpelt
-							
+						elseif ReputationType == ArkInventory.ENUM.REPUTATION.TYPE.FRIEND then
+
+							--ArkInventory.Output( id, " = ", factionInfo.name, " = friend" )
+
 							local friendInfo = ArkInventory.CrossClient.GetFriendshipReputation( id )
 							if friendInfo then
 								
+								processed = true
+
 								-- friendship based faction (customised rank levels)
+								-- 2526 winterpelt
 								
 								--ArkInventory.OutputDebug( id, " = ", factionInfo.name, " = friend" )
 								
@@ -726,33 +745,80 @@ local function Scan_Threaded( thread_id )
 									isCapped = 1
 								end
 								
-							else
+							end
+
+						else
+
+							--ArkInventory.Output( id, " = ", factionInfo.name, " = standard" )
+
+							-- standard reputation levels, and not always the fixed hated to exalted ones
+							
+							--ArkInventory.OutputDebug( id, " = ", factionInfo.name, " = normal" )
+							--ArkInventory.Output( id, "/", index, " = ", factionInfo )
+
+							barValue = factionInfo.currentStanding
+							barMin = factionInfo.barMin or 0
+							barMax = factionInfo.nextReactionThreshold
+							
+							rankValue = factionInfo.reaction
+							
+							rankMax = MAX_REPUTATION_REACTION or 8
+							standingText = _G["FACTION_STANDING_LABEL" .. rankValue] or ArkInventory.Localise["UNKNOWN"]
+							
+							if ArkInventory.CrossClient.IsFactionParagonForCurrentPlayer( id ) then
 								
-								-- original rank levels (hated to exalted)
+								-- highmountain
+								-- /dump C_Reputation.GetFactionInfoByID( 1828 )
+								-- /dump C_Reputation.GetFactionParagonInfo( 1828 )
 								
-								--ArkInventory.OutputDebug( id, " = ", factionInfo.name, " = normal" )
-								--ArkInventory.Output( id, "/", index, " = ", factionInfo )
+								-- 2510 = valdrakken accord C_Reputation.GetFactionParagonInfo(2510)
 								
-								barValue = factionInfo.currentStanding
-								barMin = factionInfo.barMin or 0
-								barMax = factionInfo.nextReactionThreshold
+								-- the ascended
+								-- /dump C_Reputation.GetFactionParagonInfo( 2407 )
+								-- /dump C_QuestLog.GetLogIndexForQuestID(61097)
 								
-								rankValue = factionInfo.reaction
-								
-								rankMax = MAX_REPUTATION_REACTION or 8
-								standingText = _G["FACTION_STANDING_LABEL" .. rankValue] or ArkInventory.Localise["UNKNOWN"]
+								local paragonInfo = ArkInventory.CrossClient.GetFactionParagonInfo( id )
+								if paragonInfo.value and paragonInfo.threshold and not paragonInfo.tooLowLevel then
+									
+									standingText = ArkInventory.Localise["PARAGON"]
+
+									if paragonInfo.storageLevel then
+										paragonLevel = paragonInfo.storageLevel
+									else
+										 paragonLevel = math.floor( paragonInfo.value / paragonInfo.threshold )
+									end
+
+									if paragonLevel > 0 then
+										standingText = string.format( "%s %s", standingText, paragonLevel )
+									end
+
+									
+									barMin = 0
+									barMax = paragonInfo.threshold
+									barValue = mod( paragonInfo.value, paragonInfo.threshold )
+									
+									paragonRewardPending = paragonInfo.rewardPending and 1 or 0
+									if paragonRewardPending == 1 then
+										
+										icon = [[Interface\ICONS\INV_Misc_Coin_01]]
+										
+										if not cache[id].notify then
+											ArkInventory.Output( GREEN_FONT_COLOR_CODE, "ALERT> A paragon reward for ", cache[id].name, " is ready for collection" )
+											cache[id].notify = true
+										end
+										
+									end
+									
+								end
 								
 							end
-							
+
 						end
-						
-						
 						
 						if factionInfo.atWarWith then
 							icon = [[Interface\Calendar\UI-Calendar-Event-PVP]]
 						end
-						
-						
+
 						if rankValue == rankMax then
 							
 							if barValue == barMax and barMax == barMin then
@@ -764,45 +830,8 @@ local function Scan_Threaded( thread_id )
 							
 						end
 						
-						local isParagon = ArkInventory.CrossClient.IsFactionParagon( id )
-						if isParagon then
-							
-							-- reputation level stops at exalted 42,000 - paragon values take over from there
-							
-							-- highmountain
-							-- /dump GetFactionInfoByID( 1828 )
-							-- /dump C_Reputation.GetFactionParagonInfo( 1828 )
-							
-							-- 2510 = valdrakken accord C_Reputation.GetFactionParagonInfo(2510)
-							-- artisans consortium
-							-- /dump C_Reputation.GetFactionParagonInfo( 2544 )
-							
-							local paragonInfo = ArkInventory.CrossClient.GetFactionParagonInfo( id )
-							
-							if paragonInfo and paragonInfo.value and paragonInfo.threshold and not paragonInfo.tooLowLevel then
-								
-								standingText = ArkInventory.Localise["PARAGON"]
-								paragonLevel = math.floor( paragonInfo.value / paragonInfo.threshold ) + 1
-								barMin = 0
-								barMax = paragonInfo.threshold
-								barValue = paragonInfo.value % paragonInfo.threshold
-								
-								paragonRewardPending = paragonInfo.rewardPending and 1 or 0
-								if paragonRewardPending == 1 then
-									
-									icon = [[Interface\ICONS\INV_Misc_Coin_01]]
-									
-									if not cache[id].notify then
-										ArkInventory.Output( GREEN_FONT_COLOR_CODE, "ALERT> A paragon reward for ", cache[id].name, " is ready for collection" )
-										cache[id].notify = true
-									end
-									
-								end
-								
-							end
-							
-						end
 						
+						cache[id].type = ReputationType
 						
 						cache[id].friendID = friendID
 						
@@ -861,7 +890,7 @@ local function Scan_Threaded( thread_id )
 	
 	collection.numOwned = numOwned
 	
-	--ArkInventory.Output( "Reputation: End Scan @ ", time( ), " ( ", collection.numOwned, " of ", collection.numTotal, " ) update=", update )
+	ArkInventory.OutputDebug( "Reputation: End Scan @ ", time( ), " ( ", collection.numOwned, " of ", collection.numTotal, " ) update=", update )
 	
 	if not collection.isReady then
 		collection.isReady = true
@@ -879,7 +908,7 @@ end
 
 local function Scan( )
 	
---	if true then return end -- disable reputation scanning
+	--if true then return end -- disable reputation scanning
 	
 	local thread_id = string.format( ArkInventory.Global.Thread.Format.Collection, "reputation" )
 	
@@ -893,42 +922,41 @@ end
 
 function ArkInventory:EVENT_ARKINV_COLLECTION_REPUTATION_UPDATE_BUCKET( events )
 	
-	--ArkInventory.Output( "REPUTATION BUCKET [", events, "]" )
+	ArkInventory.OutputDebug( "REPUTATION BUCKET [", events, "]" )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
-	local loc_id_window = ArkInventory.Const.Location.Reputation
+	local loc_id = ArkInventory.Const.Location.Reputation
 	
-	if not ArkInventory.isLocationMonitored( loc_id_window ) then
-		--ArkInventory.Output( "IGNORED (REPUTATION NOT MONITORED)" )
+	if not ArkInventory.isLocationMonitored( loc_id ) then
+		ArkInventory.OutputDebug( "IGNORED (REPUTATION NOT MONITORED)" )
 		return
 	end
 	
 	if ReputationFrame:IsVisible( ) then
-		--ArkInventory.Output( "IGNORED (REPUTATION FRAME IS OPEN)" )
+		ArkInventory.OutputDebug( "IGNORED (REPUTATION FRAME IS OPEN)" )
 		return
 	end
 	
 	if ArkInventory.Global.Mode.Combat then
-		--ArkInventory.Output( "IGNORED (IN COMBAT)" )
-		ArkInventory.Global.ScanAfterCombat[loc_id_window] = true
+		ArkInventory.OutputDebug( "IGNORED (IN COMBAT)" )
+		ArkInventory.Global.ScanAfterCombat[loc_id] = true
 		return
 	end
 	
 	if ArkInventory.Global.Mode.DragonRace then
-		--ArkInventory.Output( "IGNORED (DRAGON RACING)" )
-		ArkInventory.Global.ScanAfterDragonRace[loc_id_window] = true
+		ArkInventory.OutputDebug( "IGNORED (DRAGON RACING)" )
+		ArkInventory.Global.ScanAfterDragonRace[loc_id] = true
 		return
 	end
 	
 	
 	if not collection.isScanning then
 		collection.isScanning = true
-		--ArkInventory.Output( "scan reputation" )
 		Scan( )
 		collection.isScanning = false
 	else
-		--ArkInventory.Output( "IGNORED (REPUTATION SCAN IN PROGRESS - WILL RESCAN WHEN FINISHED)" )
+		ArkInventory.OutputDebug( "IGNORED (REPUTATION SCAN IN PROGRESS - WILL RESCAN WHEN FINISHED)" )
 		ArkInventory:SendMessage( "EVENT_ARKINV_COLLECTION_REPUTATION_UPDATE_BUCKET", "RESCAN" )
 	end
 	

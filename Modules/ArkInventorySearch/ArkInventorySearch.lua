@@ -245,7 +245,7 @@ function ArkInventorySearch.Frame_Table_Refresh_Threaded( frame, thread_id )
 			
 			for l, ld in pairs( pd.location ) do
 				
-				if ( not ArkInventory.Global.Location[l].excludeFromGlobalSearch ) and ArkInventory.ClientCheck( ArkInventory.Global.Location[l].ClientCheck ) then
+				if ( not ArkInventory.Global.Location[l].excludeFromGlobalSearch ) and ArkInventory.Global.Location[l].ClientCheck then
 					
 					for b, bd in pairs( ld.bag ) do
 						

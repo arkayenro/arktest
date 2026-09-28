@@ -1,10 +1,10 @@
-﻿## Interface: 11508
+﻿## Interface: 11509
 
 ## Title: ArkInventory [Classic] [Configuration]
 ## Notes: Configuration options for ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 31205.08
+## Version: 31216.07
 ## X-ReleaseType: Alpha
 ## IconTexture: Interface\Icons\INV_Misc_Bag_07_Green
 

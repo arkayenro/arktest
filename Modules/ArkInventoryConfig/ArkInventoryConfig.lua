@@ -428,7 +428,9 @@ function ArkInventory.ConfigInternal( )
 								vault = {
 									order = 100,
 									name = ArkInventory.Localise["VAULT"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck ),
+									hidden = function( info )
+										return not ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_OPEN_DESC"], ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name, ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"] ),
 									values = function( )
@@ -514,7 +516,9 @@ function ArkInventory.ConfigInternal( )
 								void = {
 									order = 100,
 									name = ArkInventory.Localise["VOID_STORAGE"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Void].ClientCheck ),
+									hidden = function( info )
+										return not ArkInventory.Global.Location[ArkInventory.Const.Location.Void].ClientCheck
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_OPEN_DESC"], ArkInventory.Global.Location[ArkInventory.Const.Location.Void].Name, ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"] ),
 									values = function( )
@@ -532,7 +536,9 @@ function ArkInventory.ConfigInternal( )
 								obliterum = {
 									order = 100,
 									name = ArkInventory.Localise["OBLITERUM_FORGE"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.LEGION ),
+									hidden = function( info )
+										return not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.LEGION )
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_OPEN_DESC"], ArkInventory.Localise["OBLITERUM_FORGE"], ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"], ArkInventory.Localise["ALWAYS"] ),
 									values = function( )
@@ -550,7 +556,9 @@ function ArkInventory.ConfigInternal( )
 								scrap = {
 									order = 100,
 									name = ArkInventory.Localise["CONFIG_AUTO_SCRAP"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA ),
+									hidden = function( info )
+										return not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA )
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_OPEN_DESC"], ArkInventory.Localise["CONFIG_AUTO_SCRAP"], ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"] ),
 									values = function( )
@@ -568,7 +576,9 @@ function ArkInventory.ConfigInternal( )
 								transmog = {
 									order = 100,
 									name = ArkInventory.Localise["TRANSMOGRIFIER"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM ),
+									hidden = function( info )
+										return not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM )
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_OPEN_DESC"], ArkInventory.Localise["TRANSMOGRIFIER"], ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"] ),
 									values = function( )
@@ -586,7 +596,9 @@ function ArkInventory.ConfigInternal( )
 								rune = {
 									order = 100,
 									name = ArkInventory.Localise["ENGRAVE"],
-									disabled = not ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.CLASSIC ),
+									hidden = function( info )
+										return not ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.CLASSIC )
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_OPEN_DESC"], ArkInventory.Localise["ENGRAVE"], ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"] ),
 									values = function( )
@@ -635,7 +647,9 @@ function ArkInventory.ConfigInternal( )
 								vault = {
 									order = 100,
 									name = ArkInventory.Localise["VAULT"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck ),
+									hidden = function( info )
+										return not ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_CLOSE_DESC"], ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name, ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"], ArkInventory.Localise["ALWAYS"] ),
 									values = function( )
@@ -721,7 +735,9 @@ function ArkInventory.ConfigInternal( )
 								void = {
 									order = 100,
 									name = ArkInventory.Localise["VOID_STORAGE"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Void].ClientCheck ),
+									hidden = function( info )
+										return not ArkInventory.Global.Location[ArkInventory.Const.Location.Void].ClientCheck
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_CLOSE_DESC"], ArkInventory.Global.Location[ArkInventory.Const.Location.Void].Name, ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"], ArkInventory.Localise["ALWAYS"] ),
 									values = function( )
@@ -739,7 +755,9 @@ function ArkInventory.ConfigInternal( )
 								obliterum = {
 									order = 100,
 									name = ArkInventory.Localise["OBLITERUM_FORGE"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.LEGION ),
+									hidden = function( info )
+										return not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.LEGION )
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_CLOSE_DESC"], ArkInventory.Localise["OBLITERUM_FORGE"], ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"], ArkInventory.Localise["ALWAYS"] ),
 									values = function( )
@@ -757,7 +775,9 @@ function ArkInventory.ConfigInternal( )
 								scrap = {
 									order = 100,
 									name = ArkInventory.Localise["CONFIG_AUTO_SCRAP"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA ),
+									hidden = function( info )
+										return not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA )
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_CLOSE_DESC"], ArkInventory.Localise["CONFIG_AUTO_SCRAP"], ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"], ArkInventory.Localise["ALWAYS"] ),
 									values = function( )
@@ -775,7 +795,9 @@ function ArkInventory.ConfigInternal( )
 								transmog = {
 									order = 100,
 									name = ArkInventory.Localise["TRANSMOGRIFIER"],
-									disabled = not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM ),
+									hidden = function( info )
+										return not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM )
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_CLOSE_DESC"], ArkInventory.Localise["TRANSMOGRIFIER"], ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"], ArkInventory.Localise["ALWAYS"] ),
 									values = function( )
@@ -793,7 +815,9 @@ function ArkInventory.ConfigInternal( )
 								rune = {
 									order = 100,
 									name = ArkInventory.Localise["ENGRAVE"],
-									disabled = not ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.CLASSIC ),
+									hidden = function( info )
+										return not ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.CLASSIC )
+									end,
 									type = "select",
 									desc = string.format( ArkInventory.Localise["CONFIG_AUTO_CLOSE_DESC"], ArkInventory.Localise["ENGRAVE"], ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name, ArkInventory.Localise["NO"], ArkInventory.Localise["YES"], ArkInventory.Localise["ALWAYS"] ),
 									values = function( )
@@ -1100,14 +1124,14 @@ function ArkInventory.ConfigInternal( )
 									desc = string.format( ArkInventory.Localise["CONFIG_GENERAL_TOOLTIP_LOCATION_INCLUDE_DESC"], ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name ),
 									type = "toggle",
 									disabled = function( )
-										if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck ) then
+										if ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck then
 											return not ArkInventory.db.option.tooltip.show or not ArkInventory.db.option.tooltip.itemcount.enable or ArkInventory.db.option.tooltip.itemcount.justme
 										else
 											return true
 										end
 									end,
 									get = function( info )
-										if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck ) then
+										if ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck then
 											return ArkInventory.db.option.tooltip.itemcount.vault
 										end
 									end,
@@ -1122,7 +1146,7 @@ function ArkInventory.ConfigInternal( )
 									desc = string.format( ArkInventory.Localise["CONFIG_GENERAL_TOOLTIP_ITEMCOUNT_VAULT_TABS_DESC"], ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name ),
 									type = "toggle",
 									disabled = function( )
-										if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck ) then
+										if ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck then
 											return not ArkInventory.db.option.tooltip.show or not ArkInventory.db.option.tooltip.itemcount.enable or ArkInventory.db.option.tooltip.itemcount.justme or not ArkInventory.db.option.tooltip.itemcount.vault
 										else
 											return true
@@ -1142,8 +1166,7 @@ function ArkInventory.ConfigInternal( )
 									desc = string.format( ArkInventory.Localise["CONFIG_GENERAL_TOOLTIP_LOCATION_INCLUDE_DESC"], ArkInventory.Global.Location[ArkInventory.Const.Location.Tradeskill].Name ),
 									type = "toggle",
 									disabled = function( )
-										local ok = ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Tradeskill].ClientCheck )
-										return not ok or not ArkInventory.db.option.tooltip.show or not ArkInventory.db.option.tooltip.itemcount.enable
+										return not ArkInventory.Global.Location[ArkInventory.Const.Location.Tradeskill].ClientCheck or not ArkInventory.db.option.tooltip.show or not ArkInventory.db.option.tooltip.itemcount.enable
 									end,
 									get = function( info )
 										return ArkInventory.db.option.tooltip.itemcount.tradeskill
@@ -1312,7 +1335,7 @@ function ArkInventory.ConfigInternal( )
 									desc = string.format( ArkInventory.Localise["CONFIG_GENERAL_TOOLTIP_LOCATION_INCLUDE_DESC"], ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name ),
 									type = "toggle",
 									disabled = function( )
-										if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck ) then
+										if ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck then
 											return not ArkInventory.db.option.tooltip.show or not ArkInventory.db.option.tooltip.money.enable or ArkInventory.db.option.tooltip.money.justme
 										else
 											return true
@@ -1331,7 +1354,12 @@ function ArkInventory.ConfigInternal( )
 						battlepet = {
 							order = 300,
 							name = ArkInventory.Localise["BATTLEPET"],
-							disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Pet].ClientCheck ),
+							hidden = function( info )
+								return not ArkInventory.Global.Location[ArkInventory.Const.Location.Pet].ClientCheck
+							end,
+							disabled = function( info )
+								return not ArkInventory.db.option.tooltip.show
+							end,
 							type = "group",
 							--inline = true,
 							args = {
@@ -1383,7 +1411,12 @@ function ArkInventory.ConfigInternal( )
 							order = 300,
 							type = "group",
 							name = ArkInventory.Localise["REPUTATION"],
-							disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Reputation].ClientCheck ),
+							hidden = function( info )
+								return not ArkInventory.Global.Location[ArkInventory.Const.Location.Reputation].ClientCheck
+							end,
+							disabled = function( info )
+								return not ArkInventory.db.option.tooltip.show
+							end,
 							args = {
 								custom = {
 									order = 100,
@@ -1473,6 +1506,9 @@ function ArkInventory.ConfigInternal( )
 							order = 300,
 							name = ArkInventory.Localise["TRANSMOGRIFICATION"],
 							type = "group",
+							hidden = function( info )
+								return not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM )
+							end,
 							disabled = function( info )
 								return not ArkInventory.db.option.tooltip.show
 							end,
@@ -2435,7 +2471,9 @@ function ArkInventory.ConfigInternal( )
 				transmog = {
 					order = 1000,
 					name = ArkInventory.Localise["TRANSMOGRIFY"],
-					disabled = not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CLASSIC ), -- FIX ME
+					hidden = function( info )
+						return not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.CATACLYSM )
+					end,
 					type = "group",
 					args = {
 						enable = {
@@ -2751,7 +2789,7 @@ function ArkInventory.ConfigInternal( )
 										return t
 									end,
 									get = function( info )
-										if ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck ) then
+										if ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck then
 											if ArkInventory.db.option.cleanup.enable then
 												return 1
 											else
@@ -2906,7 +2944,7 @@ function ArkInventory.ConfigInternal( )
 							name = ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name,
 							type = "group",
 							hidden = function( )
-								return not ArkInventory.db.option.cleanup.enable
+								return (not ArkInventory.db.option.cleanup.enable)
 							end,
 							args = {
 								reversesort = {
@@ -2929,7 +2967,7 @@ function ArkInventory.ConfigInternal( )
 							name = ArkInventory.Global.Location[ArkInventory.Const.Location.ReagentBank].Name,
 							type = "group",
 							hidden = function( )
-								return ( not ArkInventory.db.option.cleanup.enable ) or ( not ArkInventory.Util.MapCheckStorage( ArkInventory.Const.Location.ReagentBank ) )
+								return (not ArkInventory.db.option.cleanup.enable) or (not ArkInventory.Global.Location[ArkInventory.Const.Location.ReagentBank].ClientCheck)
 							end,
 							args = {
 								deposit = {
@@ -2948,11 +2986,11 @@ function ArkInventory.ConfigInternal( )
 							},
 						},
 						cleanup_accountbank = {
-							order = 4000,
+							order = 5000,
 							name = ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].Name,
 							type = "group",
 							hidden = function( )
-								return ( not ArkInventory.db.option.cleanup.enable ) or ( not ArkInventory.Util.MapCheckStorage( ArkInventory.Const.Location.AccountBank ) )
+								return (not ArkInventory.db.option.cleanup.enable) or (not ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].ClientCheck)
 							end,
 							args = {
 								deposit = {
@@ -2989,7 +3027,7 @@ function ArkInventory.ConfigInternal( )
 								},
 							},
 						},
-						bag = {
+						restack_bag = {
 							order = 1000,
 							name = ArkInventory.Global.Location[ArkInventory.Const.Location.Bag].Name,
 							type = "group",
@@ -3060,12 +3098,12 @@ function ArkInventory.ConfigInternal( )
 								},
 							},
 						},
-						reagentbag = {
+						restack_reagentbag = {
 							order = 2000,
 							name = ArkInventory.Global.Location[ArkInventory.Const.Location.ReagentBag].Name,
 							type = "group",
 							hidden = function( )
-								return ArkInventory.db.option.cleanup.enable
+								return ArkInventory.db.option.cleanup.enable or (not ArkInventory.Global.Location[ArkInventory.Const.Location.ReagentBag].ClientCheck)
 							end,
 							args = {
 								stack = {
@@ -3131,7 +3169,7 @@ function ArkInventory.ConfigInternal( )
 								},
 							},
 						},
-						bank = {
+						restack_bank = {
 							order = 3000,
 							name = ArkInventory.Global.Location[ArkInventory.Const.Location.Bank].Name,
 							type = "group",
@@ -3232,12 +3270,12 @@ function ArkInventory.ConfigInternal( )
 								},
 							},
 						},
-						reagentbank = {
+						restack_reagentbank = {
 							order = 4000,
 							name = ArkInventory.Global.Location[ArkInventory.Const.Location.ReagentBank].Name,
 							type = "group",
 							hidden = function( )
-								return ( ArkInventory.db.option.cleanup.enable ) or ( not ArkInventory.Util.MapCheckStorage( ArkInventory.Const.Location.ReagentBank ) )
+								return ArkInventory.db.option.cleanup.enable or (not ArkInventory.Global.Location[ArkInventory.Const.Location.ReagentBank].ClientCheck)
 							end,
 							args = {
 								stack = {
@@ -3333,12 +3371,12 @@ function ArkInventory.ConfigInternal( )
 								},
 							},
 						},
-						accountbank = {
+						restack_accountbank = {
 							order = 5000,
 							name = ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].Name,
 							type = "group",
 							hidden = function( )
-								return ( ArkInventory.db.option.cleanup.enable ) or ( not ArkInventory.Util.MapCheckStorage( ArkInventory.Const.Location.AccountBank ) )
+								return ArkInventory.db.option.cleanup.enable or (not ArkInventory.Global.Location[ArkInventory.Const.Location.AccountBank].ClientCheck)
 							end,
 							args = {
 								stack = {
@@ -3434,12 +3472,12 @@ function ArkInventory.ConfigInternal( )
 								},
 							},
 						},
-						vault = {
+						restack_vault = {
 							order = 9000,
 							name = ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name,
 							type = "group",
 							hidden = function( )
-								return ( ArkInventory.db.option.cleanup.enable ) or ( not ArkInventory.Util.MapCheckStorage( ArkInventory.Const.Location.Vault ) )
+								return ArkInventory.db.option.cleanup.enable or (not ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck)
 							end,
 							args = {
 								stack = {
@@ -3649,21 +3687,21 @@ function ArkInventory.ConfigInternal( )
 							name = ArkInventory.Localise["MOUNTS"],
 							type = "group",
 							childGroups = "tab",
-							disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].ClientCheck ),
+							disabled = not ArkInventory.Global.Location[ArkInventory.Const.Location.Mount].ClientCheck,
 							args = { }, -- calculated
 						},
 						pets = {
 							order = 100,
 							type = "group",
 							name = ArkInventory.Localise["PETS"],
-							disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Pet].ClientCheck ),
+							disabled = not ArkInventory.Global.Location[ArkInventory.Const.Location.Pet].ClientCheck,
 							args = { }, -- calculated
 						},
 --						currencies = {
 --							order = 400,
 --							type = "group",
 --							name = string.format( "%s: %s", ArkInventory.Localise["TRACKING"], ArkInventory.Localise["CURRENCY"] ),
---							disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Currency].ClientCheck ),
+--							disabled = not ArkInventory.Global.Location[ArkInventory.Const.Location.Currency].ClientCheck,
 --							args = { },
 --						},
 						items = {
@@ -3690,7 +3728,7 @@ function ArkInventory.ConfigInternal( )
 							order = 400,
 							type = "group",
 							name = string.format( "%s: %s", ArkInventory.Localise["TRACKING"], ArkInventory.Localise["REPUTATION"] ),
-							disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Reputation].ClientCheck ),
+							disabled = not ArkInventory.Global.Location[ArkInventory.Const.Location.Reputation].ClientCheck,
 							args = {
 								style = {
 									order = 100,
@@ -3930,7 +3968,7 @@ function ArkInventory.ConfigInternal( )
 								vault = {
 									order = ArkInventory.Const.Location.Vault,
 									name = ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name,
-									disabled = not ArkInventory.ClientCheck( ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck ),
+									disabled = not ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].ClientCheck,
 									desc = string.format( ArkInventory.Localise["CONFIG_GENERAL_MESSAGES_RESTACK_DESC"], ArkInventory.Global.Location[ArkInventory.Const.Location.Vault].Name ),
 									type = "toggle",
 									get = function( info )
@@ -7491,7 +7529,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 		
 		if not v.hide then
 			
-			if ArkInventory.ClientCheck( v.ClientCheck ) then
+			if v.ClientCheck then
 				
 				args2[string.format( "%i", k )] = {
 					order = 100,
@@ -11256,7 +11294,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 											name = ArkInventory.Localise["SIZE"],
 											desc = string.format( ArkInventory.Localise["ANCHOR_TEXT2"], string.format( ArkInventory.Localise["CONFIG_DESIGN_ITEM_STATUSICON_TEXT"], ArkInventory.Localise["CONFIG_DESIGN_ITEM_OVERLAY_PROFESSIONRANK"] ), "" ),
 											type = "range",
-											min = 30,
+											min = 5,
 											max = 60,
 											step = 1,
 											disabled = function( info )
@@ -11273,7 +11311,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 												local id = ConfigGetNodeArg( info, #info - 5 )
 												local style = ArkInventory.ConfigInternalDesignGet( id )
 												local v = math.floor( v )
-												if v < 30 then v = 30 end
+												if v < 5 then v = 5 end
 												if v > 60 then v = 60 end
 												if style.slot.overlay.professionrank.size ~= v then
 													style.slot.overlay.professionrank.size = v
@@ -11897,7 +11935,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 		
 		if not v.hide then
 			
-			if ArkInventory.ClientCheck( v.ClientCheck ) then
+			if v.ClientCheck then
 				
 				c = c + 1
 				
@@ -12747,7 +12785,7 @@ function ArkInventory.ConfigInternalProfileControl( path )
 						return t
 					end,
 					hidden = function( info )
-						if ArkInventory.Const.BLIZZARD.CLIENT.ELEVEN_POINT_TWO then
+						if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 							local loc_id = ConfigGetNodeArg( info, #info - 2 )
 							return loc_id ~= ArkInventory.Const.Location.Bank
 						end
@@ -12922,7 +12960,7 @@ function ArkInventory.ConfigInternalProfileControl( path )
 	
 	local loc_id = ArkInventory.Const.Location.Tradeskill
 	local loc_data = ArkInventory.Global.Location[loc_id]
-	if ArkInventory.ClientCheck( loc_data.ClientCheck ) then
+	if loc_data.ClientCheck then
 		path[string.format( "%i", loc_id )] = {
 			order = ArkInventory.db.option.ui.sortalpha and 1 or loc_id,
 			arg = loc_id,
@@ -13525,10 +13563,10 @@ function ArkInventory.ConfigInternalLDBMounts( )
 	
 	path["travelform"] = {
 		order = 1,
-		name = string.format( ArkInventory.Localise["LDB_MOUNTS_TRAVEL_FORM"], ArkInventory.Localise["SPELL_DRUID_TRAVEL_FORM"] ),
-		desc = string.format( ArkInventory.Localise["LDB_MOUNTS_TRAVEL_FORM_DESC"], ArkInventory.Localise["SPELL_DRUID_TRAVEL_FORM"] ),
+		name = string.format( ArkInventory.Localise["LDB_MOUNTS_CLASS_ABILITY"], ArkInventory.Localise["CLASS_ABILITY"] ),
+		desc = string.format( ArkInventory.Localise["LDB_MOUNTS_CLASS_ABILITY_DESC"], ArkInventory.Localise["CLASS_ABILITY"] ),
 		type = "toggle",
-		disabled = config.me.player.data.info.class ~= "DRUID",
+		disabled = not (config.me.player.data.info.class == "DRUID" or config.me.player.data.info.class == "EVOKER"),
 		get = function( info )
 			return config.me.player.data.ldb.travelform
 		end,

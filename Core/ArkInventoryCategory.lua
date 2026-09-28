@@ -166,13 +166,12 @@ ArkInventory.Const.Category = {
 				id = "SYSTEM_HOUSING",
 				text = ArkInventory.Localise["HOUSING"],
 			},
-		},
-		Timerunning = {
 			[463] = {
-				ClientCheck = ( ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID > 0 ),
 				id = "SYSTEM_OPENABLE",
 				text = ArkInventory.Localise["CATEGORY_SYSTEM_OPENABLE"],
 			},
+		},
+		Timerunning = {
 			[464] = {
 				ClientCheck = ( ArkInventory.Const.BLIZZARD.CLIENT.TIMERUNNINGSEASONID == ArkInventory.ENUM.TIMERUNNINGSEASONID.PANDARIA ),
 				id = "TIMERUNNING_GEM_PRISMATIC",
@@ -300,7 +299,7 @@ ArkInventory.Const.Category = {
 			},
 			[450] = {
 				id = "CONSUMABLE_POWER_SYSTEM_OLD",
-				text = ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_OLD"],
+				text = "", -- calculated below
 			},
 --			[470] = - RESERVED
 			[471] = {
@@ -346,7 +345,7 @@ ArkInventory.Const.Category = {
 			[479] = {
 				ClientCheck = false,
 				id = "CONSUMABLE_POWER_SYSTEM_CURRENT_9",
-				text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"], ArkInventory.Localise["OTHER"] ),
+				text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], ArkInventory.Localise["OTHER"] ),
 			},
 			[461] = {
 				id = "CONSUMABLE_ABILITIES_AND_ACTIONS",
@@ -696,51 +695,55 @@ if true then
 
 	-- set power system category names for each expansion
 
-	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.LEGION, ArkInventory.ENUM.EXPANSION.LEGION ) then
-		
-		ArkInventory.Const.Category.Code.Consumable[471].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"], "artifact relics" ) -- fix this text
-		ArkInventory.Const.Category.Code.Consumable[471].ClientCheck = nil
-		
+	if ArkInventory.ENUM.EXPANSION.CURRENT < ArkInventory.ENUM.EXPANSION.LEGION then
+		ArkInventory.Const.Category.Code.Consumable[450].text = ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"]
+	else
+		ArkInventory.Const.Category.Code.Consumable[450].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], "Old" )
 	end
 
-	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA, ArkInventory.ENUM.EXPANSION.BFA ) then
+
+	if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.LEGION then
 		
-		ArkInventory.Const.Category.Code.Consumable[471].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"], "artifact power" ) -- fix this text
+		ArkInventory.Const.Category.Code.Consumable[471].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], "artifact relics" ) -- fix this text
 		ArkInventory.Const.Category.Code.Consumable[471].ClientCheck = nil
 		
-		ArkInventory.Const.Category.Code.Consumable[472].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"], "heart of azeroth" ) -- fix this text
+	elseif ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.BFA then
+		
+		ArkInventory.Const.Category.Code.Consumable[471].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], "artifact power" ) -- fix this text
+		ArkInventory.Const.Category.Code.Consumable[471].ClientCheck = nil
+		
+		ArkInventory.Const.Category.Code.Consumable[472].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], "heart of azeroth" ) -- fix this text
 		ArkInventory.Const.Category.Code.Consumable[472].ClientCheck = nil
 		
-		ArkInventory.Const.Category.Code.Consumable[473].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"], "tinkering" ) -- fix this text
+		ArkInventory.Const.Category.Code.Consumable[473].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], "tinkering" ) -- fix this text
 		ArkInventory.Const.Category.Code.Consumable[473].ClientCheck = nil
 
 		ArkInventory.Const.Category.Code.Consumable[479].ClientCheck = nil
 
-	end
-
-	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.SHADOWLANDS, ArkInventory.ENUM.EXPANSION.SHADOWLANDS ) then
+	elseif ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.SHADOWLANDS then
 		
-		ArkInventory.Const.Category.Code.Consumable[471].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"], string.format( "%s - %s", ArkInventory.Localise["COVENANT"], ArkInventory.Localise["ANIMA"] ) )
+		ArkInventory.Const.Category.Code.Consumable[471].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], string.format( "%s - %s", ArkInventory.Localise["COVENANT"], ArkInventory.Localise["ANIMA"] ) )
 		ArkInventory.Const.Category.Code.Consumable[471].ClientCheck = nil
 
-		ArkInventory.Const.Category.Code.Consumable[472].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"], string.format( "%s - %s", ArkInventory.Localise["COVENANT"], ArkInventory.Localise["CONDUITS"] ) )
+		ArkInventory.Const.Category.Code.Consumable[472].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], string.format( "%s - %s", ArkInventory.Localise["COVENANT"], ArkInventory.Localise["CONDUITS"] ) )
 		ArkInventory.Const.Category.Code.Consumable[472].ClientCheck = nil
 
 		ArkInventory.Const.Category.Code.Consumable[479].ClientCheck = nil
 
-	end
-
-	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT, ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT ) then
+	elseif ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.WARWITHIN then
 		
-	end
-
-	if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WARWITHIN, ArkInventory.ENUM.EXPANSION.WARWITHIN ) then
-		
-		ArkInventory.Const.Category.Code.Consumable[471].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"], "curios" ) -- fix this text
+		ArkInventory.Const.Category.Code.Consumable[471].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], ArkInventory.Localise["DELVES"] )
 		ArkInventory.Const.Category.Code.Consumable[471].ClientCheck = nil
 
-		ArkInventory.Const.Category.Code.Consumable[472].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEM_CURRENT"], "undermine" ) -- fix this text
+		ArkInventory.Const.Category.Code.Consumable[472].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], "undermine" ) -- fix this text
 		ArkInventory.Const.Category.Code.Consumable[472].ClientCheck = nil
+
+		ArkInventory.Const.Category.Code.Consumable[479].ClientCheck = nil
+
+	elseif ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.MIDNIGHT then
+		
+		ArkInventory.Const.Category.Code.Consumable[471].text = string.format( ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS_FORMAT"], ArkInventory.Localise["CATEGORY_CONSUMABLE_POWER_SYSTEMS"], ArkInventory.Localise["DELVES"] )
+		ArkInventory.Const.Category.Code.Consumable[471].ClientCheck = nil
 
 		ArkInventory.Const.Category.Code.Consumable[479].ClientCheck = nil
 
@@ -919,34 +922,45 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	end
 	
 	
+	
 	-- power systems
 	if true then
 		
+
+		-- these categories are current / old expansion specific, if its not the current expansion then they get pushed to the old one
+
 		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.LEGION ) then
-			
+
+			-- ancient mana (tooltip)
+			if ArkInventory.TooltipMatch( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_ANCIENT_MANA"], false, true, false, 0, ArkInventory.Const.Tooltip.Search.Short ) then
+				return ArkInventory.CategoryGetSystemID( "SYSTEM_CURRENCY" )
+			end
+
 			-- type 1 - artifact power (tooltip)
 			if ArkInventory.TooltipMatch( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_ARTIFACT_POWER"], false, true, false, 0, ArkInventory.Const.Tooltip.Search.Short ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.LEGION, ArkInventory.ENUM.EXPANSION.LEGION ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.LEGION then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_1" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
 				end
 			end
 			
-			-- ancient mana (tooltip)
-			if ArkInventory.TooltipMatch( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_ANCIENT_MANA"], false, true, false, 0, ArkInventory.Const.Tooltip.Search.Short ) then
-				return ArkInventory.CategoryGetSystemID( "SYSTEM_CURRENCY" )
-			end
-			
 		end
 		
 		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA ) then
 			
-			-- type 1 - artifact power
+			-- type 1 - artifact power (tooltip)
+			if ArkInventory.TooltipMatch( ArkInventory.Global.Tooltip.Scan, nil, ArkInventory.Localise["WOW_TOOLTIP_ARTIFACT_POWER"], false, true, false, 0, ArkInventory.Const.Tooltip.Search.Short ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.BFA then
+					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_1" )
+				else
+					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
+				end
+			end
 			
 			-- type 2 - essences
 			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.BFA.Heart of Azeroth.Essence" ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA, ArkInventory.ENUM.EXPANSION.BFA ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.BFA then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_2" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -955,7 +969,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 
 			-- type 3 - tinkering
 			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.BFA.Tinkering" ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA, ArkInventory.ENUM.EXPANSION.BFA ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.BFA then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_3" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -964,7 +978,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 
 			-- type 9 - other
 			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.BFA" ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.BFA, ArkInventory.ENUM.EXPANSION.BFA ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.BFA then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_9" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -974,10 +988,10 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		end
 		
 		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.SHADOWLANDS ) then
-			
+
 			-- type 1 - anima
 			if ArkInventory.CrossClient.IsItemAnima( info.id ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.SHADOWLANDS, ArkInventory.ENUM.EXPANSION.SHADOWLANDS ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.SHADOWLANDS then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_1" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -986,7 +1000,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 			
 			-- type 2 - conduits
 			if ArkInventory.CrossClient.IsItemConduit( info.id ) or ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.Shadowlands.Conduit" ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.SHADOWLANDS, ArkInventory.ENUM.EXPANSION.SHADOWLANDS ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.SHADOWLANDS then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_2" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -995,7 +1009,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 			
 			-- type 9 - other
 			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.Shadowlands" ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.SHADOWLANDS, ArkInventory.ENUM.EXPANSION.SHADOWLANDS ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.SHADOWLANDS then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_9" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -1006,22 +1020,18 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		
 		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT ) then
 			
-			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.Dragonflight.Knowledge" ) then
+			-- profession knowledge started in dragonflight
+			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.Knowledge" ) then
 				return ArkInventory.CategoryGetSystemID( "CONSUMABLE_PROFESSION_KNOWLEDGE" )
 			end
 
 		end
 		
-		-- war within
 		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WARWITHIN ) then
-			
-			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.TWW.Knowledge" ) then
-				return ArkInventory.CategoryGetSystemID( "CONSUMABLE_PROFESSION_KNOWLEDGE" )
-			end
 
 			-- type 1 - delve curios
-			if ( info.itemtypeid == ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.PARENT and ( info.itemsubtypeid == ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.CURIO_COMBAT or info.itemsubtypeid == ArkInventory.ENUM.ITEM.TYPE.CONSUMABLE.CURIO_UTILITY ) ) or ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.TWW.Delves" ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WARWITHIN, ArkInventory.ENUM.EXPANSION.WARWITHIN ) then
+			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.TWW.Delves" ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.WARWITHIN then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_1" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -1030,7 +1040,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 
 			-- type 2 - undermine vehicle mount
 			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.TWW.Undermine" ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WARWITHIN, ArkInventory.ENUM.EXPANSION.WARWITHIN ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.WARWITHIN then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_2" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -1039,7 +1049,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 
 			-- type 9 - other
 			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.TWW" ) then
-				if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WARWITHIN, ArkInventory.ENUM.EXPANSION.WARWITHIN ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.WARWITHIN then
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_9" )
 				else
 					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -1048,6 +1058,28 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 
 		end
 		
+		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.MIDNIGHT ) then
+
+			-- type 1 - delve curios
+			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.Midgnight.Delves" ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.MIDNIGHT then
+					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_1" )
+				else
+					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
+				end
+			end
+
+			-- type 9 - other
+			if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power.Midnight" ) then
+				if ArkInventory.ENUM.EXPANSION.CURRENT == ArkInventory.ENUM.EXPANSION.MIDNIGHT then
+					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_CURRENT_9" )
+				else
+					return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
+				end
+			end
+
+		end
+
 		-- old power systems (current power system items should have already been categorised)
 		if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Consumable.Power" ) then
 			return ArkInventory.CategoryGetSystemID( "CONSUMABLE_POWER_SYSTEM_OLD" )
@@ -1994,8 +2026,16 @@ function ArkInventory.CategoryGenerate( )
 end
 
 function ArkInventory.CategoryIdSplit( cat_id )
-	local cat_type, cat_num = string.match( cat_id, "(%d+)!(%d+)" )
+	
+	local cat_type, cat_num = string.match( cat_id or "", "(%d+)!(%d+)" )
+	
+	if not cat_type or not cat_num then
+		local cat_id = ArkInventory.CategoryGetSystemID( "SYSTEM_DEFAULT" )
+		cat_type, cat_num = string.match( cat_id or "", "(%d+)!(%d+)" )
+	end
+
 	return tonumber( cat_type ), tonumber( cat_num )
+
 end
 
 function ArkInventory.CategoryIdBuild( cat_type, cat_num )

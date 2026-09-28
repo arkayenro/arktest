@@ -113,7 +113,7 @@ local function RestackBagCheck( blizzard_id )
 		
 		bagFamily = -2
 		
-		if ArkInventory.CrossClient.IsWarbankInUseByAnotherCharacter( ) then
+		if ArkInventory.CrossClient.IsWarbankLocked( ) then
 			return loc_id_storage
 		end
 		
@@ -139,7 +139,7 @@ end
 
 local function RestackBagOrder( loc_id_window )
 	
---	/dump RestackBagOrder( ArkInventory.Const.Location.Bag )
+	--/dump RestackBagOrder( ArkInventory.Const.Location.Bag )
 	
 	if restackBagOrder[loc_id_window] then
 		-- cached for each restack run
@@ -189,7 +189,7 @@ local function RestackBagOrder( loc_id_window )
 	
 end
 
-local function IngoreItem( id )
+local function IgnoreItem( id )
 	local search_id = string.format( "item:%s", id )
 	return not ArkInventory.db.option.restack.include.item[search_id]
 end
@@ -207,7 +207,7 @@ local function FindItem( src_loc_id_window, dst_loc_id_window, dst_bag_id_window
 	
 	--ArkInventory.Output( "item> find [", src_loc_id_window, "] [", dst_loc_id_window, "] [", dst_bag_id_window, "] [", dst_bag_pos, "] [", dst_slot_id, "] [", id, "]" )
 	
-	if IngoreItem( id ) then return end
+	if IgnoreItem( id ) then return end
 	
 	local map = ArkInventory.Util.MapGetWindow( dst_loc_id_window, dst_bag_id_window )
 	local dst_loc_id_storage = map.loc_id_storage
@@ -251,7 +251,6 @@ local function FindItem( src_loc_id_window, dst_loc_id_window, dst_bag_id_window
 					local itemInfo
 					if src_loc_id_window == ArkInventory.Const.Location.Vault then
 						itemInfo = ArkInventory.CrossClient.GetGuildBankItemInfo( src_bag_id_window, slot_id )
-						ArkInventory.CrossClient.GetGuildBankItemInfo( 1, 91 )
 					else
 						itemInfo = ArkInventory.CrossClient.GetContainerItemInfo( blizzard_id, slot_id )
 					end
@@ -406,7 +405,7 @@ local function FindCraftingItem( src_loc_id_window, dst_loc_id_window, dst_bag_i
 								
 								local info = ArkInventory.GetObjectInfo( itemInfo.hyperlink )
 								
-								if IngoreItem( info.id ) then
+								if IgnoreItem( info.id ) then
 									
 									--ArkInventory.OutputDebug( mode, "> ignored [", blizzard_id, ".", slot_id, "] [", info.craft, "] [", info.itemunique, "] ", itemInfo.hyperlink )
 									
@@ -585,7 +584,7 @@ local function FindNormalItem( src_loc_id_window, dst_loc_id, dst_bag_id, dst_ba
 									
 									local info = ArkInventory.GetObjectInfo( itemInfo.hyperlink )
 									
-									if IngoreItem( info.id ) then
+									if IgnoreItem( info.id ) then
 										
 										--ArkInventory.OutputDebug( "found "> ignored [", blizzard_id, ".", slot_id, "] ", itemInfo.hyperlink )
 										
@@ -628,7 +627,6 @@ local function FindNormalItem( src_loc_id_window, dst_loc_id, dst_bag_id, dst_ba
 	return false, recheck
 	
 end
-
 
 local function Stack( loc_id_window )
 	
@@ -1462,4 +1460,254 @@ function ArkInventory.EmptyBag( src_loc_id, src_bag_id )
 		
 	end
 	
+end
+
+
+
+
+
+
+
+
+
+
+local function MoveItem_FindEmptySlot_InBag( blizzard_id )
+	
+	-- find an empty slot in a specific bag
+	
+	local recheck = false
+		
+	local ab, bt, slot_count = RestackBagCheck( blizzard_id )
+	if ab then
+		return ab
+	end
+		
+	for slot_id = slot_count, 1, -1 do
+		
+		local ab = RestackBagCheck( blizzard_id )
+		if ab then
+			return ab
+		end
+		
+		local itemLocation = ItemLocation:CreateFromBagAndSlot( blizzard_id, slot_id )
+		if not C_Item.DoesItemExist( itemLocation ) then
+			return false, recheck, true, blizzard_id, slot_id
+		end
+			
+	end
+			
+	return false, recheck
+	
+end
+
+local function MoveItem_FindEmptySlot( loc_id_window )
+	
+	-- find an empty slot in a window
+	
+	local map = ArkInventory.Util.MapGetWindow( loc_id_window )
+	
+	local recheck = false
+	
+	local bag_order = RestackBagOrder( loc_id_window )
+	for bag_pos, blizzard_id in ArkInventory.reverse_ipairs( bag_order ) do
+		
+		local ab, rc, found_blizzard_id, found_slot_id = MoveItem_FindEmptySlot_InBag( blizzard_id )
+		
+		if ab then
+			return
+		end
+
+		if rc then
+			recheck = true
+		end
+
+		if found_blizzard_id and found_slot_id then
+			return ab, false, found_blizzard_id, found_slot_id
+		end
+
+	end
+	
+	
+	--ArkInventory.Output( "empty> exit" )
+	return false, recheck
+	
+end
+
+local function helper_MoveItemIntoCharacterBank( src_blizzard_id, src_slot_id, dst_map )
+	
+	local bankType = ArkInventory.ENUM.BANKTYPE.CHARACTER
+	local loc_id_storage = ArkInventory.Const.Location.Bank
+	local dst_blizzard_id = dst_map.blizzard_id
+	
+	ArkInventory.OutputDebug( "MoveItem PreClick: move to character bank - start [", src_blizzard_id, ".", src_slot_id, "] to [", dst_map.loc_id_storage, ".", dst_map.bag_id_storage, "]" )
+
+	local itemLocation = ItemLocation:CreateFromBagAndSlot( src_blizzard_id, src_slot_id )
+	if C_Item.DoesItemExist( itemLocation ) then
+
+		local item_id = C_Item.GetItemID( itemLocation )
+		local stack_count = C_Item.GetStackCount( itemLocation ) or 1
+
+		if not ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
+			
+			-- bag based bank
+			
+			if stack_count == 1 then
+
+				-- check if source item is a bag
+
+				if true then
+
+					-- item is a bag
+					-- check if there is an empty bank bag slot we can put it in
+
+					if true then
+
+						-- drop bag onto the empty bank bag slot
+
+						--ArkInventory.OutputDebug( "bag placed in bank bag slot xxxx" )
+						-- return
+
+					else
+
+						-- loop through all current bag slots and check for a same type but smaller slot bag
+
+						if true then
+
+							-- replace current bag with new bag
+
+							--ArkInventory.OutputDebug( "replaced bag in bank bag slot xxxx" )
+							-- return
+
+						end
+
+					end
+
+				end
+
+			end
+
+		end
+
+
+		if C_Bank.IsItemAllowedInBankType( bankType, itemLocation ) then
+			
+			if stack_count > 1 then
+				
+				-- repeat until no more source left, or no partial stack found
+					--FindItem( dst_map.loc_id_storage, dst_map.loc_id_storage, nil, nil, nil, item_id, true )
+					-- merge if found
+
+			else
+
+				--FindEmpty( dst_map.loc_id_storage )
+				--move item
+			
+			end
+
+			
+		else
+			ArkInventory.OutputDebug( "this item is not allowed in the character bank" )
+		end
+
+	else
+		ArkInventory.OutputDebug( "ignored - source slot is empty" )
+	end
+
+	ArkInventory.OutputDebug( "MoveItem PreClick: move to character bank - end" )
+
+end
+
+local function helper_MoveItemIntoReagentBank( src_blizzard_id, src_slot_id, dst_map )
+	
+	if true then return end
+
+	local itemLocation = ItemLocation:CreateFromBagAndSlot( src_blizzard_id, src_slot_id )
+	if C_Item.DoesItemExist( itemLocation ) then
+
+		if codex.player.data.panel.bank.combine.reagent and ArkInventory.CrossClient.IsReagentBankUnlocked( ) and ArkInventory.CrossClient.GetContainerNumFreeSlots( ArkInventory.ENUM.BAG.INDEX.REAGENTBANK ) > 0 then
+			-- bank is selected, panel is combined reagent bank, reagent bank is unlocked, reagent bank has a free slot, send it to the reagent bank if its a crafting mat
+
+			local info = ArkInventory.GetObjectInfo( i.h, i )
+			if info.craft then
+
+				ArkInventory.OutputDebug( "PreClick: atempting to move item to reagent bank" )
+
+
+			end
+
+		end
+
+	else
+
+		ArkInventory.OutputDebug( "ignored - source slot is empty" )
+
+	end
+
+	ArkInventory.OutputDebug( "MoveItem PreClick: move to reagent bank - end" )
+
+end
+
+
+function ArkInventory.MoveItem_PreClick( src_blizzard_id, src_slot_id )
+
+	if true then return end
+
+
+	
+	ArkInventory.OutputDebug( "pre-click move source [", src_blizzard_id, "] [", src_slot_id, "]" )
+
+	ArkInventory.Util.Assert( type( src_blizzard_id ) == "number", "src_blizzard_id is [", type( src_blizzard_id ), "], should be [number]" )
+	ArkInventory.Util.Assert( type( src_slot_id ) == "number", "src_slot_id is [", type( src_slot_id ), "], should be [number]" )
+
+	local src_map = ArkInventory.Util.MapGetBlizzard( src_blizzard_id )
+	if src_map.loc_id_storage ~= ArkInventory.Const.Location.Bag then
+		ArkInventory.OutputWarning( "code issue - pre-click move source location [", src_map.loc_id_storage, "] is not supported" )
+		return
+	end
+	
+	local itemLocation = ItemLocation:CreateFromBagAndSlot( src_blizzard_id, src_slot_id )
+	if C_Item.DoesItemExist( itemLocation ) then
+
+		if ArkInventory.Global.Mode.Bank then
+			
+			local dst_map = ArkInventory.Util.getWindowActiveMap( ArkInventory.Const.Location.Bank )
+
+			if dst_map.loc_id_storage == ArkInventory.Const.Location.Bank then
+				return helper_MoveItemIntoCharacterBank( src_blizzard_id, src_slot_id, dst_map )
+			elseif dst_map.loc_id_storage == ArkInventory.Const.Location.ReagentBank then
+				ArkInventory.OutputDebug( "MoveItem PreClick: atempting to move item to reagent bank" )
+				return --helper_MoveItemIntoReagentBank( src_blizzard_id, src_slot_id, dst_map )
+			elseif dst_map.loc_id_storage == ArkInventory.Const.Location.AccountBank then
+				ArkInventory.OutputDebug( "MoveItem PreClick: atempting to move item to account, active tab is [", dst_map.bag_id_storage, "]" )
+				return --helper_MoveItemIntoAccountBank( src_blizzard_id, src_slot_id, dst_map )
+			end
+
+		elseif ArkInventory.Global.Mode.Vault then
+			
+			local dst_map = ArkInventory.Util.getWindowActiveMap( ArkInventory.Const.Location.Vault )
+
+			ArkInventory.OutputDebug( "MoveItem PreClick: atempting to move item to vault, active tab is [", dst_map.bag_id_storage, "]" )
+
+			-- the guild bank already handles this itself so no point trying to do it my way
+
+			return
+
+		else
+
+			-- todo
+			-- check if source item is a container
+		
+			-- check if there is an open inventory (bag slot) and add bag to it (double check quivers)
+			-- if all bag slots are are full, check for a smaller, same type, bag, and replace if found
+
+			return
+
+		end
+
+	else
+
+		ArkInventory.OutputWarning( "code issue - MoveItem PreClick source slot is empty" )
+	
+	end
+
 end

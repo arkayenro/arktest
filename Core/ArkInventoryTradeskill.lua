@@ -311,7 +311,7 @@ local function helper_GoodToScan1( )
 	if not ArkInventory.Tradeskill.IsReady( ) then return end
 	
 	local loc_id = ArkInventory.Const.Location.Tradeskill
-	if not ArkInventory.ClientCheck( ArkInventory.Global.Location[loc_id].ClientCheck ) then
+	if not ArkInventory.Global.Location[loc_id].ClientCheck then
 		ArkInventory.OutputDebug( "TRADESKILL: SCAN ABORTED> tradeskill location is not supported in this expansion" )
 		return
 	end
@@ -742,9 +742,10 @@ function ArkInventory.Tradeskill.ScanHeaders( )
 		
 		ArkInventory.ObjectCacheTooltipClear( )
 		
-		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT ) then
+		
+		if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID == ArkInventory.ENUM.CLASSICSEASONID.FOREVER or ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT ) then
 			
---			ArkInventory.Output( "professions - start" )
+			--ArkInventory.Output( "professions - start 1" )
 			
 			ArkInventory.LoadAddOn( "Blizzard_Professions" )
 			
@@ -758,8 +759,11 @@ function ArkInventory.Tradeskill.ScanHeaders( )
 --			ArkInventory.Output( "professions - end" )
 			
 		else
+
+			--ArkInventory.Output( "professions - start 2" )
 			ArkInventory.LoadAddOn( "Blizzard_TradeSkillUI" )
 			ArkInventory.Tradeskill.Const.Frame = TradeSkillFrame
+
 		end
 		
 		

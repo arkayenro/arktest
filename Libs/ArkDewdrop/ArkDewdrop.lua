@@ -3455,19 +3455,19 @@ local function activate()
 	)
 	
 	lib.frame:Show()
-	lib.hookedTooltip = true
+--	lib.hookedTooltip = true
 	
-	local OnTooltipHide = GameTooltip:GetScript("OnHide")
-	GameTooltip:SetScript( "OnHide",
-		function( self, ... )
-			if OnTooltipHide then
-				OnTooltipHide( self, ... )
-			end
-			if type( self.OnTooltipHide ) == "function" then
-				self:OnTooltipHide( )
-			end
-		end
-	)
+--	local OnTooltipHide = GameTooltip:GetScript("OnHide")
+--	GameTooltip:SetScript( "OnHide",
+--		function( self, ... )
+--			if OnTooltipHide then
+--				OnTooltipHide( self, ... )
+--			end
+--			if type( self.OnTooltipHide ) == "function" then
+--				self:OnTooltipHide( )
+--			end
+--		end
+--	)
 	
 	levels = {}
 	buttons = {}
