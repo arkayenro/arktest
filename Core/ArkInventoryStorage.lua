@@ -771,6 +771,13 @@ function ArkInventory:EVENT_ARKINV_BANK_ENTER( ... )
 	
 	if not ArkInventory:IsEnabled( ) then return end
 	
+
+	local frame = ArkInventory.CrossClient.GetBankPanel( )
+	if frame then
+		-- the bankpanel needs to be shown when entering the bank as it was hidden when we left.  if we dont show it (especially in forever) the bank frame will fail to load properly as it expect this to be shown
+		frame:Show( )
+	end
+
 	OpenAllBags( BankFrame )
 	
 	if ArkInventory.isLocationControlled( loc_id ) then

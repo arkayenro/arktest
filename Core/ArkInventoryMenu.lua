@@ -2455,7 +2455,7 @@ function ArkInventory.MenuBagOpen( frame )
 						
 						if loc_id_storage == ArkInventory.Const.Location.Bank then
 							
-							if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
+							if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS or ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID == ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
 
 								local tabData = C_Bank.FetchNextPurchasableBankTabData( ArkInventory.ENUM.BANKTYPE.CHARACTER )
 								local txt = string.format( "%s %s", ArkInventory.Localise["COSTS_LABEL"], ArkInventory.MoneyText( tabData.tabCost, true ) )

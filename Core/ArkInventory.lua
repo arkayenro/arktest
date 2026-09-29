@@ -9649,7 +9649,9 @@ function ArkInventory.Frame_Item_PreClick( frame, button, down )
 								if active_map.loc_id_storage == ArkInventory.Const.Location.Bank then
 									
 									if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
+										
 										ArkInventory.OutputDebug( "PreClick: atempting to move item to bank tab [", active_map.bag_id_storage, "]" )
+
 										if ArkInventory.CrossClient.MoveItemToLocation( ArkInventory.Const.Location.Bank, active_map.blizzard_id, blizzard_id, slot_id ) then
 											return
 										end
@@ -12600,7 +12602,12 @@ function ArkInventory.Frame_Changer_Slot_OnClick( frame, button, loop_protection
 						--StaticPopup_Show( "CONFIRM_BUY_BANK_TAB", nil, nil, { bankType = ArkInventory.ENUM.BANKTYPE.CHARACTER } )
 						ArkInventory.Lib.StaticDialog:Spawn( "PROTECTED_BANK_TAB_PURCHASE" )
 					else
-						StaticPopup_Show( "CONFIRM_BUY_BANK_SLOT" )
+						if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID == ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
+							--StaticPopup_Show( "CONFIRM_BUY_BANK_TAB", nil, nil, { bankType = ArkInventory.ENUM.BANKTYPE.CHARACTER } )
+							ArkInventory.Lib.StaticDialog:Spawn( "PROTECTED_BANK_TAB_PURCHASE" )
+						else
+							StaticPopup_Show( "CONFIRM_BUY_BANK_SLOT" )
+						end
 					end
 					return
 				end
@@ -13305,12 +13312,14 @@ function ArkInventory.HookOpenAllBags( self, ... )
 	if ArkInventory.Global.Mode.Bank then
 
 		if not ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
-			local loc_id_window = ArkInventory.Const.Location.Bank
-			if not ArkInventory.isLocationControlled( loc_id_window ) then
-				for x = ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + 1, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS do
-					if ArkInventory.CrossClient.GetContainerNumSlots( x ) > 0 then
-						--ArkInventory.OutputDebug( "HookOpenAllBags - closing bag ", x )
-						CloseBag( x )
+			if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID ~= ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
+				local loc_id_window = ArkInventory.Const.Location.Bank
+				if not ArkInventory.isLocationControlled( loc_id_window ) then
+					for x = ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + 1, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS do
+						if ArkInventory.CrossClient.GetContainerNumSlots( x ) > 0 then
+							--ArkInventory.OutputDebug( "HookOpenAllBags - closing bag ", x )
+							CloseBag( x )
+						end
 					end
 				end
 			end
@@ -13327,12 +13336,14 @@ function ArkInventory.HookOpenAllBags( self, ... )
 	if ArkInventory.Global.Mode.Bank then
 
 		if not ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
-			local loc_id_window = ArkInventory.Const.Location.Bank
-			if not ArkInventory.isLocationControlled( loc_id_window ) then
-				for x = ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + 1, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS do
-					if ArkInventory.CrossClient.GetContainerNumSlots( x ) > 0 then
-						--ArkInventory.OutputDebug( "HookOpenAllBags - opening bag ", x )
-						ArkInventory.hooks.OpenBag( x )
+			if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID ~= ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
+				local loc_id_window = ArkInventory.Const.Location.Bank
+				if not ArkInventory.isLocationControlled( loc_id_window ) then
+					for x = ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + 1, ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS + ArkInventory.Const.BLIZZARD.GLOBAL.BANK.NUM_BAGS do
+						if ArkInventory.CrossClient.GetContainerNumSlots( x ) > 0 then
+							--ArkInventory.OutputDebug( "HookOpenAllBags - opening bag ", x )
+							ArkInventory.hooks.OpenBag( x )
+						end
 					end
 				end
 			end
@@ -14057,7 +14068,11 @@ function ArkInventory.BlizzardAPIHook( disable, reload )
 			if ArkInventory.Const.BLIZZARD.CLIENT.BANK_USES_TABS then
 				ArkInventory.MySecureHook( "BankFrame", "SetTab", ArkInventory.HookBankFrame_SetTab )
 			else
-				ArkInventory.MySecureHook( "BankFrame_ShowPanel", ArkInventory.HookBankFrame_ShowPanel )
+				if ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID == ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
+					ArkInventory.MySecureHook( "BankFrame", "SetTab", ArkInventory.HookBankFrame_SetTab )
+				else
+					ArkInventory.MySecureHook( "BankFrame_ShowPanel", ArkInventory.HookBankFrame_ShowPanel )
+				end
 			end
 
 		end

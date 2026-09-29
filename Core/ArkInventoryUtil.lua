@@ -649,6 +649,9 @@ function ArkInventory.Util.syncBlizzardBankUI( map, blizzard_id )
 
 		end
 
+	elseif ArkInventory.Const.BLIZZARD.CLIENT.CLASSICSEASONID == ArkInventory.ENUM.CLASSICSEASONID.FOREVER then
+
+
 	elseif BankFrame_ShowPanel then
 		
 		if loc_id_storage == ArkInventory.Const.Location.Bank then
